@@ -1,0 +1,71 @@
+version: '3.5'
+
+services:
+  redis-cluster:
+    image: 'redis:6.0-alpine'
+    command: [ "redis-cli", "--cluster", "create",
+               "192.168.0.6:6373", "192.168.0.6:6374",
+               "192.168.0.6:6375", "192.168.0.6:6376",
+               "192.168.0.6:6377", "192.168.0.6:6378",
+               "--cluster-replicas", "1", "--cluster-yes" ]
+    depends_on:
+      - redis-node-1
+      - redis-node-2
+      - redis-node-3
+      - redis-node-4
+      - redis-node-5
+      - redis-node-6
+
+  redis-node-1:
+    image: 'redis:6.0-alpine'
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6373:6373'
+      - '16373:16373'
+    volumes:
+      - ./cluster-conf/redis1.conf:/usr/local/etc/redis/redis.conf
+
+  redis-node-2:
+    image: 'redis:6.0-alpine'
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6374:6374'
+      - '16374:16374'
+    volumes:
+      - ./cluster-conf/redis2.conf:/usr/local/etc/redis/redis.conf
+
+  redis-node-3:
+    image: 'redis:6.0-alpine'
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6375:6375'
+      - '16375:16375'
+    volumes:
+      - ./cluster-conf/redis3.conf:/usr/local/etc/redis/redis.conf
+
+  redis-node-4:
+    image: 'redis:6.0-alpine'
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6376:6376'
+      - '16376:16376'
+    volumes:
+      - ./cluster-conf/redis4.conf:/usr/local/etc/redis/redis.conf
+
+  redis-node-5:
+    image: 'redis:6.0-alpine'
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6377:6377'
+      - '16377:16377'
+    volumes:
+      - ./cluster-conf/redis5.conf:/usr/local/etc/redis/redis.conf
+
+  redis-node-6:
+    image: 'redis:6.0-alpine'
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - '6378:6378'
+      - '16378:16378'
+    volumes:
+      - ./cluster-conf/redis6.conf:/usr/local/etc/redis/redis.conf
