@@ -2,6 +2,11 @@
 
 using namespace std;
 
+//
+// see main.cpp for comments
+//
+
+
 class ITask
 {
 public:

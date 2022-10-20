@@ -3,6 +3,10 @@
 using namespace std;
 #include <locale>
 
+//
+// see main.cpp for comments
+//
+
 class ILogger
 {
 protected:

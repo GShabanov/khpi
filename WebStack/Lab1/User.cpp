@@ -7,6 +7,10 @@
 #include "TaskNotify.h"
 #include "Log.h"
 
+//
+// see main.cpp for comments
+//
+
 
 void  CUser::AssignTask(ITaskNotify* taskNote)
 {

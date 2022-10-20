@@ -2,6 +2,15 @@
 
 using namespace std;
 
+//
+// see main.cpp for comments
+//
+
+//
+// 4. Interface Segregation Principle
+//
+
+
 class ITaskNotify
 {
 protected:

@@ -8,6 +8,9 @@
 #include "Log.h"
 #include "TaskNotify.h"
 
+//
+// see main.cpp for comments
+//
 
 CProject::~CProject()
 {
@@ -60,6 +63,14 @@ void CProject::UpdateProject()
         if (!m_taskList.empty())
         {
             ITask* currentTask = m_taskList.front();
+
+            //
+            // 5. Dependency Inversion Principle
+            //
+            //  project.UpdateProject();
+            // 
+            //  is working with abstactions of IUser, ITask, ITaskNotify
+            //
 
             ITaskNotify* newTask;
 

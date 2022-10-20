@@ -8,6 +8,9 @@
 
 using namespace std;
 
+//
+// see main.cpp for comments
+//
 
 
 void

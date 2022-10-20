@@ -2,6 +2,17 @@
 
 using namespace std;
 
+//
+// see main.cpp for comments
+//
+
+
+//
+// 2. Open Closed Principle
+// 
+// CAdminUser is extending functionality
+//
+
 class IUser
 {
 protected:
@@ -28,7 +39,7 @@ public:
 
 class CUser : public IUser
 {
-private:
+protected:
 
     string          m_name;
     bool            m_isAdmin;
@@ -77,10 +88,11 @@ public:
 //
 class CAdminUser : public CUser
 {
-private:
-
-    string          m_name;
-    bool            m_isAdmin;
+    //
+    // 3. Liskov Substitution Principle
+    //
+    // We are using declaration inside base class
+    //
 
 public:
     CAdminUser(class ILogger* logger, const string name)
