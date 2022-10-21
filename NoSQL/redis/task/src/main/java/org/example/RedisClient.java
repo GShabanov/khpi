@@ -13,13 +13,13 @@ public class RedisClient {
         this.jedis = jedis;
     }
 
-    protected String execute(String... command) {
+    protected String execute(String command, String... parameters) {
 
-        String actual = Arrays.stream(command)
+        String actual = Arrays.stream(parameters)
                               .map(word -> "'" + word + "'")
                               .collect(Collectors.joining(", "));
 
-        Object response = jedis.eval("return redis.call(" + actual + ")");
+        Object response = jedis.eval("return redis.call('" + command + "',"  + actual + ")");
 
         if (response != null) {
             return response.toString();
