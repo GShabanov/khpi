@@ -61,6 +61,7 @@ public:
 
 
 
+CLocalDisk    globalDisk;
 
 int
 _tmain(int argc, TCHAR* argv[])
@@ -113,6 +114,9 @@ _tmain(int argc, TCHAR* argv[])
 
     disk2->Read(buffer, sizeof(buffer) / 2, ioCount);
 
+
+    globalDisk.Write(buffer, sizeof(buffer), ioCount);
+    globalDisk.Read(buffer, sizeof(buffer), ioCount);
 
 
 
