@@ -43,7 +43,7 @@ public class Taxi extends RedisClient {
         }
         catch(Exception e)
         {
-            Logger.getAnonymousLogger().info(e.getMessage());
+            System.out.println(e.getMessage());
         }
 
     }
@@ -65,7 +65,7 @@ public class Taxi extends RedisClient {
         }
         catch(Exception e)
         {
-            Logger.getAnonymousLogger().info(e.getMessage());
+            System.out.println(e.getMessage());
         }
 
         return output;
@@ -77,11 +77,15 @@ public class Taxi extends RedisClient {
 
         try
         {
-            output = execute("GEOSEARCH", "Cars:Map", "FROMMEMBER", carName, "BYRADIUS", "200", "km", "WITHCOORD");
+            output = execute("GEOSEARCH",
+                    "Cars:Map",
+                    "FROMMEMBER", carName,
+                    "BYRADIUS", "200", "km",
+                    "WITHCOORD");
         }
         catch(Exception e)
         {
-            Logger.getAnonymousLogger().info(e.getMessage());
+            System.out.println(e.getMessage());
         }
 
         return output;
@@ -95,7 +99,7 @@ public class Taxi extends RedisClient {
         }
         catch(Exception e)
         {
-            Logger.getAnonymousLogger().info(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -109,7 +113,7 @@ public class Taxi extends RedisClient {
         }
         catch(Exception e)
         {
-            Logger.getAnonymousLogger().info(e.getMessage());
+            System.out.println(e.getMessage());
         }
 
         return output;
@@ -124,7 +128,7 @@ public class Taxi extends RedisClient {
         }
         catch(Exception e)
         {
-            Logger.getAnonymousLogger().info(e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
@@ -137,7 +141,7 @@ public class Taxi extends RedisClient {
         }
         catch(Exception e)
         {
-            Logger.getAnonymousLogger().info(e.getMessage());
+            System.out.println(e.getMessage());
         }
 
         return output;

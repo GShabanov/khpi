@@ -20,7 +20,6 @@ public:
         if (!m_inited)
         {
             out = new Impl();
-
             m_inited = true;
 
             return (Impl*)out;

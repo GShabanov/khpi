@@ -61,6 +61,7 @@ public:
 
 
 
+CLocalDisk    globalDisk;
 
 int
 _tmain(int argc, TCHAR* argv[])
@@ -68,9 +69,9 @@ _tmain(int argc, TCHAR* argv[])
     unsigned char buffer[100];
     size_t        ioCount = 0;
 
-    IDisk* disk1 = CLocalDisk::Get();
+    IDisk *disk1 = CLocalDisk::Get();
 
-    IDisk* disk3 = CLocalDisk::Get();
+    IDisk *disk3 = CLocalDisk::Get();
 
     //
     // this is must be one instance of one class !
@@ -113,6 +114,9 @@ _tmain(int argc, TCHAR* argv[])
 
     disk2->Read(buffer, sizeof(buffer) / 2, ioCount);
 
+
+    globalDisk.Write(buffer, sizeof(buffer), ioCount);
+    globalDisk.Read(buffer, sizeof(buffer), ioCount);
 
 
 

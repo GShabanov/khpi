@@ -2,23 +2,31 @@
 #include <windows.h>
 #include <tchar.h>
 #include <math.h>
+#include "FPArray.h"
 
 const float myArray[] = { 
     71, 115, 86, 103, 102, 76, 103, 46, 120, 52, 55, 88, 102, 97, 62, 95, 102, 70, 99, 115, 72, 120, 90, 111, 91, 74, 91, 107, 85, 101, 75, 87, 102, 131, 89, 116, 72, 103, 114, 77 
 };
 
+const float sampleArray[] = {
+    183, 170, 176, 178, 176, 180, 176, 185, 184, 174, 168, 174, 189, 172, 175, 167, 179, 176, 169, 178,
+    169, 171, 170, 177, 176, 179, 174, 176, 188, 178, 172, 176, 167, 166, 180, 183, 176, 182, 178, 172,
+    185, 183, 175, 174, 180, 166, 169, 171, 178, 169, 170, 179, 171, 178, 173, 177 
+};
+
+
 void
-DumpTable(float* table, size_t arraySize)
+DumpTable(CFPArray<float> &data)
 {
     size_t  rover = 0;
 
-    for (int i = 0; i < (arraySize / 5); i++)
+    for (int i = 0; i < (data.Size() / 5); i++)
     {
         _tprintf(_T("* "));
 
         for (int j = 0; j < 5; j++)
         {
-            _tprintf(_T("%4.4f "), table[i * 5 + j]);
+            _tprintf(_T("%4.4f "), data[i * 5 + j]);
             rover++;
         }
 
@@ -26,13 +34,13 @@ DumpTable(float* table, size_t arraySize)
     }
 
 
-    if ((arraySize % 5) > 0)
+    if ((data.Size() % 5) > 0)
     {
         _tprintf(_T("* "));
 
-        for (size_t i = rover; i < arraySize; i++)
+        for (size_t i = rover; i < data.Size(); i++)
         {
-            _tprintf(_T("%4.4f "), table[i]);
+            _tprintf(_T("%4.4f "), data[i]);
         }
 
         _tprintf(_T("\n"));
@@ -40,103 +48,133 @@ DumpTable(float* table, size_t arraySize)
 
 }
 
+//
+// клас которий описуЇ одну группу
+//
 class CValuesClass
 {
 private:
-    float* m_values;
-    size_t m_valuesCount;
-    float  m_avaregeValue;
 
 
-    const float *m_inputTable;
-    size_t       m_InputTableSize;
+    float  m_arithmeticMean;
+    float  m_standartDeviation;
 
+    float  m_Bx;
+    float  m_Bxx;
+    float  m_dX;
+    float  m_Z;
+    //const float *m_inputTable;          // вх≥дна таблиц€
+    //size_t       m_InputTableSize;      // њњ розм≥р
+
+    CFPArray<float>  m_valuesTable;       // таблиц€ значень побудована
+
+    CFPArray<float>  m_inputTable;        // вх≥дна таблиц€
 public:
 
-    CValuesClass(const float* table, size_t arraySize)
+    CValuesClass(
+        const CFPArray<float>& inputArray,
+        float                  arithmeticMean,    // arithmetic mean of the base table
+        float                  standartDeviation  // standart deviation of the base table
+        )
+        : m_valuesTable()
+        , m_inputTable(inputArray)
     {
-        m_values = NULL;
-        m_valuesCount = 0;
-        m_avaregeValue = 0;
 
-        m_inputTable     = table;
-        m_InputTableSize = arraySize;
+        m_arithmeticMean = arithmeticMean;
 
-
+        m_standartDeviation = standartDeviation;
     }
 
     ~CValuesClass()
     {
-        if (m_values != NULL) {
-            delete m_values;
-        }
     }
 
-    float GetAvarage()
+    float GetMean()
     {
-        _tprintf(_T("avarage value %4.4f\n\n"), m_avaregeValue);
-        return m_avaregeValue;
+        return m_valuesTable.GetMean();
     }
 
     int GetFrequency()
     {
-        return (int)m_InputTableSize;
+        return (int)m_valuesTable.Size();
+    }
+
+    float GetBx()
+    {
+        return m_Bx;
+    }
+
+    float GetBxx()
+    {
+        return m_Bxx;
+    }
+
+    float GetDx()
+    {
+        return m_dX;
+    }
+
+    float GetZ()
+    {
+        return m_Z;
+    }
+
+
+
+    CFPArray<float> &GetValuesTable()
+    {
+        return m_valuesTable;
     }
 
     bool Build(float minValue, float maxValue)
     {
-        _tprintf(_T("from %4.4f to %4.4f\n"), minValue, maxValue);
 
-        int   count = 0;
+        int     count = 0;
 
-        for (int i = 0; i < m_InputTableSize; i++)
+        //
+        // precalculate future table size
+        //
+        for (int i = 0; i < m_inputTable.Size(); i++)
         {
 
             if (m_inputTable[i] >= minValue && m_inputTable[i] < maxValue)
             {
-                //values[count] = (float)table[i];
-
                 count++;
             }
         }
 
-        m_values = new float[count];
-
-        if (m_values == NULL)
-            return false;
+        m_valuesTable = CFPArray<float>(count);
 
         count = 0;
 
-        for (int i = 0; i < m_InputTableSize; i++)
+        //
+        // insert values
+        //
+        for (int i = 0; i < m_inputTable.Size(); i++)
         {
 
             if (m_inputTable[i] >= minValue && m_inputTable[i] < maxValue)
             {
-                m_values[count] = (float)m_inputTable[i];
+                m_valuesTable[count] = (float)m_inputTable[i];
 
                 count++;
             }
         }
 
-        m_valuesCount = count;
-        _tprintf(_T("count %d\n"), count);
+        m_Bx = m_valuesTable.Size() * m_valuesTable.GetMean();
+        m_Bxx = m_valuesTable.Size() * m_valuesTable.GetMean() * m_valuesTable.GetMean();
+        m_dX = m_valuesTable.GetMean() - m_arithmeticMean;
 
-        float summ = 0.0;
+        //
+        // Z = | (X - X') / S |
+        //
+        m_Z = m_dX / m_standartDeviation;
 
-        if (count > 0)
-        {
-            _tprintf(_T(" *"));
-        }
-
-        for (int i = 0; i < count; i++)
-        {
-            _tprintf(_T(" %4.4f"), myArray[i]);
-            summ += m_values[i];
-        }
-
-        _tprintf(_T("\n"));
-
-        m_avaregeValue = summ / count;
+        //
+        // module
+        //
+        if (m_Z < 0)
+            m_Z = -m_Z;
 
         return true;
     }
@@ -145,42 +183,46 @@ public:
 int
 _tmain(int argc, TCHAR* argv[])
 {
-    size_t        arraySize = ARRAYSIZE(myArray);
-    const float  *initialArray = myArray;
-    float         maxValue = 0;
-    float         minValue = 0;
-    float         groupCount = 0.0;
-    int           groupCountMin = 0;
-    int           groupCountMax = 0;
+
+    //CFPArray<float>  inputArray(myArray, ARRAYSIZE(myArray));
+    CFPArray<float>  inputArray(sampleArray, ARRAYSIZE(sampleArray));
+
+    CFPArray<float>  deviationTable;
+
+    float            maxValue = 0;
+    float            minValue = 0;
+    float            groupCount = 0.0;
+    int              groupCountMin = 0;
+    int              groupCountMax = 0;
 
     _tprintf(_T("Lab 1\n"));
 
-    _tprintf(_T("Array size %d\n"), (int)arraySize);
+    _tprintf(_T("Array size %d\n"), (int)inputArray.Size());
 
     //
     // prepare calculation for 'X'
     //
     float averageNumber = 0;
 
-    maxValue = initialArray[0];
-    minValue = initialArray[0];
+    maxValue = inputArray[0];
+    minValue = inputArray[0];
 
-    for (int i = 0; i < arraySize; i++) {
+    for (int i = 0; i < inputArray.Size(); i++) {
 
-        averageNumber += initialArray[i];
+        averageNumber += inputArray[i];
 
-        if (initialArray[i] > maxValue) {
+        if (inputArray[i] > maxValue) {
 
-            maxValue = initialArray[i];
+            maxValue = inputArray[i];
         }
 
-        if (initialArray[i] < minValue) {
+        if (inputArray[i] < minValue) {
 
-            minValue = initialArray[i];
+            minValue = inputArray[i];
         }
     }
 
-    averageNumber /= arraySize;
+    averageNumber /= inputArray.Size();
 
     _tprintf(_T("Average number %4.4f\n"), averageNumber);
     _tprintf(_T("Max number %4.4f\n"), maxValue);
@@ -189,7 +231,7 @@ _tmain(int argc, TCHAR* argv[])
     //
     // Sturgerts classes
     //
-    groupCount = (float)(1 + 3.32 * log10f((float)arraySize));
+    groupCount = (float)(1 + 3.32 * log10f((float)inputArray.Size()));
     _tprintf(_T("aproximation groups count %4.4f\n"), groupCount);
 
     groupCountMin = (int)groupCount;
@@ -202,46 +244,48 @@ _tmain(int argc, TCHAR* argv[])
 
     if (groupCountMax > groupCountMin) {
 
-        groupCountMin = groupCountMax;
+        //groupCountMin = groupCountMax;
 
         _tprintf(_T("assume max value for group count %d\n"), groupCountMin);
     }
 
-    int stepsize = (int)((maxValue - minValue) / groupCountMin);
+    int stepsize = (int)ceil((maxValue - minValue) / groupCountMin);
 
     _tprintf(_T("step size %d\n"), stepsize);
 
     //
-    // calulate displacion
+    // calulating deviation table
     //
-    float* di = new float[arraySize];
+    deviationTable = CFPArray<float>(inputArray.Size());
 
-    for (int i = 0; i < arraySize; i++)
+    for (int i = 0; i < inputArray.Size(); i++)
     {
-        di[i] = initialArray[i] - averageNumber;
+        deviationTable[i] = inputArray[i] - averageNumber;
     }
 
     //
-    // dump displacement table
+    // dump deviation table
     //
-    _tprintf(_T("Displacion table\n"));
-    DumpTable(di, arraySize);
+    _tprintf(_T("deviation table\n"));
+    DumpTable(deviationTable);
 
     //
-    // calculate quadratic displacement avarage sum
+    // corrected sample standard deviation
     //
-    float  Ssq = 0;
+    float  standartDeviation = 0;
 
-    for (int i = 0; i < arraySize; i++)
+    for (int i = 0; i < inputArray.Size(); i++)
     {
-        Ssq += (di[i] * di[i]);
+        standartDeviation += (deviationTable[i] * deviationTable[i]);
     }
 
-    Ssq /= (arraySize - 1);
+    standartDeviation /= (inputArray.Size() - 1);
 
-    _tprintf(_T("Squre S %4.4f\n"), Ssq);
+    _tprintf(_T("Squre S %4.4f\n"), standartDeviation);
 
-    _tprintf(_T("Avarage displacement S %f\n"), sqrt(Ssq));
+    standartDeviation = sqrt(standartDeviation);
+
+    _tprintf(_T("sample standard deviation S %f\n"), standartDeviation);
 
 
     CValuesClass** m_classes = new CValuesClass*[groupCountMin];
@@ -253,13 +297,25 @@ _tmain(int argc, TCHAR* argv[])
     for (int i = 0; i < groupCountMin; i++)
     {
 
-        m_classes[i] = new CValuesClass(initialArray, arraySize);
+        m_classes[i] = new CValuesClass(inputArray, averageNumber, standartDeviation);
 
         _tprintf(_T("Group %d\n"), i + 1);
+        _tprintf(_T("from %4.4f to %4.4f\n"), baseValue, floor(baseValue + stepsize));
 
-        m_classes[i]->Build(baseValue, baseValue + stepsize);
+        m_classes[i]->Build(baseValue, floor(baseValue + stepsize));
 
-        m_classes[i]->GetAvarage();
+        DumpTable(m_classes[i]->GetValuesTable());
+
+        _tprintf(_T("frequency %d\n"), (int)m_classes[i]->GetFrequency());
+        _tprintf(_T("mean value %4.4f\n"), m_classes[i]->GetMean());
+
+        _tprintf(_T("B*x %4.4f\n"), m_classes[i]->GetBx());
+        _tprintf(_T("B*x^2 %4.4f\n"), m_classes[i]->GetBxx());
+
+        _tprintf(_T("delta X %4.4f\n"), m_classes[i]->GetDx());
+        _tprintf(_T("Z %4.4f\n"), m_classes[i]->GetZ());
+
+        _tprintf(_T("\n"));
 
         baseValue += stepsize;
     }
