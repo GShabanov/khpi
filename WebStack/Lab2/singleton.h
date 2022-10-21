@@ -13,36 +13,47 @@ template<
 class Singleton : public Base
 {
 public:
-    static inline Impl *Get()
+    static Impl *Get()
     {		
-        return (Impl *)m_body;
+        Impl* out;
+
+        if (!m_inited)
+        {
+            out = new Impl();
+
+            m_inited = true;
+
+            return (Impl*)out;
+        }
+        
+        return (Impl*)m_body;
     }
 
-    inline void* operator new( size_t /*size*/ )
+    void* operator new( size_t /*size*/ )
     {
         return m_body;
     }
 
-    inline void operator delete( void* /*p*/ )
+    void operator delete( void* /*p*/ )
     {
     }
 
-    inline operator bool() const
+    operator bool() const
     {
         return m_inited;
     }
 
-    inline void Initalized()
+    void Initalized()
     {
         m_inited = true;
     }
 
 protected:
-    inline Singleton()
+    Singleton()
     {
     }
 
-    inline ~Singleton()
+    ~Singleton()
     {
     }
 

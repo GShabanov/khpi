@@ -68,9 +68,9 @@ _tmain(int argc, TCHAR* argv[])
     unsigned char buffer[100];
     size_t        ioCount = 0;
 
-    IDisk* disk1 = new CLocalDisk();
+    IDisk* disk1 = CLocalDisk::Get();
 
-    IDisk* disk3 = new CLocalDisk();
+    IDisk* disk3 = CLocalDisk::Get();
 
     //
     // this is must be one instance of one class !
@@ -81,9 +81,9 @@ _tmain(int argc, TCHAR* argv[])
         return -1;
     }
 
-    IDisk* disk2 = new CAmazonDisk();
+    IDisk* disk2 = CAmazonDisk::Get();
 
-    IDisk* disk4 = new CAmazonDisk();
+    IDisk* disk4 = CAmazonDisk::Get();
 
     //
     // this is must be one instance of one class !
