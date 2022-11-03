@@ -8,19 +8,19 @@
 #define Pi  ((double)3.1415926535)
 
 
-const float myArray[] = { 
+const double myArray[] = { 
     71, 115, 86, 103, 102, 76, 103, 46, 120, 52, 55, 88, 102, 97, 62, 95, 102, 70, 99, 115, 72, 120, 90, 111, 91, 74, 91, 107, 85, 101, 75, 87, 102, 131, 89, 116, 72, 103, 114, 77 
 };
 
-const float sampleArray[] = {
+const double sampleArray[] = {
     183, 170, 176, 178, 176, 180, 176, 185, 184, 174, 168, 174, 189, 172, 175, 167, 179, 176, 169, 178,
     169, 171, 170, 177, 176, 179, 174, 176, 188, 178, 172, 176, 167, 166, 180, 183, 176, 182, 178, 172,
     185, 183, 175, 174, 180, 166, 169, 171, 178, 169, 170, 179, 171, 178, 173, 177 
 };
 
-
+template <class Type>
 void
-DumpTable(CFPArray<float> &data)
+DumpTable(CFPArray<Type> &data)
 {
     size_t  rover = 0;
 
@@ -73,9 +73,9 @@ private:
     //const float *m_inputTable;          // вх≥дна таблиц€
     //size_t       m_InputTableSize;      // њњ розм≥р
 
-    CFPArray<float>  m_valuesTable;       // таблиц€ значень побудована
+    CFPArray<Type>  m_valuesTable;       // таблиц€ значень побудована
 
-    CFPArray<float>  m_inputTable;        // вх≥дна таблиц€
+    CFPArray<Type>  m_inputTable;        // вх≥дна таблиц€
 public:
 
     CValuesClass(
@@ -96,49 +96,24 @@ public:
     {
     }
 
-    Type GetMean()
-    {
-        return m_valuesTable.GetMean();
-    }
+    Type GetMean() { return m_valuesTable.GetMean(); }
 
-    int GetFrequency()
-    {
-        return (int)m_valuesTable.Size();
-    }
+    int GetFrequency() { return (int)m_valuesTable.Size(); }
 
-    Type GetBx()
-    {
-        return m_Bx;
-    }
+    Type GetBx() { return m_Bx; }
 
-    Type GetBxx()
-    {
-        return m_Bxx;
-    }
+    Type GetBxx() { return m_Bxx; }
 
-    Type GetDx()
-    {
-        return m_dX;
-    }
+    Type GetDx() { return m_dX; }
 
-    Type GetZ()
-    {
-        return m_Z;
-    }
+    Type GetZ() { return m_Z; }
 
-    Type GetFz()
-    {
-        return m_fZ;
-    }
+    Type GetFz() { return m_fZ; }
 
-    Type GetK(Type S)
-    {
-        return m_K1 / S;
-    }
+    Type GetK(Type S) { return m_K1 / S; }
 
 
-    CFPArray<float> &GetValuesTable()
-    {
+    CFPArray<Type> &GetValuesTable() {
         return m_valuesTable;
     }
 
@@ -205,12 +180,13 @@ public:
     }
 };
 
+template <class Type>
 void
-CalculateArray(CFPArray<float>& inputArray)
+CalculateArray(CFPArray<Type>& inputArray)
 {
-    float            maxValue = 0;
-    float            minValue = 0;
-    float            classesCount = 0.0;
+    Type            maxValue = 0;
+    Type            minValue = 0;
+    Type            classesCount = 0.0;
     int              classesCountMin = 0;
     int              classesCountMax = 0;
 
@@ -219,7 +195,7 @@ CalculateArray(CFPArray<float>& inputArray)
     //
     // prepare calculation for 'X'
     //
-    float averageNumber = 0;
+    Type averageNumber = 0;
 
     maxValue = inputArray[0];
     minValue = inputArray[0];
@@ -248,11 +224,11 @@ CalculateArray(CFPArray<float>& inputArray)
     //
     // Sturgerts classes
     //
-    classesCount = (float)(1 + 3.32 * log10f((float)inputArray.Size()));
+    classesCount = (Type)(1 + 3.32 * log10f((float)inputArray.Size()));
     _tprintf(_T("aproximation classes count %4.4f\n"), classesCount);
 
     classesCountMin = (int)classesCount;
-    classesCountMax = (int)classesCount + ((classesCount - (float)(unsigned int)classesCount) > 0.2 ? 1 : 0);
+    classesCountMax = (int)classesCount + ((classesCount - (Type)(unsigned int)classesCount) > 0.2 ? 1 : 0);
 
 
 
@@ -273,7 +249,7 @@ CalculateArray(CFPArray<float>& inputArray)
     //
     // calulating deviation table
     //
-    CFPArray<float>  deviationTable(inputArray.Size());
+    CFPArray<Type>  deviationTable(inputArray.Size());
 
     for (int i = 0; i < inputArray.Size(); i++)
     {
@@ -290,7 +266,7 @@ CalculateArray(CFPArray<float>& inputArray)
     //
     // corrected sample standard deviation
     //
-    float  standartDeviation = 0;
+    Type  standartDeviation = 0;
 
     for (int i = 0; i < inputArray.Size(); i++)
     {
@@ -304,31 +280,31 @@ CalculateArray(CFPArray<float>& inputArray)
     //
     // standart deviation
     //
-    standartDeviation = (float)sqrt(standartDeviation);
+    standartDeviation = (Type)sqrt(standartDeviation);
 
     _tprintf(_T("sample standard deviation S %f\n"), standartDeviation);
 
 
-    CValuesClass<float>** m_classes = new CValuesClass<float> * [classesCountMin];
+    CValuesClass<Type>** m_classes = new CValuesClass<Type> * [classesCountMin];
 
-    CFPArray<double>  SumBx(classesCountMin);
-    CFPArray<double>  SumBxx(classesCountMin);
+    CFPArray<Type>  SumBx(classesCountMin);
+    CFPArray<Type>  SumBxx(classesCountMin);
     //
     // for future iteration we use min value in table
     //
-    float  baseValue = minValue;
+    Type  baseValue = minValue;
     for (int i = 0; i < classesCountMin; i++)
     {
 
-        m_classes[i] = new CValuesClass<float>(inputArray, averageNumber, standartDeviation);
+        m_classes[i] = new CValuesClass<Type>(inputArray, averageNumber, standartDeviation);
 
         _tprintf(_T("----------------------------------------------------\n"));
         _tprintf(_T("Class %d\n"), i + 1);
         _tprintf(_T("from %4.4f to %4.4f\n"), baseValue, floor(baseValue + stepsize));
 
-        m_classes[i]->Build(baseValue, (float)floor(baseValue + stepsize));
+        m_classes[i]->Build(baseValue, (Type)floor(baseValue + stepsize));
 
-        DumpTable(m_classes[i]->GetValuesTable());
+        DumpTable<Type>(m_classes[i]->GetValuesTable());
 
         _tprintf(_T("frequency   = %d\n"), (int)m_classes[i]->GetFrequency());
         _tprintf(_T("mean value  = %4.4f\n"), m_classes[i]->GetMean());
@@ -349,9 +325,9 @@ CalculateArray(CFPArray<float>& inputArray)
     // _
     // S  =  SQRT (  summ(Bx^2) - (summ(Bx) ^ 2 / n) / (n - 1) )
     //
-    double S_class1 = SumBxx.GetSumm();
-    double S_class2 = (SumBx.GetSumm() * SumBx.GetSumm() / inputArray.Size());
-    float S_class = (float)sqrt((S_class1 - S_class2) / (inputArray.Size() - 1));
+    Type S_class1 = SumBxx.GetSumm();
+    Type S_class2 = (SumBx.GetSumm() * SumBx.GetSumm() / inputArray.Size());
+    Type S_class = (Type)sqrt((S_class1 - S_class2) / (inputArray.Size() - 1));
 
     _tprintf(_T(" _\n"));
     _tprintf(_T(" S      = %4.4f\n"), S_class);
@@ -362,7 +338,7 @@ CalculateArray(CFPArray<float>& inputArray)
 
 
 
-    CFPArray<float>  FzK(classesCountMin);
+    CFPArray<Type>  FzK(classesCountMin);
 
     for (int i = 0; i < classesCountMin; i++)
     {
@@ -371,16 +347,16 @@ CalculateArray(CFPArray<float>& inputArray)
 
 
     _tprintf(_T("F(z) * K' table\n"));
-    DumpTable(FzK);
+    DumpTable<Type>(FzK);
     _tprintf(_T("\n"));
 
 
     //
     // Note: Arrays are null based !
     //
-    CFPArray<float>  frequencyE(classesCountMin - 1);
-    CFPArray<float>  BminusE(classesCountMin - 1);
-    CFPArray<float>  BminusE2E(classesCountMin - 1);
+    CFPArray<Type>  frequencyE(classesCountMin - 1);
+    CFPArray<Type>  BminusE(classesCountMin - 1);
+    CFPArray<Type>  BminusE2E(classesCountMin - 1);
 
     //
     // without last one !
@@ -394,7 +370,7 @@ CalculateArray(CFPArray<float>& inputArray)
     //
     // 5 + 6 classes
     //
-    float lastE = FzK[classesCountMin - 2] + FzK[classesCountMin - 1];
+    Type lastE = FzK[classesCountMin - 2] + FzK[classesCountMin - 1];
 
     //
     // Note: Arrays are null based !
@@ -437,7 +413,7 @@ int
 _tmain(int argc, TCHAR* argv[])
 {
 
-    CFPArray<float>  inputArray(myArray, ARRAYSIZE(myArray));
+    CFPArray<double>  inputArray(myArray, ARRAYSIZE(myArray));
     //CFPArray<float>  inputArray(sampleArray, ARRAYSIZE(sampleArray));
 
     _tprintf(_T("===============================\n"));
@@ -445,6 +421,19 @@ _tmain(int argc, TCHAR* argv[])
     _tprintf(_T("===============================\n"));
 
     CalculateArray(inputArray);
+
+    _tprintf(_T("===============================\n"));
+    _tprintf(_T("==  X' = lg(x) * 100           \n"));
+    _tprintf(_T("===============================\n"));
+
+    CFPArray<double>  covertedArray(inputArray);
+
+    for (int i = 0; i < inputArray.Size(); i++)
+    {
+        covertedArray[i] = log10(inputArray[i]) * 100;
+    }
+
+    CalculateArray(covertedArray);
 
 
     return 0;
