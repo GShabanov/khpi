@@ -140,6 +140,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="SocialMedia.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FacebookMedia.h" />
+    <ClInclude Include="LinkedInMedia.h" />
+    <ClInclude Include="SocialMedia.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
