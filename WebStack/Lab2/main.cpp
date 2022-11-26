@@ -60,8 +60,21 @@ public:
 };
 
 
-
+//
+// static instantiation
+//
 CLocalDisk    globalDisk;
+
+
+void
+ExecuteOperation(IDisk &refClass)
+{
+    unsigned char buffer[100];
+    size_t        ioCount = 0;
+
+    refClass.Write(buffer, sizeof(buffer), ioCount);
+    refClass.Read(buffer, sizeof(buffer) / 2, ioCount);
+}
 
 int
 _tmain(int argc, TCHAR* argv[])
@@ -73,6 +86,7 @@ _tmain(int argc, TCHAR* argv[])
 
     IDisk *disk3 = CLocalDisk::Get();
 
+
     //
     // this is must be one instance of one class !
     //
@@ -81,6 +95,10 @@ _tmain(int argc, TCHAR* argv[])
         std::cout << "Error: classes instances are not same !" << std::endl;
         return -1;
     }
+
+
+    ExecuteOperation(globalDisk);
+    
 
     IDisk* disk2 = CAmazonDisk::Get();
 
