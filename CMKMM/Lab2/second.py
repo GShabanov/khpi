@@ -6,161 +6,192 @@
     Implemented by: Gennady Shabanov
     Group: IKM-M222k
 """
-
 import sys
 import math
+import numpy as np
 import pandas
 import seaborn as sns
-import numpy as np
-import matplotlib.pyplot as plt
+import random
+from pprint import pprint
 from sklearn.model_selection import train_test_split as model
+import matplotlib.pyplot as plt
 
-def findDominant(pairs):
-    max_value = 0
-    name = ''
-    for value in pairs:
-        if value[1] >= max_value:
-            max_value = value[1]
-            name = value[0]
 
-    return name
+COLUMN_STEPS_CONSTS = {
+    "PetalWidthCm"  : 0.8,
+    "PetalLengthCm" : 2.5
+}
 
-def EuclideanDistance(point1, point2):
-    return math.sqrt((point1[0] - point2[0]) ** 2 + (point1[1] - point2[1]) ** 2)
 
-def PlotPicture(df):
-    plt.scatter(df.PetalLengthCm, df.PetalWidthCm)
-    sns.set_style('whitegrid')
-    sns.FacetGrid(df, hue='Species').map(plt.scatter, 'PetalLengthCm', 'PetalWidthCm').add_legend()
-    plt.show()
 
-def GetEntropy(value1, value2, value3):
+
+def GetEntropy(data):
+
+    target = data.iloc[:, -1]
+
     #
     # Entropy(S) = - ∑ pᵢ * log₂(pᵢ) ; i = 1 to n
     #
-    total = value1 + value2 + value3
+    p = target.value_counts(normalize = True).to_numpy()
 
-    return -(value1 / total * math.log(value1 / total, 2) + value2 / total * math.log(value2 / total, 2)
-             + value3 / total * math.log(value3 / total, 2))
+    return sum(p * -np.log2(p))
 
-def AttributeEntropy(dataset):
 
-    #
-    # pᵢ is the probability of class "i" or the ratio of "the number of rows with class i in the target column" to the "total number of rows" in the data set.
-    #
-    data_array = np.array(dataset)
 
-    Entropy = 0
-    Sum = 0
+def GetInformationGain(data, name):
+
+    values = data[name].value_counts(normalize=True)
+    entropy = 0
 
     #
-    # return possibility for values in this data array
+    # IG(S, A) = Entropy(S) - ∑((|Sᵥ| / |S|) * Entropy(Sᵥ))
     #
-    for val in ['Iris-setosa', 'Iris-versicolor', 'Iris-virginica']:
-        p = 0
-        for elem in data_array:
-            if elem[2] == val:
-                p = p + 1
+    for v, f in values.items():
+        entropy1 = GetEntropy(data[data[name] == v])
+        entropy += f * entropy1
 
-        possibility = p / len(dataset)
-
-        #
-        # IG(S, A) = Entropy(S) - ∑((|Sᵥ| / |S|) * Entropy(Sᵥ))
-        #
-        if p > 0:
-            Entropy += (-possibility * math.log(possibility, 2))
-            Sum += Entropy
-
-    return Sum / 2
+    return GetEntropy(data) - entropy
 
 
+def GetBestGainFeature(data):
+    target = data.iloc[:, -1]
+
+    names = data.columns
+
+    infoGains = []
+
+    for name in names:
+        if name == target.name:
+            continue
+
+        infoGains.append(GetInformationGain(data, name))
+
+    print("Current gains: " + str(infoGains))
+    return names[np.argmax(infoGains)]
 
 
-def InformationGain(current, target):
-    return (target - current)
+def Split(data, node, value):
 
-def findMaxGain(infoSet):
-    max = 0
-    name = ''
+    column = data[data[node] == value]
 
-    for gain in infoSet:
-        if gain[0] >= max:
-            max = gain[0]
-            name = gain[1]
+    return column.drop(node, axis = 1)
 
-    print('[*] Max gain is: ' + str(max) + ', set ' + name)
-    return (max, name)
+def GetCurrentDecision(column):
+
+    print("Species in group:")
+    print(column.value_counts())
+    maxValues = column.value_counts().idxmax()
+
+    print("Maximum values for: ", maxValues)
+    print("\n")
+
+    return maxValues
 
 
+def BuildTree(data):
 
-def Splitting(dataFrame, train):
+    print(data.shape)
 
-    print(train.Species.value_counts())
-    value1 = train.Species.value_counts()[0]
-    value2 = train.Species.value_counts()[1]
-    value3 = train.Species.value_counts()[2]
-
-    entropy = GetEntropy(value1, value2, value3)
-
-    print('Total entry =', entropy)
-    print('\n')
-
-    gains = []
-
-    #
-    # 2. Construct a binary tree. To do this, calculate the information increment for the traits with a step: for a flower width of 0.8 cm and for a flower length of 2.5.
-    #
-
-    print('Split by information gain')
-    #
-    # flower length of 2.5.
-    #
-    for value in (2.5, 5):
-        #
-        # left value
-        #
-        leftBranch = train[(dataFrame.PetalLengthCm < value)]
-        leftBranch.name = 'PetalLengthCm < ' + str(value)
-
-        #
-        # rigth value
-        #
-        rigthBranch = train[(dataFrame.PetalLengthCm >= value)]
-        rigthBranch.name = 'PetalLengthCm >= ' + str(value)
-
-        gains.append((InformationGain(AttributeEntropy(leftBranch),
-                entropy), 
-             leftBranch.name))
-
-        gains.append(
-            (InformationGain(AttributeEntropy(rigthBranch), entropy), rigthBranch.name))
-
-    #
-    # for a flower width of 0.8 cm 
-    #
-    for value in (0.8, 1.6):
-        #
-        # left value
-        #
-        leftBranch = train[(dataFrame.PetalWidthCm < value)]
-        leftBranch.name = 'PetalWidthCm < ' + str(value)
-
-        #
-        # rigth value
-        #
-        rigthBranch = train[(dataFrame.PetalWidthCm >= value)]
-        rigthBranch.name = 'PetalWidthCm >= ' + str(value)
-
-        gains.append(
-            (InformationGain(AttributeEntropy(leftBranch), entropy), leftBranch.name))
-        gains.append(
-            (InformationGain(AttributeEntropy(rigthBranch), entropy), rigthBranch.name))
-
+    speciesName = data.iloc[:, -1].name
 
     #
     # 3. Make a node of the decision tree using the function with the maximum profit of information (nodes with the highest profit are at the top of the tree)
     #
-    findMaxGain(gains)
+    bestGainFeature = GetBestGainFeature(data)
+
+    #
+    # cature arrays of unique values
+    #
+    features = data[bestGainFeature].unique()
+
+    tree = {bestGainFeature: {}}
+
+    for feature in features:
+        #
+        # split by the best gain
+        #
+        newData = Split(data, bestGainFeature, feature)
+
+        print("BestFeature:  " + bestGainFeature, feature)
+        print("Array split: ", newData.shape)
+
+
+        #
+        # only one element here
+        #
+        if len(newData[speciesName].unique()) == 1:
+
+            #
+            # node leaf
+            #
+
+            #
+            # 4. If all rows belong to the same class, make the current node a sheet node with the class as its label.
+            #
+            tree[bestGainFeature][feature] = GetCurrentDecision(newData[speciesName])
+
+        else:
+
+            if len(newData.columns) > 1:
+
+                #
+                # local root node
+                #
+
+                #
+                # more than one column - continue splitting
+                #
+                tree[bestGainFeature][feature] = BuildTree(newData)
+
+            else:
+                #
+                # node leaf
+                #
+
+                #
+                # 4. If all rows belong to the same class, make the current node a sheet node with the class as its label.
+                #
+                tree[bestGainFeature][feature] = GetCurrentDecision(newData[speciesName])
+
+    return tree
+
+
+def Predict(row, tree):
+    for node in tree.keys():
+        value = row[node]
+        tree = tree[node][value]
+
+        if type(tree) is dict:
+            return Predict(row, tree)
+        else:
+            return tree
+
+
+def BuildRanges(data):
+
+    data = data.copy()
+
+    for name, step in COLUMN_STEPS_CONSTS.items():
+
+        for row_index, row_value in data[name].items():
+
+            new_row_value = round(math.ceil(row_value / step) * step, 1)
+            data.at[row_index, name] = f"<= {new_row_value}"
+
+    return data
+
+
+def CheckResults(data, tree):
+
+    columnName = data.iloc[:, -1].name
+    
+    data["Type prediction"] = data.apply(Predict, axis = 1, args=(tree,))
+
+    data["Is correct"] = data["Type prediction"] == data[columnName]
+
+    print(data.iloc[:])
+
+    return (data["Is correct"].mean(), data)
 
 
 
@@ -174,13 +205,16 @@ def main():
 
     df = pandas.read_csv(name)
 
+
+    speciesName = df.iloc[:, -1].name
+
+    print(f'Data: {df.info()} \n')
+
+
     #
     # 1. Select 2 column attributes for classification: length (‘PetalLengthCm’) and width (‘PetalWidthCm’) of the flower.
     #
     data = df[['PetalLengthCm', 'PetalWidthCm', 'Species']]
-
-    print(f'Data: {data.info()} \n')
-
 
     print('Divide data to train (80%) and test (20%) randomly')
 
@@ -189,7 +223,50 @@ def main():
     #
     train, test = model(data, test_size = 0.2, random_state = 1)
 
-    Splitting(df, train)
+    #ax = plt.subplots(2, 2, figsize = [10, 8])
+    fig, axs = plt.subplots(nrows = 2, ncols = 2, figsize = [10, 8])
+
+    #petalFig1 = plt.figure(figsize = [10, 8])
+    sns.scatterplot(x = "PetalWidthCm", y = "PetalLengthCm", hue = speciesName, data = train, ax = axs[0][0])
+
+    #petalFig2 = plt.figure(figsize = [10, 8])
+    sns.scatterplot(x = "PetalWidthCm", y = "PetalLengthCm", hue = speciesName, data = test, ax = axs[0][1])
+
+    #
+    # 2. Construct a binary tree. To do this, calculate the information increment for the traits with a step: for a flower width of 0.8 cm and for a flower length of 2.5.
+    #
+    train = BuildRanges(train)
+    test = BuildRanges(test)
+
+    id3 = BuildTree(train)
+
+
+
+
+    print("\n")
+    print("===========================================================")
+
+    pprint(id3)
+    
+    print("===========================================================")
+    print("\n")
+
+    reliability = CheckResults(test, id3)
+
+    print("\n")
+    print("Reliability: ", reliability[0])
+
+    #petalFig3 = plt.figure(figsize = [10, 8])
+
+    test["prediction"] = test.apply(Predict, axis = 1, args=(id3,))
+    df["correct"] = test["prediction"] == test[speciesName]
+    sns.scatterplot(x = "PetalWidthCm", y = "PetalLengthCm", hue = "correct", data = df, ax = axs[1][1])
+
+    plt.show()
+
+
+
+
 
 
 
