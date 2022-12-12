@@ -1,8 +1,8 @@
 # Lab2
 According to the experimental data, construct the equations of direct and inverse linear regression.
 
-![https://github.com/GShabanov/khpi/tree/master/SCE/Lab2/images/1.jpg](https://github.com/GShabanov/khpi/tree/master/SCE/Lab2/images/1.jpg)
-![https://github.com/GShabanov/khpi/tree/master/SCE/Lab2/images/2.jpg](https://github.com/GShabanov/khpi/tree/master/SCE/Lab2/images/2.jpg)
+![https://github.com/GShabanov/khpi/blob/master/SCE/Lab2/images/1.jpg](https://github.com/GShabanov/khpi/blob/master/SCE/Lab2/images/1.jpg)
+![https://github.com/GShabanov/khpi/blob/master/SCE/Lab2/images/2.jpg](https://github.com/GShabanov/khpi/blob/master/SCE/Lab2/images/2.jpg)
 
 ## Brief:
 According to the experimental data, construct the equations of direct and inverse linear 
