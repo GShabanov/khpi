@@ -206,7 +206,7 @@ CFifthTab::OnPaint()
         clRect.bottom = clRect.top + 16;
 
         //
-        // Σ(y-y^) = {sum_y_y_roof}, Σ((y-y^)^2) = {sum_square_y_y_roof}
+        // Σ(y-y^) = sum_y_y_roof, Σ((y-y^)^2) = sum_square_y_y_roof
         //
         text.Format(L"Σ(y-ŷ) = %f, Σ(y-ŷ)² = %f",
             m_solver->getSum6(), 
@@ -262,7 +262,7 @@ CFifthTab::OnPaint()
         clRect.bottom = clRect.top + 16;
 
         //
-        // F^ = {F_roof} >> 3.3881 =F(табл)(9,8,5%)
+        // F^ >> 3.3881 = F(табл)(9,8,5%)
         //
         text.Format(L"в %8.2f разів краще рівняння регресі",
             F_roof / 3.3881);
@@ -273,19 +273,11 @@ CFifthTab::OnPaint()
         clRect.bottom = clRect.top + 16;
 
         //
-        // F^ = {F_roof} >> 3.3881 =F(табл)(9,8,5%)
+        // F^ >> 3.3881 =F(табл)(9, 8,5%)
         //
         text.Format(L"предугадує Y чим Y середнє");
 
         dc->DrawText(text, clRect, 0);
-
-        
-
-
-        //    print(f' F^ = {F_roof} >> 3.3881 =F(табл)(9,8,5%)')
-        //    print(f' F^ = {F_roof} >> 5.9106 =F(табл)(9,8,1%)')
-        //    print('\n\nв 6000 тисяч разів краще рівняння регресі предугадує y чим y-середнє')
-
 
 
         dc->SelectObject(oldFont);

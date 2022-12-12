@@ -125,13 +125,11 @@ CSolver<double>::BuildCoefficients()
     m_y_hat1 = m_b0_yx;
     m_y_hat2 = m_b1_yx;
     // y ^ = b0_yx + b1_yx * x
-    //print(f'ŷ={round(b0_yx, 4)}+{round(b1_yx, 4)}x')
 
     // indirect
     // x ^ = b0_xy + b1_xy * x
     T b0_xy = (sum_x * m_sum_yy - m_sum_xy * sum_y) / (n * m_sum_yy - sum_y_sum_y);  // 2.15
     m_b1_xy = (n * m_sum_xy - sum_x * sum_y) / (n * m_sum_yy - sum_y_sum_y);  // 2.16
-        //print(f'x̂={round(b0_xy, 4)}+{round(b1_xy, 4)}y')
 
     m_x_hat1 = b0_xy;
     m_x_hat2 = m_b1_xy;
@@ -148,10 +146,9 @@ CSolver<double>::BuildCoefficients()
     m_Corr = (n * m_sum_xy - sum_x * sum_y) / (sqrt((n * m_sum_xx - sum_x_sum_x) * (n * m_sum_yy - sum_y_sum_y)));
 
 
-    m_Qx = m_thetta / n;           // # 2.26
-    m_Qy = thetta_shtrich / n;   // # 2.27
+    m_Qx = m_thetta / n;          // # 2.26
+    m_Qy = thetta_shtrich / n;    // # 2.27
     m_Qxy = m_thetta2 / n;        // # 2.28
-    //print(f'Qx={round(Qx, 4)}, Qy={round(Qy, 4)}, Qxy={round(Qxy, 4)}')
 
     m_Sx_med = sqrt(m_Qx / (n - 1));   // # 2.38
     m_Sy_med = sqrt(m_Qy / (n - 1));   //  # 2.39
@@ -162,9 +159,6 @@ CSolver<double>::BuildCoefficients()
     //T s_mid_b0_yx = s_mid_yx * sqrt(1 / n + ((sum_x / n) * (sum_x / n) /*df[x].mean() * df[x].mean()*/) / Qx); //  # 2.43
 
     m_S_b0_med = m_Syx_med * sqrt((T)1.0 / n + ((sum_x / n) * (sum_x / n)) / m_Qx); //  # 2.43
-    //    print(f' S̄_x = {round(s_mid_x,4)}, S̄_y = {round(s_mid_y,4)}')
-    //    print(f' S̄_xy = {round(s_mid_xy,4)}, S̄_yx = {round(s_mid_yx,4)}')
-    //    print(f' S̄_b1_yx = {round(s_mid_b1_yx,4)}, S̄_b0_yx = {round(s_mid_b0_yx,4)}')
 
 
     for (unsigned i = 0; i < m_inputData.rows(); i++)
@@ -191,12 +185,6 @@ CSolver<double>::BuildCoefficients()
 
     m_S_med_y_square = m_Qy / (n - 1);
     m_S_med_y_square_rest = sum_square_y_y_roof / (n - 2);   // # 2.48
-
-    //df['y^'] = df[x].mul(b1_yx) + b0_yx
-    //    df['y-y^'] = df[y] - df['y^']
-    //    df['(y-y^)^2'] = df['y-y^'].mul(df['y-y^'])
-    //    sum_y_y_roof = df['y-y^'].sum()
-    //    sum_square_y_y_roof = df['(y-y^)^2'].sum()
 
 
     return true;

@@ -210,7 +210,7 @@ CFourthTab::OnPaint()
         clRect.bottom = clRect.top + 16;
 
         //
-        // print(f'r={r}={Qxy/sqrt(Qx*Qy)}={s_mid_xy/(s_mid_x*s_mid_y)}={math.sqrt(b1_yx*b1_xy)}')
+        // r = Qxy / sqrt(Qx*Qy) = s_mid_xy / (s_mid_x*s_mid_y) = sqrt(b1_yx * b1_xy)
         //
         text.Format(L"r = %f = %f = %f = %f",
             m_solver->getCorr(), 
@@ -224,7 +224,7 @@ CFourthTab::OnPaint()
         clRect.bottom = clRect.top + 16;
 
         //
-        // S̄b0(yx)/S̄b1(yx)=sqrt( (Σx^2)/n
+        // S̄b0(yx) / S̄b1(yx) = sqrt( (Σx^2)/n
         //
         text.Format(L"S̄b0(yx) / S̄b1(yx) = sqrt( (Σx²)/n )");
 
@@ -234,7 +234,7 @@ CFourthTab::OnPaint()
         clRect.bottom = clRect.top + 16;
 
         //
-        // S̄b0(yx)/S̄b1(yx) = sqrt( (Σx^2)/n )
+        // S̄b0(yx) / S̄b1(yx) = sqrt( (Σx^2)/n )
         //
         text.Format(L"%f = %f", 
             m_solver->getSb0_med() / m_solver->getSb1_med(), 
@@ -275,9 +275,9 @@ CFourthTab::OnPaint()
         dc->DrawText(text, clRect, 0);
 
         //    t_roof = (r * math.sqrt(n - 2)) / (math.sqrt(1 - r * r))
-        //    print(f't^ = {round(t_roof, 4)}')
+        //    t^ = round(t_roof, 4)
 
-        //    print(f' r > r(крит, 1, 1%) => {round(r, 6)} > 0.9995')
+        //    r > r(крит, 1, 1%) => round(r, 6) > 0.9995
 
 
         dc->SelectObject(oldFont);

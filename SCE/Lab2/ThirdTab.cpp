@@ -226,7 +226,6 @@ CThirdTab::OnSize(UINT nType, int cx, int cy)
 
 	GetClientRect(&clRect);
 
-	//m_selection.SetWindowPos(this, 0, 0, cx, cy - 30, SWP_NOZORDER);
     clRect.DeflateRect(1, 1);
 
     clRect.top += 100;
