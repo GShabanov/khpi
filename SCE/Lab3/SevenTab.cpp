@@ -199,10 +199,10 @@ CSevenTab::OnPaint()
         clRect.left = 10;
         clRect.right = clRect.left + 320;
 
-        CString  text;
-        text.Format(L"r = Qxy / sqrt(Qx*Qy)  =  S̄xy / (S̄x*S̄y)  =  sqrt(b1yx * b1xy)");
+        //CString  text;
+        //text.Format(L"r = Qxy / sqrt(Qx*Qy)  =  S̄xy / (S̄x*S̄y)  =  sqrt(b1yx * b1xy)");
 
-        dc->DrawText(text, clRect, 0);
+        //dc->DrawText(text, clRect, 0);
 
 
 

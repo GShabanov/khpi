@@ -206,7 +206,7 @@ CFifthTab::OnPaint()
         clRect.left = 10;
         clRect.right = width3 * 3;
 
-        text.Format(L"Квадратичне рівняння ŷ = a + b*x + c*x² + d*x³");
+        text.Format(L"Кубчічне рівняння ŷ = a + b*x + c*x² + d*x³");
 
         dc->DrawText(text, clRect, 0);
 
