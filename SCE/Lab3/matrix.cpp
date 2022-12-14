@@ -93,9 +93,9 @@ CMatrix<Type>& CMatrix<Type>::operator= (const CMatrix<Type>& other)
         mat[i].resize(new_cols);
     }
 
-    for (size_t i = 0; i < new_rows; i++) {
+    for (unsigned i = 0; i < new_rows; i++) {
 
-        for (size_t j = 0; j < new_cols; j++)
+        for (unsigned j = 0; j < new_cols; j++)
         {
             mat[i][j] = other(i, j);
         }
@@ -240,10 +240,10 @@ CMatrix<Type>::transpose()
 {
     CMatrix result(m_rows, m_cols, 0.0);
 
-    for (size_t i = 0; i < m_rows; i++)
+    for (unsigned i = 0; i < m_rows; i++)
     {
 
-        for (size_t j = 0; j < m_cols; j++)
+        for (unsigned j = 0; j < m_cols; j++)
         {
             result(i, j) = this->mat[j][i];
         }
@@ -252,6 +252,218 @@ CMatrix<Type>::transpose()
     return result;
 }
 
+//
+// get cofactor matrix
+//
+
+template<typename Type>
+CMatrix<Type>
+CMatrix<Type>::inverse() {
+
+
+    Type d = 1.0 / this->determinant();
+
+    CMatrix<Type> solution(m_rows, m_cols, 0.0);
+
+    for (unsigned i = 0; i < m_rows; i++) {
+
+        for (unsigned j = 0; j < m_cols; j++) {
+
+            solution(i, j) = this->mat[i][j];
+        }
+    }
+
+    solution = solution.cofactor().transpose();
+
+    for (unsigned i = 0; i < m_rows; i++) {
+
+        for (unsigned j = 0; j < m_cols; j++) {
+
+            solution(i, j) *= d;
+        }
+    }
+
+    /*for (unsigned i = 0; i < solution.rows(); i++)
+    {
+
+        for (unsigned j = 0; j < solution.cols(); j++)
+        {
+            
+            CString num;
+            num.Format(_T(" %4.4f "), invv.operator()(i, j));
+
+            OutputDebugString(num);
+
+        }
+
+        OutputDebugString(L"\n");
+    }*/
+
+
+    return solution;
+}
+
+//
+// get cofactor matrix
+//
+template<typename Type>
+CMatrix<Type>
+CMatrix<Type>::cofactor()
+{
+    assert(this->m_cols == this->m_rows);
+
+    CMatrix<Type> solution(m_rows, m_cols, 0.0);
+    CMatrix<Type> subMatrix(m_rows - 1, m_cols - 1, 0.0);
+
+    for (unsigned i = 0; i < m_rows; i++) {
+
+        for (unsigned j = 0; j < m_cols; j++) {
+
+            unsigned p = 0;
+
+            for (size_t x = 0; x < m_rows; x++) {
+
+                if (x == i) {
+                    continue;
+                }
+
+                unsigned q = 0;
+
+                for (size_t y = 0; y < m_rows; y++)
+                {
+
+                    if (y == j) {
+
+                        continue;
+                    }
+
+                    subMatrix(p, q) = this->mat[x][y];
+                    q++;
+                }
+
+                p++;
+            }
+
+            Type determinant = subMatrix.determinant();
+
+            if (determinant == 0)
+                determinant = determinant;
+
+            solution(i, j) = pow(-1, i + j) * determinant;
+        }
+    }
+
+    return solution;
+}
+
+template<typename Type>
+Type
+CMatrix<Type>::determinant()
+{
+    assert(this->m_cols == this->m_rows);
+
+    unsigned dimension = m_cols;
+
+    if (dimension == 0) {
+        return 1;
+    }
+
+    if (dimension == 1) {
+        return this->mat[0][0];
+    }
+
+    //
+    // Formula for 2x2-matrix
+    //
+    if (dimension == 2) {
+        return this->mat[0][0] * this->mat[1][1] - this->mat[0][1] * this->mat[1][0];
+    }
+
+    Type result = 0.0;
+    int sign = 1;
+
+    for (unsigned i = 0; i < dimension; ++i)
+    {
+
+        unsigned x = 0, y = 0;
+        CMatrix<Type> subMatrix;
+
+        for (unsigned j = 1; j < dimension; ++j)
+        {
+
+            for (unsigned k = 0; k < dimension; ++k)
+            {
+
+                if (i == k) continue;
+
+
+                subMatrix(x, y) = this->mat[j][k];
+                ++y;
+
+                if (y == dimension - 1) {
+                    y = 0;
+                    ++x;
+                }
+            }
+        }
+
+        Type multiple = this->mat[0][i] * subMatrix.determinant();
+
+        if (sign < 0) {
+
+            result = result - multiple;
+        }
+        else {
+
+            result = result + multiple;
+        }
+
+        sign = -sign;
+    }
+
+    return result;
+
+    /*for (unsigned i = 0; i < dimension; i++) {
+
+        //
+        // Submatrix
+        //
+        CMatrix<Type> subMatrix(dimension - 1, dimension - 1, 0.0);
+
+
+        for (unsigned m = 1; m < dimension; m++) {
+
+            unsigned z = 0;
+
+            for (unsigned n = 0; n < dimension; n++) {
+
+                if (n != i) {
+
+                    subMatrix(m - 1, z) = this->mat[m][n];
+                    z++;
+                }
+            }
+        }
+
+        //
+        // recursive call
+        //
+        Type multiple = this->mat[0][i] * subMatrix.determinant();
+
+        if (sign < 0) {
+
+            result = result - multiple;
+        }
+        else {
+
+            result = result + multiple;
+        }
+
+        sign = -sign;
+    }
+
+    return result;*/
+}
 //
 // Matrix / scalar addition
 //

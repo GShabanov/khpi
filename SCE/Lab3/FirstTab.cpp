@@ -1,4 +1,4 @@
-
+﻿
 // CFirstTab.cpp : implementation file
 //
 
@@ -42,7 +42,7 @@ CFirstTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
 
 	this->GetClientRect(&clRect);
 
-    clRect.top += 100;
+    clRect.top += 150;
 
     m_listCtrl = new CListCtrl();
 
@@ -86,7 +86,6 @@ CFirstTab::OnPaint()
 {
     PAINTSTRUCT     paintStruct = { 0, };
     CDC             *dc;
-    CString         text = _T("��������, ������� �.�. ���-�222�, ������ 16");
 
 
     dc = this->BeginPaint(&paintStruct);
@@ -100,14 +99,47 @@ CFirstTab::OnPaint()
 
         GetClientRect(clRect);
 
-        clRect.top = 20;
-        clRect.bottom = 70;
+        CString         text = _T("Завдання, Шабанов Г.В. ІКМ-М222К, варіант 16");
+
+        clRect.top = 5;
+        clRect.bottom = 35;
         clRect.left = 20;
         clRect.right = clRect.left + 500;
 
         dc->DrawText(text, clRect, 0);
 
         dc->SelectObject(oldFont);
+
+        dc->SelectObject(m_smallFont);
+
+        GetClientRect(clRect);
+
+        clRect.top += 35;
+        clRect.bottom = clRect.top + 16;
+        clRect.left = 5;
+        clRect.right = clRect.right - 5;
+
+        text.Format(L"1. За даними експерименту побудувати квадратичне рівняння регресії");
+
+        dc->DrawText(text, clRect, 0);
+
+        clRect.top += 18;
+        clRect.bottom = clRect.top + 16;
+
+        text.Format(L"Знайти коефіцієнти рівняння регресії і коефіцієнт кореляції. Оцінити значимість коефіцієнтів ");
+        dc->DrawText(text, clRect, 0);
+
+        clRect.top += 18;
+        clRect.bottom = clRect.top + 16;
+
+        text.Format(L"і значимість коефіцієнта кореляції, використовуючи розподіл Стьюдента. Перевірити");
+        dc->DrawText(text, clRect, 0);
+
+        clRect.top += 18;
+        clRect.bottom = clRect.top + 16;
+
+        text.Format(L"значимість рівняння в цілому, використовуючи F-критерій Фішера і обчислюючи залишкову дисперсію.");
+        dc->DrawText(text, clRect, 0);
 
         this->EndPaint(&paintStruct);
     }
@@ -127,7 +159,7 @@ CFirstTab::OnSize(UINT nType, int cx, int cy)
 
     clRect.DeflateRect(1, 1);
 
-    clRect.top += 100;
+    clRect.top += 150;
 
 
     m_listCtrl->SetWindowPos(this, clRect.left, clRect.top, clRect.Width(), clRect.Height(), SWP_NOZORDER);
