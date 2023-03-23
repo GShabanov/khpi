@@ -139,17 +139,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Log.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Project.cpp" />
-    <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Log.h" />
-    <ClInclude Include="Project.h" />
-    <ClInclude Include="Task.h" />
-    <ClInclude Include="TaskNotify.h" />
-    <ClInclude Include="User.h" />
+    <ClInclude Include="MyObjects.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
