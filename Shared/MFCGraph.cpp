@@ -21,7 +21,7 @@
 #define  CHART_BACKGROUND_COLOR     RGB(0x20, 0x20, 0x20)
 #define  CHART_AXIS_COLOR           RGB(0xFF, 0xFF, 0x20)
 #define  CHART_GRID_COLOR           RGB(0x50, 0x50, 0x50)
-#define  CHART_NAMES_COLOR          RGB(0x20, 0xFF, 0x20)
+#define  CHART_NAMES_COLOR          RGB(0x50, 0xFF, 0x50)
 #define  CHART_GRAPH_COLOR          RGB(0x20, 0x20, 0xFF)
 #define  CHART_CROSSPOINT_OFFSET    16
 #define  CHART_ARROW_LENGTH         12
@@ -35,13 +35,14 @@
 
 // CChartControlApp
 BEGIN_MESSAGE_MAP(CGraphControl, CWnd)
-   //{{AFX_MSG_MAP(CGraphControl)
-   ON_WM_PAINT()
-   ON_WM_SIZE()
-   ON_WM_MOVING()
-   ON_WM_CONTEXTMENU()
-   ON_WM_DESTROY()
-   //}}AFX_MSG_MAP
+    //{{AFX_MSG_MAP(CGraphControl)
+    ON_WM_PAINT()
+    ON_WM_SIZE()
+    ON_WM_MOVING()
+    ON_WM_LBUTTONDOWN()
+    ON_WM_CONTEXTMENU()
+    ON_WM_DESTROY()
+    //}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 
@@ -137,14 +138,18 @@ CGraphControl::OnSize(UINT nType, int cx, int cy)
 void
 CGraphControl::InsertGraph(int index, CGraph  &graph)
 {
+
+    m_chartUpdateLock.Lock();
+
     INT_PTR chartsSize = m_graphs.GetSize();
 
     ASSERT(index <= chartsSize);
 
-    if (index > chartsSize)
-        return;
+    if (index > chartsSize) {
 
-    m_chartUpdateLock.Lock();
+        m_chartUpdateLock.Unlock();
+        return;
+    }
 
     //if (index > m_graphs.GetSize() || m_graphs.GetSize() == 0)
     if (chartsSize == 0 || index > (chartsSize - 1))
@@ -167,6 +172,130 @@ CGraphControl::InsertGraph(int index, CGraph  &graph)
     }
 }
 
+void CGraphControl::DeleteGraph(int index)
+{
+    m_chartUpdateLock.Lock();
+
+    INT_PTR chartsSize = m_graphs.GetSize();
+
+    if (chartsSize == 0 || 
+        index > chartsSize - 1) {
+
+        m_chartUpdateLock.Unlock();
+        return;
+    }
+
+    delete m_graphs[index];
+    m_graphs.RemoveAt(index, 1);
+
+    m_chartUpdateLock.Unlock();
+
+    if (this->IsWindowVisible())
+    {
+        this->Invalidate(TRUE);
+    }
+}
+
+CGraph::GRAPH_POINT
+CGraphControl::GetPointFromClient(int x, int y)
+{
+    CRect   worksArrea;
+    double  verticalAspectRatio = 0.0;
+    double  horisontalAspectRatio = 0.0;
+
+    //
+    // copy chart array to local buffer, so _chartValues can be freely updates 
+    //
+    CArray<CGraph*>  graphLocal;
+
+    GetClientRect(&worksArrea);
+
+    //
+    // make work area
+    //
+    worksArrea.DeflateRect(0, CHART_CROSSPOINT_OFFSET);
+    worksArrea.bottom -= CHART_CROSSPOINT_OFFSET;
+
+    m_chartUpdateLock.Lock();
+
+    graphLocal.Copy(m_graphs);
+
+    m_chartUpdateLock.Unlock();
+
+    GRAPH_MINMAX  minmax = { 0, 0, 0, 0 };
+
+    BuildMinMax(graphLocal, minmax);
+
+    //
+    // iteration constans for vertical and horizontal points
+    //
+    horisontalAspectRatio = (float)worksArrea.Width() / (float)abs(minmax.max_x - minmax.min_x);
+    verticalAspectRatio = (float)worksArrea.Height() / (float)abs(minmax.max_y - minmax.min_y);
+
+    //
+    // central point of the whole graph
+    //
+    CPoint  centralPoint(worksArrea.left, worksArrea.bottom);
+
+    //
+    // in case we have negative values move axis to 0
+    //
+    if (minmax.min_x < 0) {
+
+        centralPoint.x -= (LONG)(minmax.min_x * horisontalAspectRatio);
+    }
+
+    if (minmax.min_y < 0) {
+
+        centralPoint.y += (LONG)(minmax.min_y * verticalAspectRatio);
+    }
+
+    //
+    // move central point if we are near to order dimensions
+    //
+    if (centralPoint.x < (worksArrea.left + CHART_CROSSPOINT_OFFSET))
+    {
+        centralPoint.x += CHART_CROSSPOINT_OFFSET;
+    }
+
+    if (centralPoint.y > (worksArrea.bottom - CHART_CROSSPOINT_OFFSET))
+    {
+        centralPoint.y -= CHART_CROSSPOINT_OFFSET;
+    }
+
+    CGraph::GRAPH_POINT  a;
+
+    a.x = (x - centralPoint.x) / horisontalAspectRatio;
+
+    a.y = (centralPoint.y - y) / verticalAspectRatio;
+
+
+    return a;
+}
+
+void
+CGraphControl::OnLButtonDown(UINT nFlags, CPoint point)
+{
+    __super::OnLButtonDown(nFlags, point);
+
+    CRect  worksArrea;
+
+    GetClientRect(&worksArrea);
+
+    //
+    // make work area
+    //
+    worksArrea.DeflateRect(0, CHART_CROSSPOINT_OFFSET);
+    worksArrea.bottom -= CHART_CROSSPOINT_OFFSET;
+
+    if (PtInRect(worksArrea, point))
+    {
+
+        CGraph::GRAPH_POINT  a = GetPointFromClient(point.x, point.y);
+
+        GetParent()->SendMessage(WM_USER + 1, (WPARAM)&a, NULL);
+    }
+}
 
 void
 CGraphControl::BuildMinMax(const CArray<CGraph*> &graph, GRAPH_MINMAX& minmaxRect)
@@ -176,10 +305,26 @@ CGraphControl::BuildMinMax(const CArray<CGraph*> &graph, GRAPH_MINMAX& minmaxRec
     minmaxRect.max_x = 0;
     minmaxRect.min_y = 0;
     minmaxRect.max_y = 0;
+
+    //
+    // initialize by first valid
+    //
+    for (INT_PTR i = 0, j = graph.GetSize(); i < j; i++)
+    {
+        if (graph[i]->IsVisible())
+        {
+            minmaxRect.min_x = graph[i]->getMinX();
+            minmaxRect.max_x = graph[i]->getMaxX();
+            minmaxRect.min_y = graph[i]->getMinY();
+            minmaxRect.max_y = graph[i]->getMaxY();
+            break;
+        }
+    }
+
     //
     // build min max rect
     //
-    for (INT_PTR i = 0; i < graph.GetSize(); i++)
+    for (INT_PTR i = 0, j = graph.GetSize(); i < j; i++)
     {
         if (graph[i]->IsVisible())
         {
@@ -242,58 +387,67 @@ CGraphControl::DrawAxis(CDC *cdc, const CRect &rect, const CPoint& centralPoint,
     LONG xGridLines = rect.Width() / 40; // 40 pixels by step
     LONG yGridLines = rect.Height() / 40; // 40 pixels by step
 
-    LONG  xStep = rect.Width() / xGridLines;
-
-
-    CPoint  gridAxis(rect.left, rect.bottom);
-
-    gridAxis.x += xStep;
-
-    CString  textOut;
-
-    int i = 1;
-    //
-    // vertical grids
-    //
-    while (gridAxis.x < (rect.right - CHART_ARROW_LENGTH))
+    if (xGridLines > 0)
     {
+        LONG  xStep = rect.Width() / xGridLines;
 
-        cdc->MoveTo(gridAxis);
 
-        cdc->LineTo(gridAxis.x, rect.top);
+        CPoint  gridAxis(rect.left, rect.bottom);
 
-        textOut.Format(L"%2.1f", minMax.min_x + ((minMax.max_x - minMax.min_x) / xGridLines) * i);
-
-        cdc->TextOutW(gridAxis.x, gridAxis.y + 2, textOut);
-
-        i++;
         gridAxis.x += xStep;
+
+        CString  textOut;
+
+        int i = 1;
+        //
+        // vertical grids
+        //
+        while (gridAxis.x < (rect.right - CHART_ARROW_LENGTH))
+        {
+
+            cdc->MoveTo(gridAxis);
+
+            cdc->LineTo(gridAxis.x, rect.top);
+
+            textOut.Format(L"%2.1f", minMax.min_x + ((minMax.max_x - minMax.min_x) / xGridLines) * i);
+
+            cdc->TextOutW(gridAxis.x, gridAxis.y + 2, textOut);
+
+            i++;
+            gridAxis.x += xStep;
+        }
     }
 
-    LONG  yStep = rect.Height() / yGridLines;
-
-    gridAxis = CPoint(rect.left, rect.bottom);
-
-
-    gridAxis.y -= yStep;
-
-    i = 1;
-    //
-    // horizontal grids
-    //
-    while (gridAxis.y > (rect.top + CHART_ARROW_LENGTH))
+    if (yGridLines > 0)
     {
 
-        cdc->MoveTo(gridAxis);
+        LONG  yStep = rect.Height() / yGridLines;
 
-        cdc->LineTo(rect.right, gridAxis.y);
+        CPoint  gridAxis = CPoint(rect.left, rect.bottom);
 
-        textOut.Format(L"%2.1f", minMax.min_y + ((minMax.max_y - minMax.min_y) / yGridLines) * i);
 
-        cdc->TextOutW(rect.left, gridAxis.y + 2, textOut);
-
-        i++;
         gridAxis.y -= yStep;
+
+        CString  textOut;
+
+        int i = 1;
+        //
+        // horizontal grids
+        //
+        while (gridAxis.y > (rect.top + CHART_ARROW_LENGTH))
+        {
+
+            cdc->MoveTo(gridAxis);
+
+            cdc->LineTo(rect.right, gridAxis.y);
+
+            textOut.Format(L"%2.1f", minMax.min_y + ((minMax.max_y - minMax.min_y) / yGridLines) * i);
+
+            cdc->TextOutW(rect.left, gridAxis.y + 2, textOut);
+
+            i++;
+            gridAxis.y -= yStep;
+        }
     }
 
 
@@ -531,7 +685,7 @@ CGraphControl::Draw(CDC  *cdc)
         centralPoint.x += CHART_CROSSPOINT_OFFSET;
     }
 
-    if (centralPoint.y > (worksArrea.bottom + CHART_CROSSPOINT_OFFSET))
+    if (centralPoint.y > (worksArrea.bottom - CHART_CROSSPOINT_OFFSET))
     {
         centralPoint.y -= CHART_CROSSPOINT_OFFSET;
     }
@@ -688,8 +842,11 @@ CDottedGraph::DrawGraph(
         //
         // invert coordinate for Y and left as is for X
         //
-        pixel.x = boundingRect.left + (LONG)(m_chartValues[i].x * horisontalAspectRatio + centralPoint.x);
-        pixel.y = boundingRect.bottom - (LONG)(m_chartValues[i].y * verticalAspectRatio + centralPoint.y) + boundingRect.top;
+        //pixel.x = boundingRect.left + (LONG)(m_chartValues[i].x * horisontalAspectRatio + centralPoint.x);
+        //pixel.y = boundingRect.bottom - (LONG)(m_chartValues[i].y * verticalAspectRatio + centralPoint.y) + boundingRect.top;
+        pixel.x = centralPoint.x + (LONG)(m_chartValues[i].x * horisontalAspectRatio);
+        pixel.y = centralPoint.y - (LONG)(m_chartValues[i].y * verticalAspectRatio);
+
 
         DrawCircle(cdc, pixel, m_DotSize);
     }
@@ -786,8 +943,8 @@ CColorDottedGraph::DrawGraph(
         //
         // invert coordinate for Y and left as is for X
         //
-        pixel.x = boundingRect.left + (LONG)(m_chartValues[i].x * horisontalAspectRatio + centralPoint.x);
-        pixel.y = boundingRect.bottom - (LONG)(m_chartValues[i].y * verticalAspectRatio + centralPoint.y) + boundingRect.top;
+        pixel.x = centralPoint.x + (LONG)(m_chartValues[i].x * horisontalAspectRatio);
+        pixel.y = centralPoint.y - (LONG)(m_chartValues[i].y * verticalAspectRatio);
 
         DrawCircle(cdc, pixel, m_DotSize);
     }
@@ -843,19 +1000,22 @@ CLinedGraph::DrawGraph(
 
     CPen   *oldPen = cdc->SelectObject(&drawPenGraph);
 
+    if (m_chartValues.GetCount() < 2)
+        return;
+
     //
     // invert coordinate for Y and left as is for X
     //
-    pixel.x = boundingRect.left + (LONG)(m_chartValues[0].x * horisontalAspectRatio + centralPoint.x);
-    pixel.y = boundingRect.bottom - (LONG)(m_chartValues[0].y * verticalAspectRatio + centralPoint.y) + boundingRect.top;
+    pixel.x = centralPoint.x + (LONG)(m_chartValues[0].x * horisontalAspectRatio);
+    pixel.y = centralPoint.y - (LONG)(m_chartValues[0].y * verticalAspectRatio);
 
     cdc->MoveTo(pixel);
 
-    for (INT_PTR i = 1, j = m_chartValues.GetSize(); i < j; i++)
+    for (INT_PTR i = 1, j = m_chartValues.GetCount(); i < j; i++)
     {
 
-        pixel.x = boundingRect.left + (LONG)(m_chartValues[i].x * horisontalAspectRatio + centralPoint.x);
-        pixel.y = boundingRect.bottom - (LONG)(m_chartValues[i].y * verticalAspectRatio + centralPoint.y) + boundingRect.top;
+        pixel.x = centralPoint.x + (LONG)(m_chartValues[i].x * horisontalAspectRatio);
+        pixel.y = centralPoint.y - (LONG)(m_chartValues[i].y * verticalAspectRatio);
 
         cdc->LineTo(pixel);
     }
@@ -915,8 +1075,8 @@ CPixelGraph::DrawGraph(
         //
         // invert coordinate for Y and left as is for X
         //
-        pixel.x = boundingRect.left   + (LONG)(m_chartValues[i].x * horisontalAspectRatio + centralPoint.x);
-        pixel.y = boundingRect.bottom - (LONG)(m_chartValues[i].y * verticalAspectRatio + centralPoint.y);
+        pixel.x = centralPoint.x + (LONG)(m_chartValues[i].x * horisontalAspectRatio);
+        pixel.y = centralPoint.y - (LONG)(m_chartValues[i].y * verticalAspectRatio);
 
 
         cdc->SetPixel(pixel.x, pixel.y, m_chartColor);
@@ -974,8 +1134,10 @@ CColorPixelGraph::DrawGraph(
         //
         // invert coordinate for Y and left as is for X
         //
-        pixel.x = boundingRect.left + (LONG)(m_chartValues[i].x * horisontalAspectRatio + centralPoint.x);
-        pixel.y = boundingRect.bottom - (LONG)(m_chartValues[i].y * verticalAspectRatio + centralPoint.y) + boundingRect.top;
+        //pixel.x = boundingRect.left + (LONG)(m_chartValues[i].x * horisontalAspectRatio + centralPoint.x);
+        //pixel.y = boundingRect.bottom - (LONG)(m_chartValues[i].y * verticalAspectRatio + centralPoint.y) + boundingRect.top;
+        pixel.x = centralPoint.x + (LONG)(m_chartValues[i].x * horisontalAspectRatio);
+        pixel.y = centralPoint.y - (LONG)(m_chartValues[i].y * verticalAspectRatio);
 
 
         cdc->SetPixel(pixel.x, pixel.y, m_chartValues[i].color);

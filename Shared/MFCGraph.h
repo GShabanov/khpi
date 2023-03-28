@@ -713,11 +713,14 @@ public:
     }
 
     void InsertGraph(int index, CGraph &graph);
+    void DeleteGraph(int index);
 
     CGraphControl& operator= (const CGraphControl& ) {
 
         return *this;
     }
+
+    CGraph::GRAPH_POINT GetPointFromClient(int x, int y);
 
 protected:
 
@@ -727,6 +730,7 @@ protected:
     afx_msg void OnDestroy();
     afx_msg void OnPaint();
     afx_msg void OnSize(UINT nType, int cx, int cy);
+    afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
     afx_msg void OnContextMenu(CWnd* pWnd, CPoint pos);
     DECLARE_MESSAGE_MAP()
 };
