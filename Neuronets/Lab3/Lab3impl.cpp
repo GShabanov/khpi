@@ -101,9 +101,8 @@ template <class Type>
 Type
 CSolver<Type>::SigmaFunction(Type input)
 {
-    Type k = 1.0;
 
-    Type exponent = exp(-k * input);
+    Type exponent = exp(-m_k * input);
     return 1.0 / (1.0 + exponent);
 }
 
@@ -112,11 +111,10 @@ Type
 CSolver<Type>::DSigma(Type input)
 {
     Type  sigma;
-    Type k = 1.0;
 
     sigma = SigmaFunction(input);
 
-    return (sigma * k * (1.0 - sigma));
+    return (sigma * m_k * (1.0 - sigma));
 }
 
 

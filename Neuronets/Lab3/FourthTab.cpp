@@ -186,11 +186,11 @@ CFourthTab::DispayTestData()
 
             if (result)
             {
-                a.color = RGB(0, 0xFF, 0);
+                a.color = RGB(0xFF, 0, 0);
             }
             else
             {
-                a.color = RGB(0xFF, 0, 0);
+                a.color = RGB(0, 0xFF, 0);
             }
 
             testData.Add(a);

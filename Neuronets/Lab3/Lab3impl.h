@@ -18,6 +18,7 @@ class  CSolver
     bool        m_Trained;
 
     Type            m_Nu;
+    Type            m_k;
 
     //
     // layer 1
@@ -90,6 +91,7 @@ public:
         m_Trained = false;
         m_Epoc = 1000;
         m_Nu = 1.0;
+        m_k = 1.0;
     }
 
     ~CSolver()
