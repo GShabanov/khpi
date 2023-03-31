@@ -39,7 +39,7 @@ class  CSolver
 
 
     Type  SigmaFunction(Type input);
-    Type  Activation(Type input);
+    Type  DSigma(Type input);
 
     unsigned int     m_Epoc;
 

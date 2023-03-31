@@ -109,7 +109,7 @@ CSolver<Type>::SigmaFunction(Type input)
 
 template <class Type>
 Type
-CSolver<Type>::Activation(Type input)
+CSolver<Type>::DSigma(Type input)
 {
     Type  sigma;
     Type k = 1.0;
@@ -209,8 +209,7 @@ CSolver<Type>::TrainNet()
             //
             // layer 2
             //
-            Type func2 = Activation(u1_2);
-            Type d_func2 = func2 * 1 * (1 - func2);
+            Type d_func2 = DSigma(u1_2);
 
             m_W10_2 = m_W10_2 + m_Nu * e * d_func2;
             m_W11_2 = m_W11_2 + m_Nu * e * d_func2 * y1_1;
@@ -220,16 +219,14 @@ CSolver<Type>::TrainNet()
             // layer 1
             //
             // u1
-            Type func1 = Activation(u1_1);
-            Type d_func1 = func1 * 1 * (1 - func1);
+            Type d_func1 = DSigma(u1_1);
 
             m_W10 = m_W10 + m_Nu * e * d_func2 * m_W11_2 * d_func1;
             m_W11 = m_W11 + m_Nu * e * d_func2 * m_W11_2 * d_func1 * x1;
             m_W12 = m_W12 + m_Nu * e * d_func2 * m_W11_2 * d_func1 * x2;
 
             // u2
-            func1 = Activation(u2_1);
-            d_func1 = func1 * 1 * (1 - func1);
+            d_func1 = DSigma(u2_1);
 
             m_W20 = m_W20 + m_Nu * e * d_func2 * m_W12_2 * d_func1;
             m_W21 = m_W21 + m_Nu * e * d_func2 * m_W12_2 * d_func1 * x1;

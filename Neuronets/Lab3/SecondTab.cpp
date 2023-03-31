@@ -200,7 +200,7 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     CRect child = clRect;
 
     child.left = (LONG)(clRect.Width() * 330 / 707);
-    child.right = child.left + 40;
+    child.right = child.left + 45;
 
     child.top = (LONG)(clRect.bottom * 40 / 323);
     child.bottom = child.top + 20;
@@ -221,7 +221,7 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     m_W20.SetTextColor(RGB(0xFF, 0x20, 0x20));
 
     child.left = (LONG)(clRect.Width() * 208 / 707);
-    child.right = child.left + 40;
+    child.right = child.left + 45;
 
     child.top = (LONG)(clRect.bottom * 84 / 323);
     child.bottom = child.top + 20;
@@ -241,7 +241,7 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
 
 
     child.left = (LONG)(clRect.Width() * 253 / 707);
-    child.right = child.left + 40;
+    child.right = child.left + 45;
 
     child.top = (LONG)(clRect.bottom * 144 / 323);
     child.bottom = child.top + 20;
@@ -264,7 +264,7 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     // 2
     //
     child.left = (LONG)(clRect.Width() * 466 / 707);
-    child.right = child.left + 40;
+    child.right = child.left + 45;
 
     child.top = (LONG)(clRect.bottom * 87 / 323);
     child.bottom = child.top + 20;
@@ -287,7 +287,7 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     // 3
     //
     child.left = (LONG)(clRect.Width() * 592 / 707);
-    child.right = child.left + 40;
+    child.right = child.left + 45;
 
     child.top = (LONG)(clRect.bottom * 81 / 323);
     child.bottom = child.top + 20;
@@ -428,7 +428,7 @@ CSecondTab::OnSize(UINT nType, int cx, int cy)
     CRect child = clRect;
 
     child.left = (LONG)(clRect.Width() * 330 / 707);
-    child.right = child.left + 40;
+    child.right = child.left + 45;
 
     if (m_W10.m_hWnd != NULL)
     {
@@ -448,7 +448,7 @@ CSecondTab::OnSize(UINT nType, int cx, int cy)
 
 
     child.left = (LONG)(clRect.Width() * 208 / 707);
-    child.right = child.left + 40;
+    child.right = child.left + 45;
 
     if (m_W11.m_hWnd != NULL)
     {
@@ -470,7 +470,7 @@ CSecondTab::OnSize(UINT nType, int cx, int cy)
 
 
     child.left = (LONG)(clRect.Width() * 253 / 707);
-    child.right = child.left + 40;
+    child.right = child.left + 45;
 
     if (m_W12.m_hWnd != NULL)
     {
@@ -496,7 +496,7 @@ CSecondTab::OnSize(UINT nType, int cx, int cy)
     // 2
     //
     child.left = (LONG)(clRect.Width() * 466 / 707);
-    child.right = child.left + 40;
+    child.right = child.left + 45;
 
     if (m_W11_2.m_hWnd != NULL)
     {
@@ -517,7 +517,7 @@ CSecondTab::OnSize(UINT nType, int cx, int cy)
 
 
     child.left = (LONG)(clRect.Width() * 592 / 707);
-    child.right = child.left + 40;
+    child.right = child.left + 45;
 
     if (m_W10_2.m_hWnd != NULL)
     {
