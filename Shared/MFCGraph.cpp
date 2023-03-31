@@ -214,6 +214,7 @@ CGraphControl::GetPointFromClient(int x, int y)
     // make work area
     //
     worksArrea.DeflateRect(0, CHART_CROSSPOINT_OFFSET);
+    worksArrea.top += CHART_ARROW_LENGTH;
     worksArrea.bottom -= CHART_CROSSPOINT_OFFSET;
 
     m_chartUpdateLock.Lock();
@@ -260,7 +261,7 @@ CGraphControl::GetPointFromClient(int x, int y)
 
     if (centralPoint.y > (worksArrea.bottom - CHART_CROSSPOINT_OFFSET))
     {
-        centralPoint.y -= CHART_CROSSPOINT_OFFSET;
+        //centralPoint.y -= CHART_CROSSPOINT_OFFSET;
     }
 
     CGraph::GRAPH_POINT  a;
@@ -286,6 +287,7 @@ CGraphControl::OnLButtonDown(UINT nFlags, CPoint point)
     // make work area
     //
     worksArrea.DeflateRect(0, CHART_CROSSPOINT_OFFSET);
+    worksArrea.top += CHART_ARROW_LENGTH;
     worksArrea.bottom -= CHART_CROSSPOINT_OFFSET;
 
     if (PtInRect(worksArrea, point))
@@ -434,7 +436,7 @@ CGraphControl::DrawAxis(CDC *cdc, const CRect &rect, const CPoint& centralPoint,
         //
         // horizontal grids
         //
-        while (gridAxis.y > (rect.top + CHART_ARROW_LENGTH))
+        while (gridAxis.y > rect.top)
         {
 
             cdc->MoveTo(gridAxis);
@@ -467,10 +469,10 @@ CGraphControl::DrawAxis(CDC *cdc, const CRect &rect, const CPoint& centralPoint,
 
     cdc->MoveTo(verticalAxis);
 
-    cdc->LineTo(verticalAxis.x, rect.top);     // from down to top line
-    cdc->LineTo(verticalAxis.x + 2, rect.top + CHART_ARROW_LENGTH); // right arrow part
-    cdc->MoveTo(verticalAxis.x, rect.top);
-    cdc->LineTo(verticalAxis.x - 2, rect.top + CHART_ARROW_LENGTH); // left arrow  part
+    cdc->LineTo(verticalAxis.x, rect.top - CHART_ARROW_LENGTH * 2);     // from down to top line
+    cdc->LineTo(verticalAxis.x + 2, rect.top - CHART_ARROW_LENGTH); // right arrow part
+    cdc->MoveTo(verticalAxis.x, rect.top - CHART_ARROW_LENGTH * 2);
+    cdc->LineTo(verticalAxis.x - 2, rect.top - CHART_ARROW_LENGTH); // left arrow  part
 
     cdc->MoveTo(horizontalAxis);
     cdc->LineTo(rect.right, horizontalAxis.y);    // from left to right
@@ -483,7 +485,7 @@ CGraphControl::DrawAxis(CDC *cdc, const CRect &rect, const CPoint& centralPoint,
     //
     cdc->SetTextColor(CHART_NAMES_COLOR);
 
-    cdc->TextOutW(verticalAxis.x + 4, rect.top + 2, m_vericalAxisName);
+    cdc->TextOutW(verticalAxis.x + 4, rect.top - CHART_ARROW_LENGTH, m_vericalAxisName);
     cdc->TextOutW(rect.right - CHART_ARROW_LENGTH - m_horizontalAxisName.GetLength() * 5, horizontalAxis.y + 2, m_horizontalAxisName);
 
     cdc->SelectObject(&oldPen);
@@ -645,6 +647,7 @@ CGraphControl::Draw(CDC  *cdc)
     // make work area
     //
     worksArrea.DeflateRect(0, CHART_CROSSPOINT_OFFSET);
+    worksArrea.top += CHART_ARROW_LENGTH;
     worksArrea.bottom -= CHART_CROSSPOINT_OFFSET;
 
 
@@ -687,7 +690,7 @@ CGraphControl::Draw(CDC  *cdc)
 
     if (centralPoint.y > (worksArrea.bottom - CHART_CROSSPOINT_OFFSET))
     {
-        centralPoint.y -= CHART_CROSSPOINT_OFFSET;
+        //centralPoint.y -= CHART_CROSSPOINT_OFFSET;
     }
 
 
