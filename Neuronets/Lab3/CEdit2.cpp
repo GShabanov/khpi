@@ -21,6 +21,7 @@ BEGIN_MESSAGE_MAP(CEdit2, CEdit)
     ON_WM_KILLFOCUS()
     ON_WM_CHAR()
     ON_WM_PAINT()
+    ON_WM_CTLCOLOR_REFLECT()
 END_MESSAGE_MAP()
 
 
@@ -126,23 +127,57 @@ CEdit2::SetValue(unsigned int value)
     this->SetWindowText(text);
 }
 
+/*HBRUSH
+CEdit2::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
+{
+    HBRUSH _return = __super::OnCtlColor(pDC, pWnd, nCtlColor);
+
+    pDC->SetTextColor(RGB(0xFF, 0x20, 0x20));
+
+    return _return;
+}*/
+
+HBRUSH
+CEdit2::CtlColor(CDC* pDC, UINT nCtlColor)
+{
+
+    HBRUSH _return = (HBRUSH)GetStockObject(DC_BRUSH);
+
+    pDC->SetTextColor(m_TextColor);
+
+    return _return;
+}
+
 void
 CEdit2::OnPaint()
 {
+    __super::OnPaint();
+
     /*PAINTSTRUCT     paintStruct = { 0, };
     CDC* dc;
 
-    dc = this->BeginPaint(&paintStruct);
+
+    dc = this->GetDC();
 
     if (dc != NULL)
     {
 
-        dc->SetBkColor(RGB(0x20, 0xFF, 0xFF));
+        CPen  numberPen(PS_DOT, 1, RGB(0xFF, 0x20, 0x20));
+
+        CPen *oldPen = dc->SelectObject(&numberPen);
+        COLORREF oldColor = dc->SetTextColor(RGB(0xFF, 0x20, 0x20));
 
 
-        this->EndPaint(&paintStruct);
+        dc->SetTextColor(oldColor);
+
+
+        //dc->SetBkColor(RGB(0x20, 0xFF, 0xFF));
+
+        dc->SelectObject(oldPen);
+
+
+        this->ReleaseDC(dc);
     }*/
 
-    __super::OnPaint();
 
 }

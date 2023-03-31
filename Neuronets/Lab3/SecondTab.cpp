@@ -205,9 +205,11 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     child.top = (LONG)(clRect.bottom * 40 / 323);
     child.bottom = child.top + 20;
 
+
     m_W10.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, child, this, NULL);
     m_W10.SetFont(&this->m_smallFont, FALSE);
     m_W10.SetLimitText(5);
+    m_W10.SetTextColor(RGB(0xFF, 0x20, 0x20));
 
 
     child.top = (LONG)(clRect.bottom * 272 / 323);
@@ -216,6 +218,7 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     m_W20.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, child, this, NULL);
     m_W20.SetFont(&this->m_smallFont, FALSE);
     m_W20.SetLimitText(5);
+    m_W20.SetTextColor(RGB(0xFF, 0x20, 0x20));
 
     child.left = (LONG)(clRect.Width() * 208 / 707);
     child.right = child.left + 40;
@@ -226,6 +229,7 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     m_W11.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, child, this, NULL);
     m_W11.SetFont(&this->m_smallFont, FALSE);
     m_W11.SetLimitText(5);
+    m_W11.SetTextColor(RGB(0xFF, 0x20, 0x20));
 
     child.top = (LONG)(clRect.bottom * 256 / 323);
     child.bottom = child.top + 20;
@@ -233,6 +237,7 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     m_W22.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, child, this, NULL);
     m_W22.SetFont(&this->m_smallFont, FALSE);
     m_W22.SetLimitText(5);
+    m_W22.SetTextColor(RGB(0xFF, 0x20, 0x20));
 
 
     child.left = (LONG)(clRect.Width() * 253 / 707);
@@ -244,6 +249,7 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     m_W12.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, child, this, NULL);
     m_W12.SetFont(&this->m_smallFont, FALSE);
     m_W12.SetLimitText(5);
+    m_W12.SetTextColor(RGB(0xFF, 0x20, 0x20));
 
     child.top = (LONG)(clRect.bottom * 177 / 323);
     child.bottom = child.top + 20;
@@ -251,6 +257,7 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     m_W21.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, child, this, NULL);
     m_W21.SetFont(&this->m_smallFont, FALSE);
     m_W21.SetLimitText(5);
+    m_W21.SetTextColor(RGB(0xFF, 0x20, 0x20));
 
 
     //
@@ -265,6 +272,7 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     m_W11_2.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, child, this, NULL);
     m_W11_2.SetFont(&this->m_smallFont, FALSE);
     m_W11_2.SetLimitText(5);
+    m_W11_2.SetTextColor(RGB(0xFF, 0x20, 0x20));
 
     child.top = (LONG)(clRect.bottom * 243 / 323);
     child.bottom = child.top + 20;
@@ -272,6 +280,7 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     m_W12_2.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, child, this, NULL);
     m_W12_2.SetFont(&this->m_smallFont, FALSE);
     m_W12_2.SetLimitText(5);
+    m_W12_2.SetTextColor(RGB(0xFF, 0x20, 0x20));
 
 
     //
@@ -286,6 +295,7 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     m_W10_2.Create(WS_CHILD | WS_VISIBLE | WS_BORDER | ES_LEFT, child, this, NULL);
     m_W10_2.SetFont(&this->m_smallFont, FALSE);
     m_W10_2.SetLimitText(5);
+    m_W10_2.SetTextColor(RGB(0xFF, 0x20, 0x20));
 
     clRect = clRectTemp;
 

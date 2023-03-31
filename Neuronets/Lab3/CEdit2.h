@@ -29,6 +29,7 @@ public:
 
     CString             m_lastText;
     int                 m_allowedChars;
+    COLORREF            m_TextColor;
 
 public:
 
@@ -36,6 +37,8 @@ public:
         : CEdit()
     {
         m_allowedChars = EDT_NUMS | EDT_SIGN | EDT_PERIOD;
+
+        m_TextColor = RGB(0x0, 0, 0);
     }
 
     void SetAllowedChars(int chars = EDT_NUMS | EDT_SIGN | EDT_PERIOD) {
@@ -49,11 +52,16 @@ public:
     unsigned int GetInt();
     void SetValue(unsigned int value);
 
+    void SetTextColor(COLORREF rgb) {
+        m_TextColor = rgb;
+    }
+
 protected:
     afx_msg void OnSetFocus(CWnd* pOldWnd);
     afx_msg void OnKillFocus(CWnd* pNewWnd);
     afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
     afx_msg void OnPaint();
+    afx_msg HBRUSH CtlColor(CDC* pDC, UINT nCtlColor);
     DECLARE_MESSAGE_MAP()
 
 };
