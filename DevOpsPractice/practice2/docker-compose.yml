@@ -1,0 +1,45 @@
+version: '3.1'
+services:
+
+  #
+  # web server
+  #
+  http:
+    image: nginx:latest
+
+    container_name: web_server
+#    restart: always
+
+    build: ./http
+
+    ports:
+      - '80:80'
+
+    volumes:
+      - ./http:/home/http
+
+  #
+  # service container
+  #
+  service:
+
+    container_name: service
+
+    depends_on:
+      - http
+
+    links:
+      - http
+
+    build: ./service
+
+    volumes:
+      - /var/log:/var/log
+      - ./service:/home/service
+
+volumes:
+  http:
+    driver: local
+
+  service:
+    driver: local
