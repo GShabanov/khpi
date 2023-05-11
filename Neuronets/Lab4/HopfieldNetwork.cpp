@@ -35,6 +35,22 @@ CHopfieldNetwork<Type>::~CHopfieldNetwork()
 
 
 template <class Type>
+void
+CHopfieldNetwork<Type>::Reset()
+{
+    for (SIZE_T i = 0; i < m_InputsCount; i++)
+    {
+        for (SIZE_T j = 0; j < m_InputsCount; j++)
+        {
+            m_weightMatrix[i * m_InputsCount + j] = 0.0;
+        }
+    }
+
+
+    m_Initialized = true;
+}
+
+template <class Type>
 bool
 CHopfieldNetwork<Type>::Init()
 {
@@ -106,14 +122,19 @@ CHopfieldNetwork<Type>::Teach(const CArray<Type>& data)
         m_Effectors[i] = data[i];
     }
 
+
+
     //
     // обчислюємо значення на виході нейрону
     //
-    for (SIZE_T j = 0; j < m_InputsCount; j++)
+    for (SIZE_T j = 0; j < m_InputsCount; j++)    
     {
+
+        Type  n = 0;
 
         for (SIZE_T i = j; i < m_InputsCount; i++)
         {
+            n++;
             //
             // якщо головна діагональ
             //
@@ -125,8 +146,8 @@ CHopfieldNetwork<Type>::Teach(const CArray<Type>& data)
             {
                 Type sum = (m_Effectors[i] * m_Effectors[j]);
 
-                m_weightMatrix[j * m_InputsCount + i] += sum;
-                m_weightMatrix[i * m_InputsCount + j] += sum;
+                m_weightMatrix[j * m_InputsCount + i] += (sum / n);
+                m_weightMatrix[i * m_InputsCount + j] += (sum / n);
             }
 
         }

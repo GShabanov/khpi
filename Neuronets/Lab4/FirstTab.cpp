@@ -549,6 +549,8 @@ CFirstTab::OnCommand(
     if ((HWND)lParam == m_ResetButton.m_hWnd &&
         HIWORD(wParam) == BN_CLICKED)
     {
+        m_pNetwork->Reset();
+
         for (INT_PTR i = 0, j = m_BitmapTable.GetSize(); i < j; i++)
         {
             m_BitmapTable[i]->Learned = FALSE;
@@ -565,6 +567,7 @@ CFirstTab::OnCommand(
             m_PictureList.Invalidate(TRUE);
 
         }
+
 
         m_RestoreButton.EnableWindow(FALSE);
     }

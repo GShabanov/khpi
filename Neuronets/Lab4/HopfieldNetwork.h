@@ -25,6 +25,8 @@ public:
 
     bool  Init();
 
+    void  Reset();
+
     void Teach(const CArray<Type>& data);
 
     void Recovery(const CArray<Type>& input, CArray<Type>& output);
