@@ -158,7 +158,7 @@ CHopfieldNetwork<Type>::Teach(const CArray<Type>& data)
 
 template <class Type>
 void
-CHopfieldNetwork<Type>::Recovery(const CArray<Type>& input, CArray<Type>& output)
+CHopfieldNetwork<Type>::Recovery(const CArray<Type>& input, CArray<Type>& output, CNetworkUpdateCallback<Type>* callbackClass)
 {
     CArray<Type> outputTmp;
 
@@ -215,6 +215,11 @@ CHopfieldNetwork<Type>::Recovery(const CArray<Type>& input, CArray<Type>& output
 
         }
 
+
+        if (callbackClass != NULL)
+        {
+            callbackClass->NetworkUpdateCallback(outputTmp);
+        }
 
         //
         // перевірка, що масиви ідентичні

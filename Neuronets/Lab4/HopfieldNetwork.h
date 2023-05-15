@@ -6,6 +6,13 @@
 #include "Neuron.h"
 
 template <class Type>
+class CNetworkUpdateCallback
+{
+public:
+    virtual void NetworkUpdateCallback(const CArray<Type>& output) = 0;
+};
+
+template <class Type>
 class  CHopfieldNetwork
 {
 
@@ -29,7 +36,7 @@ public:
 
     void Teach(const CArray<Type>& data);
 
-    void Recovery(const CArray<Type>& input, CArray<Type>& output);
+    void Recovery(const CArray<Type>& input, CArray<Type>& output, CNetworkUpdateCallback<Type> *callbackClass = NULL);
 
     ~CHopfieldNetwork();
 };

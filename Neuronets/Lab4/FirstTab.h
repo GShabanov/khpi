@@ -7,7 +7,7 @@
 
 
 // CFirstTab dialog
-class CFirstTab : public CTabTemplate
+class CFirstTab : public CTabTemplate, protected CNetworkUpdateCallback<double>
 {
 private:
 
@@ -29,6 +29,7 @@ private:
 
     BOOL   LoadImageFile(const CString &filename);
 
+
     // Construction
 public:
     CFirstTab(); // standard constructor
@@ -37,6 +38,14 @@ public:
 
     // Implementation
 protected:
+
+    static DWORD  WINAPI RecoveryThread(CFirstTab* lpThis) {
+        return lpThis->RecoveryThreadRoutine();
+    }
+
+    DWORD  RecoveryThreadRoutine();
+
+    virtual void NetworkUpdateCallback(const CArray<double>& output);
 
     void OnSelectPicture(CListCtrlMy::DRAW_CONTEXT* pContext);
     void OnLearnButton();

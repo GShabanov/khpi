@@ -465,10 +465,36 @@ CFirstTab::OnLearnButton()
 }
 
 void
-CFirstTab::OnRecoveryButton()
+CFirstTab::NetworkUpdateCallback(const CArray<double>& output)
 {
 
+    CArrayEx<CArrayEx<COLORREF>>  newArray;
+
+    for (LONG y = 0; y < m_Picture->GetHeight(); y++)
+    {
+        newArray.Add(CArrayEx<COLORREF>());
+
+        for (LONG x = 0; x < m_Picture->GetWidth(); x++)
+        {
+            COLORREF  color = output[y * m_Picture->GetWidth() + x] > 0 ? RGB(0xFF, 0xFF, 0xFF) : RGB(0x00, 0x00, 0x00);
+
+            newArray[y].Add(color);
+        }
+    }
+
+
+    m_Picture->SetInputArray(newArray);
+
+    Sleep(100);
+}
+
+DWORD
+CFirstTab::RecoveryThreadRoutine()
+{
     CArrayEx<COLORREF> curPicture = m_Picture->Serialize();
+
+    m_Picture->Clear();
+
 
     CArrayEx<double>  learnArray;
 
@@ -483,13 +509,13 @@ CFirstTab::OnRecoveryButton()
                 GetBValue(color)) / 3;
 
 
-        if (grayScale > 0x20)
+        if (grayScale > 0x50)
         {
-            learnArray.Add(1.0);
+            learnArray.Add(1.0);  // більше до білого +1
         }
         else
         {
-            learnArray.Add(-1.0);
+            learnArray.Add(-1.0);  // чорний -1
         }
 
     }
@@ -497,7 +523,7 @@ CFirstTab::OnRecoveryButton()
     CArrayEx<double>  outputArray;
 
 
-    m_pNetwork->Recovery(learnArray, outputArray);
+    m_pNetwork->Recovery(learnArray, outputArray, this);
 
 
 
@@ -509,6 +535,9 @@ CFirstTab::OnRecoveryButton()
 
         for (LONG x = 0; x < m_Picture->GetWidth(); x++)
         {
+            //
+            // де  > 0  це білий, а  < 0 це чорний
+            //
             COLORREF  color = outputArray[y * m_Picture->GetWidth() + x] > 0 ? RGB(0xFF, 0xFF, 0xFF) : RGB(0x00, 0x00, 0x00);
 
             newArray[y].Add(color);
@@ -518,7 +547,32 @@ CFirstTab::OnRecoveryButton()
 
     m_Picture->SetInputArray(newArray);
 
+    m_RestoreButton.EnableWindow(TRUE);
 
+    return 0;
+}
+
+void
+CFirstTab::OnRecoveryButton()
+{
+
+
+    HANDLE  hThread = CreateThread(
+        NULL,
+        0,
+        reinterpret_cast<LPTHREAD_START_ROUTINE>(&CFirstTab::RecoveryThread),
+        this,
+        NULL,
+        NULL);
+
+    if (hThread != NULL)
+    {
+
+        m_RestoreButton.EnableWindow(FALSE);
+
+
+        CloseHandle(hThread);
+    }
 }
 
 BOOL
