@@ -27,6 +27,18 @@ class  CHopfieldNetwork
 
     CArray<CNeuron<Type> *>    m_Neurons;
 
+    static Type sign(Type a)
+    {
+        if (a < 0)
+        {
+            return -1.0;
+        }
+        else
+        {
+            return 1.0;
+        }
+    }
+
 public:
     CHopfieldNetwork(size_t neuronsCount = (64 * 64));
 

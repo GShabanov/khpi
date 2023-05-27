@@ -21,7 +21,6 @@
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions
 #include <afxcontrolbars.h>
-#include <vector>
 
 #ifndef __AFXWIN_H__
     #error "include 'stdafx.h' before including this file for PCH"
@@ -672,6 +671,8 @@ private:
     CString                         m_chartName;
     CCriticalSection                m_chartUpdateLock;
     CArray<CGraph *>                m_graphs;
+    CDC                             m_memoryDC;
+    CBitmap                         m_memoryBitmap;
     bool                            m_absolute;
 
     void Draw(CDC  *cdc);

@@ -13,19 +13,19 @@ private:
 
 
     void DispayErrors();
-	// Construction
+    // Construction
 public:
-    CThirdTab(CSolver<double>* solver);	// standard constructor
-	virtual BOOL Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd);
+    CThirdTab(CSolver<double>* solver); // standard constructor
+    virtual BOOL Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd);
 
 
-	// Implementation
+    // Implementation
 protected:
 
-	// Generated message map functions
-	afx_msg void OnDestroy();
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+    // Generated message map functions
+    afx_msg void OnDestroy();
+    afx_msg void OnSize(UINT nType, int cx, int cy);
     afx_msg BOOL OnCommand(WPARAM wParam, LPARAM lParam);
     afx_msg void OnPaint();
-	DECLARE_MESSAGE_MAP()
+    DECLARE_MESSAGE_MAP()
 };

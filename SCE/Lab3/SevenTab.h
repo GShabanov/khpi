@@ -12,9 +12,9 @@ class CSevenTab : public CTabTemplate
 private:
     
 
-	class CGraphControl* m_graphCtrl;
+    class CGraphControl* m_graphCtrl;
 
-	// Construction
+    // Construction
 public:
     CSevenTab(const CSolver<double> *solver);	// standard constructor
 	virtual BOOL Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd);

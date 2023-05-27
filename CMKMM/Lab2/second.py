@@ -223,13 +223,10 @@ def main():
     #
     train, test = model(data, test_size = 0.2, random_state = 1)
 
-    #ax = plt.subplots(2, 2, figsize = [10, 8])
     fig, axs = plt.subplots(nrows = 2, ncols = 2, figsize = [10, 8])
 
-    #petalFig1 = plt.figure(figsize = [10, 8])
     sns.scatterplot(x = "PetalWidthCm", y = "PetalLengthCm", hue = speciesName, data = train, ax = axs[0][0])
 
-    #petalFig2 = plt.figure(figsize = [10, 8])
     sns.scatterplot(x = "PetalWidthCm", y = "PetalLengthCm", hue = speciesName, data = test, ax = axs[0][1])
 
     #
@@ -255,8 +252,6 @@ def main():
 
     print("\n")
     print("Reliability: ", reliability[0])
-
-    #petalFig3 = plt.figure(figsize = [10, 8])
 
     test["prediction"] = test.apply(Predict, axis = 1, args=(id3,))
     df["correct"] = test["prediction"] == test[speciesName]

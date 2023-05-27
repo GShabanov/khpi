@@ -11,22 +11,22 @@ class CTabTemplate : public CWnd
 {
 
     CTabTemplate();
-	// Construction
+    // Construction
 protected:
     class CFont      m_bigFont;
     class CFont      m_smallFont;
     CSolver<double>* m_solver;
 
-	CTabTemplate(CSolver<double>* solver);	// standard constructor
+    CTabTemplate(CSolver<double>* solver);  // standard constructor
 
 
 public:
     virtual BOOL Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd);
 
 
-	// Implementation
+    // Implementation
 protected:
 
-	// Generated message map functions
-	DECLARE_MESSAGE_MAP()
+    // Generated message map functions
+    DECLARE_MESSAGE_MAP()
 };

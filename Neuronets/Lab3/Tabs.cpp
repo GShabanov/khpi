@@ -16,7 +16,7 @@
 // CTabTemplate dialog
 
 CTabTemplate::CTabTemplate(CSolver<double>* solver)
-	: CWnd()
+    : CWnd()
 {
     m_solver = solver;
 
@@ -32,12 +32,12 @@ BOOL
 CTabTemplate::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
 {
 
-	if (CWnd::Create(NULL, NULL, dwStyle | WS_CHILD, rect, pParentWnd, NULL, NULL) != TRUE)
-	{
-		return FALSE;
-	}
+    if (CWnd::Create(NULL, NULL, dwStyle | WS_CHILD, rect, pParentWnd, NULL, NULL) != TRUE)
+    {
+        return FALSE;
+    }
 
-	SetOwner(pParentWnd);
+    SetOwner(pParentWnd);
 
     m_bigFont.CreateFont(
         24,                       // nHeight
@@ -72,6 +72,6 @@ CTabTemplate::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
         _T("Arial"));
 
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+    return TRUE;  // return TRUE  unless you set the focus to a control
 
 }

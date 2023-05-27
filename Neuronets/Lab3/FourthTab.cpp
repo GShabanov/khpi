@@ -18,8 +18,8 @@
 // CFirstTab dialog
 
 CFourthTab::CFourthTab(CSolver<double>* solver)
-	: CTabTemplate(solver)
-	, m_graphCtrl(NULL)
+    : CTabTemplate(solver)
+    , m_graphCtrl(NULL)
 {
 }
 
@@ -38,12 +38,12 @@ CFourthTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
 {
     CRect  clRect;
 
-	if (__super::Create(dwStyle | WS_CHILD, rect, pParentWnd) != TRUE)
-	{
-		return FALSE;
-	}
+    if (__super::Create(dwStyle | WS_CHILD, rect, pParentWnd) != TRUE)
+    {
+        return FALSE;
+    }
 
-	this->GetClientRect(&clRect);
+    this->GetClientRect(&clRect);
 
     clRect.top += 40;
     clRect.right -= 110;
@@ -74,16 +74,16 @@ CFourthTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     m_graphCtrl->setAbsoluteAxis(true);
 
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+    return TRUE;  // return TRUE  unless you set the focus to a control
 
 }
 
 void CFourthTab::OnDestroy()
 {
     m_graphCtrl->DestroyWindow();
-	delete m_graphCtrl;
+    delete m_graphCtrl;
 
-	__super::OnDestroy();
+    __super::OnDestroy();
 }
 
 void
@@ -240,14 +240,14 @@ CFourthTab::OnCommand(
 void
 CFourthTab::OnSize(UINT nType, int cx, int cy)
 {
-	CRect  clRect;
+    CRect  clRect;
 
-	__super::OnSize(nType, cx, cy);
+    __super::OnSize(nType, cx, cy);
 
-	if (m_graphCtrl == NULL)
-		return; // Return if window is not created yet.
+    if (m_graphCtrl == NULL)
+        return; // Return if window is not created yet.
 
-	GetClientRect(&clRect);
+    GetClientRect(&clRect);
 
     clRect.DeflateRect(1, 1);
 

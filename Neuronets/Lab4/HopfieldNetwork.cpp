@@ -204,14 +204,16 @@ CHopfieldNetwork<Type>::Recovery(const CArray<Type>& input, CArray<Type>& output
 
             }
 
-            if (sum < 0)
+
+            outputTmp[j] = sign(sum);
+            /*if (sum < 0)
             {
                 outputTmp[j] = -1.0;
             }
             else
             {
                 outputTmp[j] = 1.0;
-            }
+            }*/
 
         }
 

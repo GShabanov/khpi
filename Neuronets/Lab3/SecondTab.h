@@ -39,21 +39,21 @@ private:
     BOOL LoadResource();
 
 public:
-    CSecondTab(CSolver<double> *solver);	// standard constructor
-	virtual BOOL Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd);
+    CSecondTab(CSolver<double> *solver);    // standard constructor
+    virtual BOOL Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd);
 
 
-	// Implementation
+    // Implementation
 protected:
-    virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
     afx_msg void OnTeachClicked();   
     afx_msg  void OnResetClicked();
 
 
-	// Generated message map functions
-	afx_msg void OnDestroy();
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+    // Generated message map functions
+    afx_msg void OnDestroy();
+    afx_msg void OnSize(UINT nType, int cx, int cy);
     afx_msg void OnPaint();
-	DECLARE_MESSAGE_MAP()
+    DECLARE_MESSAGE_MAP()
 };

@@ -78,7 +78,8 @@ CGraphControl::OnDestroy()
 {
     CWnd::OnDestroy();
 
-    //_ballon.DestroyWindow();
+    m_memoryBitmap.DeleteObject();
+    m_memoryDC.DeleteDC();
     m_axisFont.DeleteObject();
 }
 
@@ -91,6 +92,7 @@ CGraphControl::Create(
     {
         return FALSE;
     }
+
     
     //CRect   ballonRect = rect;
 
@@ -129,6 +131,23 @@ void
 CGraphControl::OnSize(UINT nType, int cx, int cy)
 {
     CWnd::OnSize(nType, cx, cy);
+
+    if (m_hWnd != NULL)
+    {
+
+        m_memoryDC.DeleteDC();
+        m_memoryBitmap.DeleteObject();
+
+        m_memoryDC.CreateCompatibleDC(this->GetDC());
+
+        m_memoryBitmap.CreateCompatibleBitmap(this->GetDC(), cx, cy);
+
+        CBitmap* oldBitmap = m_memoryDC.SelectObject(&m_memoryBitmap);
+
+        oldBitmap->DeleteObject();
+    }
+
+
 
     CRect   wndRect;
     this->ClientToScreen(wndRect);
@@ -723,7 +742,6 @@ CGraphControl::OnPaint()
     CWnd::OnPaint();
 
     CClientDC dc(this);
-    CDC       memoryDC;
 
     CBitmap memoryBitmap;
 
@@ -743,27 +761,14 @@ CGraphControl::OnPaint()
     }
 
     //
-    // create memory buffer for painting
-    //
-    memoryDC.CreateCompatibleDC(&dc);
-    memoryBitmap.CreateCompatibleBitmap(&dc, width, height);
-
-    CBitmap *oldBitmap = memoryDC.SelectObject(&memoryBitmap);
-
-    //
     // draw in memory
     //
-    Draw(&memoryDC);
+    Draw(&m_memoryDC);
 
     //
     // copy to main DC
     //
-    dc.BitBlt(0, 0, width, height, &memoryDC, 0, 0, SRCCOPY);
-
-    memoryDC.SelectObject(oldBitmap);
-
-    memoryBitmap.DeleteObject();
-    memoryDC.DeleteDC();
+    dc.BitBlt(0, 0, width, height, &m_memoryDC, 0, 0, SRCCOPY);
 }
 
 void

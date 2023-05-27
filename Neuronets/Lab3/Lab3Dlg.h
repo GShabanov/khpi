@@ -11,7 +11,7 @@ class CLab3Dlg : public CDialogEx
 {
 // Construction
 public:
-    CLab3Dlg(CWnd* pParent = nullptr);	// standard constructor
+    CLab3Dlg(CWnd* pParent = nullptr);  // standard constructor
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -21,10 +21,10 @@ public:
 private:
 
 protected:
-    virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+    virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
     CTabCtrl     m_selection;
 
-    class CTabTemplate*		m_CurrentTab;
+    class CTabTemplate*     m_CurrentTab;
 
     //
     // solver class

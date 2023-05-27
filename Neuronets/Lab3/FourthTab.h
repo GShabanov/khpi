@@ -17,21 +17,21 @@ private:
 
 
     void DispayTestData();
-	// Construction
+    // Construction
 public:
-	CFourthTab(CSolver<double>* solver);	// standard constructor
-	virtual BOOL Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd);
+    CFourthTab(CSolver<double>* solver);    // standard constructor
+    virtual BOOL Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd);
 
 
-	// Implementation
+    // Implementation
 protected:
 
-	// Generated message map functions
-	afx_msg void OnDestroy();
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+    // Generated message map functions
+    afx_msg void OnDestroy();
+    afx_msg void OnSize(UINT nType, int cx, int cy);
     afx_msg BOOL OnCommand(WPARAM wParam, LPARAM lParam);
     afx_msg void OnPaint();
     afx_msg void OnGraphClick(WPARAM wParam, LPARAM lParam);
 
-	DECLARE_MESSAGE_MAP()
+    DECLARE_MESSAGE_MAP()
 };

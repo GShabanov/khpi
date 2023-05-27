@@ -18,7 +18,7 @@
 // CFirstTab dialog
 
 CSecondTab::CSecondTab(CSolver<double> *solver)
-	: CTabTemplate(solver)
+    : CTabTemplate(solver)
 {
 }
 
@@ -30,8 +30,8 @@ void CSecondTab::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(CSecondTab, CTabTemplate)
-	ON_WM_SIZE()
-	ON_WM_DESTROY()
+    ON_WM_SIZE()
+    ON_WM_DESTROY()
     ON_WM_PAINT()
 END_MESSAGE_MAP()
 
@@ -182,17 +182,17 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     CRect  clRectTemp;
     CString text;
 
-	if (__super::Create(dwStyle | WS_CHILD, rect, pParentWnd) != TRUE)
-	{
-		return FALSE;
-	}
+    if (__super::Create(dwStyle | WS_CHILD, rect, pParentWnd) != TRUE)
+    {
+        return FALSE;
+    }
 
     if (!LoadResource())
         return FALSE;
 
     // 707 x 323
 
-	this->GetClientRect(&clRect);
+    this->GetClientRect(&clRect);
     clRectTemp = clRect;
 
     clRect.bottom = clRect.bottom * 2 / 3 + 50;
@@ -346,7 +346,7 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
 
 
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+    return TRUE;  // return TRUE  unless you set the focus to a control
 
 }
 
@@ -354,7 +354,7 @@ void CSecondTab::OnDestroy()
 {
     this->m_pPicture->Release();
 
-	__super::OnDestroy();
+    __super::OnDestroy();
 }
 
 void
@@ -416,7 +416,7 @@ CSecondTab::OnPaint()
 void
 CSecondTab::OnSize(UINT nType, int cx, int cy)
 {
-	CRect  clRect;
+    CRect  clRect;
     CRect  clRectTemp;
 
     this->GetClientRect(&clRect);
@@ -570,6 +570,6 @@ CSecondTab::OnSize(UINT nType, int cx, int cy)
     }
 
 
-	__super::OnSize(nType, cx, cy);
+    __super::OnSize(nType, cx, cy);
 
 }
