@@ -1,4 +1,4 @@
-
+п»ї
 #include <windows.h>
 #include <tchar.h>
 #include <string>
@@ -17,7 +17,7 @@ _tmain(int argc, TCHAR* argv[])
 {
 
     //
-    // перший FieldSet  ім'я та побатькові 
+    // РїРµСЂС€РёР№ FieldSet  С–Рј'СЏ С‚Р° РїРѕР±Р°С‚СЊРєРѕРІС– 
     //
         CHTMLElement *input1 = new CHtmlInput(std::string("firstName"));
         CHTMLElement *input2 = new CHtmlInput(std::string("lastName"));
@@ -30,7 +30,7 @@ _tmain(int argc, TCHAR* argv[])
     CHtmlFieldset *workerfieldSet = new CHtmlFieldset(std::string("worker"), workerInfo);
 
     //
-    // другий FieldSet  пол, зарплатня
+    // РґСЂСѓРіРёР№ FieldSet  РїРѕР», Р·Р°СЂРїР»Р°С‚РЅСЏ
     //
             std::vector<std::string>  genderVector;
 
@@ -58,7 +58,7 @@ _tmain(int argc, TCHAR* argv[])
 
 
     //
-    // сторінка з двох fieldset
+    // СЃС‚РѕСЂС–РЅРєР° Р· РґРІРѕС… fieldset
     //
     std::list<CHTMLElement*> htmlInfo;
 
@@ -71,7 +71,7 @@ _tmain(int argc, TCHAR* argv[])
 
 
     //
-    // будуємо всю сторінку
+    // Р±СѓРґСѓС”РјРѕ РІСЃСЋ СЃС‚РѕСЂС–РЅРєСѓ
     //
     std::string  userFormHtml = htmlPage->GetData();
 
@@ -80,7 +80,7 @@ _tmain(int argc, TCHAR* argv[])
     std::cout << userFormHtml;
 
     //
-    // програма виводить
+    // РїСЂРѕРіСЂР°РјР° РІРёРІРѕРґРёС‚СЊ
     //
 
     //<html>

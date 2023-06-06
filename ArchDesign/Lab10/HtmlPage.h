@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 
 #include "HtmlElement.h"
 
@@ -29,7 +29,7 @@ public:
         std::string  output = "<html>\n";
 
         //
-        // обходимо всі дочерні елементи та будуємо внутрішню частину
+        // РѕР±С…РѕРґРёРјРѕ РІСЃС– РґРѕС‡РµСЂРЅС– РµР»РµРјРµРЅС‚Рё С‚Р° Р±СѓРґСѓС”РјРѕ РІРЅСѓС‚СЂС–С€РЅСЋ С‡Р°СЃС‚РёРЅСѓ
         //
         for (std::list<CHTMLElement*>::iterator i = m_childrens.begin(); i != m_childrens.end(); i++)
         {
