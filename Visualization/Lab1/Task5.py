@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 n_groups = 10
+labels = (1900, 1913, 1929, 1938, 1950, 1960, 1970, 1980,  1990, 2000)
 de = (76.4, 97.6, 122.2, 130.5, 153,   176,   200.5, 227,   247,   277)
 fr = (45.7, 54.7, 58.7,  62.3,  67,    72,    77,    78.5,  79,    82)
 uk = (40.8, 41.8, 42,    42,    42,    46,    50.5,  54,    56.5,  59)
@@ -50,5 +51,8 @@ ax.set_title('Чисельність населення, млн. чол.')
 ax.set_xticks(index + 1.5*bar_width)
 ax.set_xticklabels(('1900', '1913', '1929', '1938', '1950', '1960', '1970', '1980', '1990', '2000'))
 ax.legend(loc='upper left')
+
+combined = np.array([labels, de, fr, uk, jp, ussr])
+np.savetxt('Lab1_Task5.txt', combined.T)
 
 plt.show()

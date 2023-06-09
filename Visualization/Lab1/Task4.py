@@ -8,7 +8,6 @@ phi = 10
 x = np.linspace(-10, 10, 100)
 y = np.linspace(0, 10, 100)
 x, y = np.meshgrid(x, y)
-#u = np.sqrt(2 * phi * x) 
 u = x ** 2 / (2 * phi)
 
 
