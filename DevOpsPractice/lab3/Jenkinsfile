@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+    stages {
+        stage("System info") {
+            steps {
+                sh '''
+                  docker version
+                  docker info
+                  docker compose version 
+                  curl --version
+                '''
+            }
+        }
+        stage('Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+        stage('Download data') {
+            steps {
+                checkout scmGit(
+                branches: [[name: 'main']],
+                userRemoteConfigs: [[url: 'https://github.com/GShabanov/khpi/tree/master/DevOpsPractice/']])
+            }
+        }
+        stage('Start') {
+            steps {
+                sh '''
+                    #!/bin/bash
+                    cd lab1
+                    docker compose up -d --no-color --wait
+                    docker compose ps
+                '''
+            }
+        }
+    }
+    post {
+        always {
+            sh '''
+                #!/bin/bash
+                cd lab1
+                docker compose down --remove-orphans -v
+                docker compose ps
+            '''
+        }
+    }
+}
