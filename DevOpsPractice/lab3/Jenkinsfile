@@ -18,15 +18,15 @@ pipeline {
         }
         stage('Download data') {
             steps {
-                checkout scmGit(
-                branches: [[name: 'main']],
-                userRemoteConfigs: [[url: 'https://github.com/GShabanov/khpi/tree/master/DevOpsPractice/']])
+                git branch: 'master', url: 'https://github.com/GShabanov/khpi.git'
             }
         }
         stage('Start') {
             steps {
                 sh '''
                     #!/bin/bash
+                    ls
+                    cd DevOpsPractice
                     cd lab1
                     docker compose up -d --no-color --wait
                     docker compose ps
@@ -38,6 +38,7 @@ pipeline {
         always {
             sh '''
                 #!/bin/bash
+                cd DevOpsPractice
                 cd lab1
                 docker compose down --remove-orphans -v
                 docker compose ps
