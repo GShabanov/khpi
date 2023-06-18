@@ -25,6 +25,10 @@ pipeline {
             steps {
                 sh '''
                     #!/bin/bash
+<<<<<<< HEAD
+=======
+                    ls
+>>>>>>> 9a2ee20e10eef1317545abf141759950de56fa74
                     cd DevOpsPractice
                     cd lab1
                     docker compose up -d --no-color --wait
