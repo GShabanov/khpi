@@ -310,7 +310,7 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     resetRect.top = child.bottom + 2;
     resetRect.bottom = resetRect.top + 24;
 
-    m_Reset.Create(_T("Скинути"), WS_CHILD | WS_VISIBLE | WS_BORDER, resetRect, this, NULL);
+    m_Reset.Create(_T("Скинути"), WS_CHILD | WS_VISIBLE | WS_BORDER | BS_DEFPUSHBUTTON, resetRect, this, NULL);
 
 
     child.left = child.right + 2;

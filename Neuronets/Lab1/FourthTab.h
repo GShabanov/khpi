@@ -1,11 +1,10 @@
 #pragma once
 
 #include "Tabs.h"
-#include "..\..\Shared\MFCNotify.h"
 
 
 // CFourthTab dialog
-class CFourthTab : public CTabTemplate, public CMFCNotify
+class CFourthTab : public CTabTemplate
 {
 private:
 
@@ -26,8 +25,6 @@ public:
 
     // Implementation
 protected:
-
-    virtual void ControlCallback(CWnd* from, void* data);
 
     // Generated message map functions
     afx_msg void OnDestroy();

@@ -60,11 +60,8 @@
     <ClInclude Include="..\..\Shared\MFCGraph.h">
       <Filter>Shared</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Shared\CEdit2.h">
+    <ClInclude Include="CEdit2.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Shared\MFCNotify.h">
-      <Filter>Shared</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -98,7 +95,7 @@
     <ClCompile Include="..\..\Shared\MFCGraph.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Shared\CEdit2.cpp">
+    <ClCompile Include="CEdit2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

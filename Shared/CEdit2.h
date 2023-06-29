@@ -16,6 +16,8 @@
 #ifndef __CEDIT2_H__
 #define __CEDIT2_H__
 
+#include "MFCNotify.h"
+
 class CEdit2 : public CEdit
 {
 public:
@@ -31,10 +33,13 @@ public:
     int                 m_allowedChars;
     COLORREF            m_TextColor;
 
+    CMFCNotify         *m_parentNotify;
+
 public:
 
-    CEdit2()
+    CEdit2(CMFCNotify* notify = NULL)
         : CEdit()
+        , m_parentNotify(notify)
     {
         m_allowedChars = EDT_NUMS | EDT_SIGN | EDT_PERIOD;
 

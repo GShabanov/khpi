@@ -21,6 +21,7 @@
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions
 #include <afxcontrolbars.h>
+#include "MFCNotify.h"
 
 #ifndef __AFXWIN_H__
     #error "include 'stdafx.h' before including this file for PCH"
@@ -652,7 +653,7 @@ public:
 class CGraphControl : public CWnd
 {
 public:
-    CGraphControl();
+    CGraphControl(CMFCNotify* notify = NULL);
     ~CGraphControl();
 
 private:
@@ -665,6 +666,9 @@ private:
 
     } GRAPH_MINMAX;
 
+    GRAPH_MINMAX                    m_axisDefMinMax;
+
+    CMFCNotify                     *m_parentNotify;
     CFont                           m_axisFont;
     CString                         m_vericalAxisName;
     CString                         m_horizontalAxisName;
@@ -678,7 +682,6 @@ private:
     void Draw(CDC  *cdc);
 
     void BuildMinMax(const CArray<CGraph*>& graph, GRAPH_MINMAX  &minmaxRect);
-    void DrawCircle(CDC* cdc, const CPoint& coordinates, SIZE_T size);
     void DrawAxis(CDC *cdc, const CRect &rect, const CPoint& centralPoint,  const GRAPH_MINMAX &minMax);
 
     void DrawGraph(
@@ -694,6 +697,22 @@ public:
 
     void  setHorizontalName(const CString &name) {
         m_horizontalAxisName = name;
+    }
+
+    void  setHorizontalMin(double value) {
+        m_axisDefMinMax.min_x = value;
+    }
+
+    void  setHorizontalMax(double value) {
+        m_axisDefMinMax.max_x = value;
+    }
+
+    void  setVerticalMin(double value) {
+        m_axisDefMinMax.min_y = value;
+    }
+
+    void  setVerticalMax(double value) {
+        m_axisDefMinMax.max_y = value;
     }
 
     void  setVerticalName(const CString &name) {

@@ -36,34 +36,25 @@
     <ClInclude Include="FirstTab.h">
       <Filter>Header Files\Tabs</Filter>
     </ClInclude>
-    <ClInclude Include="SecondTab.h">
-      <Filter>Header Files\Tabs</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdTab.h">
-      <Filter>Header Files\Tabs</Filter>
-    </ClInclude>
     <ClInclude Include="Tabs.h">
       <Filter>Header Files\Tabs</Filter>
     </ClInclude>
-    <ClInclude Include="FourthTab.h">
-      <Filter>Header Files\Tabs</Filter>
-    </ClInclude>
-    <ClInclude Include="Lab3.h">
+    <ClInclude Include="Lab2.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Lab3Dlg.h">
+    <ClInclude Include="Lab2Dlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Lab3impl.h">
+    <ClInclude Include="Lab2impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DynamicPicture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Shared\MFCGraph.h">
       <Filter>Shared</Filter>
     </ClInclude>
     <ClInclude Include="..\..\Shared\CEdit2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\Shared\MFCNotify.h">
       <Filter>Shared</Filter>
     </ClInclude>
   </ItemGroup>
@@ -77,43 +68,46 @@
     <ClCompile Include="Tabs.cpp">
       <Filter>Source Files\Tabs</Filter>
     </ClCompile>
-    <ClCompile Include="ThirdTab.cpp">
-      <Filter>Source Files\Tabs</Filter>
-    </ClCompile>
-    <ClCompile Include="SecondTab.cpp">
-      <Filter>Source Files\Tabs</Filter>
-    </ClCompile>
-    <ClCompile Include="FourthTab.cpp">
-      <Filter>Source Files\Tabs</Filter>
-    </ClCompile>
-    <ClCompile Include="Lab3.cpp">
+    <ClCompile Include="Lab2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Lab3Dlg.cpp">
+    <ClCompile Include="Lab2Dlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Lab3impl.cpp">
+    <ClCompile Include="Lab2impl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DynamicPicture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Shared\MFCGraph.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Shared\CEdit2.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Shared</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Lab3.rc">
+    <ResourceCompile Include="Lab2.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Lab3.rc2">
+    <None Include="res\cursor1.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\Lab2.rc2">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\Lab3.ico">
+    <Image Include="res\OkSign.gif">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Perceptron.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Lab2.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

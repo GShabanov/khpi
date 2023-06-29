@@ -58,6 +58,9 @@ CEdit2::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
         if (nChar == allowedChars[i])
         {
             __super::OnChar(nChar, nRepCnt, nFlags);
+
+            if (m_parentNotify != NULL)
+                m_parentNotify->ControlCallback(this, (void *)0);
             break;
         }
     }
@@ -67,6 +70,10 @@ CEdit2::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
         if (nChar == '-')
         {
             __super::OnChar(nChar, nRepCnt, nFlags);
+
+            if (m_parentNotify != NULL)
+                m_parentNotify->ControlCallback(this, (void*)0);
+
             return;
         }
     }
@@ -76,6 +83,10 @@ CEdit2::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags)
         if (nChar == '.')
         {
             __super::OnChar(nChar, nRepCnt, nFlags);
+
+            if (m_parentNotify != NULL)
+                m_parentNotify->ControlCallback(this, (void*)0);
+
             return;
         }
     }

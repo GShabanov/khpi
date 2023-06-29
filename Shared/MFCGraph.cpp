@@ -48,12 +48,14 @@ END_MESSAGE_MAP()
 
 // CGraphControl construction
 
-CGraphControl::CGraphControl()
+CGraphControl::CGraphControl(CMFCNotify* notify)
     : CWnd()
     , m_absolute(false)
+    , m_parentNotify(notify)
 {
     //m_graphs.SetSize(0);
 
+    memset(&m_axisDefMinMax, 0, sizeof(m_axisDefMinMax));
     m_horizontalAxisName = "X";
     m_vericalAxisName = "Y";
     m_chartName = "";
@@ -88,17 +90,12 @@ CGraphControl::Create(
     DWORD dwStyle, const CRect& rect, CWnd* pParentWnd)
 {
 
+
     if (CWnd::Create(NULL, NULL, dwStyle | WS_CHILD, rect, pParentWnd, NULL, NULL) != TRUE)
     {
         return FALSE;
     }
 
-    
-    //CRect   ballonRect = rect;
-
-    //ballonRect.InflateRect(ballonRect.Width() / 8, ballonRect.Height() / 8);
-    //_ballon.Create(NULL, this);
-    //_ballon.ShowWindow(SW_SHOW);
 
     SetOwner(pParentWnd);
     
@@ -160,7 +157,7 @@ CGraphControl::InsertGraph(int index, CGraph  &graph)
 
     m_chartUpdateLock.Lock();
 
-    INT_PTR chartsSize = m_graphs.GetSize();
+    INT_PTR chartsSize = m_graphs.GetCount();
 
     ASSERT(index <= chartsSize);
 
@@ -191,11 +188,12 @@ CGraphControl::InsertGraph(int index, CGraph  &graph)
     }
 }
 
-void CGraphControl::DeleteGraph(int index)
+void
+CGraphControl::DeleteGraph(int index)
 {
     m_chartUpdateLock.Lock();
 
-    INT_PTR chartsSize = m_graphs.GetSize();
+    INT_PTR chartsSize = m_graphs.GetCount();
 
     if (chartsSize == 0 || 
         index > chartsSize - 1) {
@@ -314,7 +312,12 @@ CGraphControl::OnLButtonDown(UINT nFlags, CPoint point)
 
         CGraph::GRAPH_POINT  a = GetPointFromClient(point.x, point.y);
 
-        GetParent()->SendMessage(WM_USER + 1, (WPARAM)&a, NULL);
+        if (m_parentNotify != NULL)
+        {
+            m_parentNotify->ControlCallback(this, &a);
+        }
+
+        //GetParent()->SendMessage(WM_USER + 1, (WPARAM)&a, NULL);
     }
 }
 
@@ -330,7 +333,7 @@ CGraphControl::BuildMinMax(const CArray<CGraph*> &graph, GRAPH_MINMAX& minmaxRec
     //
     // initialize by first valid
     //
-    for (INT_PTR i = 0, j = graph.GetSize(); i < j; i++)
+    for (INT_PTR i = 0, j = graph.GetCount(); i < j; i++)
     {
         if (graph[i]->IsVisible())
         {
@@ -342,10 +345,34 @@ CGraphControl::BuildMinMax(const CArray<CGraph*> &graph, GRAPH_MINMAX& minmaxRec
         }
     }
 
+    if (m_axisDefMinMax.min_x != 0)
+    {
+        if (m_axisDefMinMax.min_x < minmaxRect.min_x)
+            minmaxRect.min_x = m_axisDefMinMax.min_x;
+    }
+
+    if (m_axisDefMinMax.max_x != 0)
+    {
+        if (m_axisDefMinMax.max_x > minmaxRect.max_x)
+            minmaxRect.max_x = m_axisDefMinMax.max_x;
+    }
+
+    if (m_axisDefMinMax.min_y != 0)
+    {
+        if (m_axisDefMinMax.min_y < minmaxRect.min_y)
+            minmaxRect.min_y = m_axisDefMinMax.min_y;
+    }
+
+    if (m_axisDefMinMax.max_y != 0)
+    {
+        if (m_axisDefMinMax.max_y > minmaxRect.max_y)
+            minmaxRect.max_y = m_axisDefMinMax.max_y;
+    }
+
     //
     // build min max rect
     //
-    for (INT_PTR i = 0, j = graph.GetSize(); i < j; i++)
+    for (INT_PTR i = 0, j = graph.GetCount(); i < j; i++)
     {
         if (graph[i]->IsVisible())
         {
@@ -584,8 +611,6 @@ CGraphControl::Draw(CDC  *cdc)
 
     graphLocal.Copy(m_graphs);
 
-    m_chartUpdateLock.Unlock();
-
 
 
     GetClientRect(&worksArrea);
@@ -618,7 +643,7 @@ CGraphControl::Draw(CDC  *cdc)
         cdc->SelectObject(oldPen);
     }
 
-    for (INT_PTR i = 0, j = graphLocal.GetSize(); i < j; i++)
+    for (INT_PTR i = 0, j = graphLocal.GetCount(); i < j; i++)
     {
 
         if (graphLocal[i]->IsVisible())
@@ -641,7 +666,7 @@ CGraphControl::Draw(CDC  *cdc)
     if (position < 0)
         position = 0;
 
-    for (INT_PTR i = 0, j = graphLocal.GetSize(); i < j; i++)
+    for (INT_PTR i = 0, j = graphLocal.GetCount(); i < j; i++)
     {
 
         if (graphLocal[i]->IsVisible())
@@ -717,7 +742,7 @@ CGraphControl::Draw(CDC  *cdc)
     this->DrawAxis(cdc, worksArrea, centralPoint, minmax);
 
 
-    for (INT_PTR i = 0; i < graphLocal.GetSize(); i++)
+    for (INT_PTR i = 0; i < graphLocal.GetCount(); i++)
     {
 
         if (graphLocal[i]->IsVisible())
@@ -731,6 +756,9 @@ CGraphControl::Draw(CDC  *cdc)
     cdc->SelectObject(oldFont);
 
     graphLocal.RemoveAll();
+
+    m_chartUpdateLock.Unlock();
+
 }
 
 void 

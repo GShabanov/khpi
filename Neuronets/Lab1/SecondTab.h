@@ -4,7 +4,7 @@
 
 // SecondTab.h : header file
 //
-#include "..\..\Shared\CEdit2.h"
+#include "CEdit2.h"
 
 // CSecondTab dialog
 class CSecondTab : public CTabTemplate
