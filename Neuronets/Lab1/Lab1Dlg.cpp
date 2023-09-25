@@ -19,33 +19,33 @@
 #endif
 
 
-// CLab3Dlg dialog
+// CLab1Dlg dialog
 
-CLab3Dlg::CLab3Dlg(CWnd* pParent /*=nullptr*/)
+CLab1Dlg::CLab1Dlg(CWnd* pParent /*=nullptr*/)
     : CDialogEx(IDD_LAB3_DIALOG, pParent)
 {
     m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
-void CLab3Dlg::DoDataExchange(CDataExchange* pDX)
+void CLab1Dlg::DoDataExchange(CDataExchange* pDX)
 {
     CDialogEx::DoDataExchange(pDX);
     DDX_Control(pDX, IDC_TAB1, m_selection);
 }
 
-BEGIN_MESSAGE_MAP(CLab3Dlg, CDialogEx)
+BEGIN_MESSAGE_MAP(CLab1Dlg, CDialogEx)
     ON_WM_SYSCOMMAND()
     ON_WM_PAINT()
     ON_WM_SIZE()
     ON_WM_DESTROY()
     ON_WM_QUERYDRAGICON()
-    ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CLab3Dlg::OnTcnSelchangeTab)
+    ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, &CLab1Dlg::OnTcnSelchangeTab)
 END_MESSAGE_MAP()
 
 
-// CLab3Dlg message handlers
+// CLab1Dlg message handlers
 
-BOOL CLab3Dlg::OnInitDialog()
+BOOL CLab1Dlg::OnInitDialog()
 {
     TC_ITEM ti;
     CRect    rect;
@@ -99,7 +99,7 @@ BOOL CLab3Dlg::OnInitDialog()
     return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-void CLab3Dlg::OnDestroy()
+void CLab1Dlg::OnDestroy()
 {
     m_CurrentTab->DestroyWindow();
     delete m_CurrentTab;
@@ -107,7 +107,7 @@ void CLab3Dlg::OnDestroy()
     CDialogEx::OnDestroy();
 }
 
-void CLab3Dlg::OnSysCommand(UINT nID, LPARAM lParam)
+void CLab1Dlg::OnSysCommand(UINT nID, LPARAM lParam)
 {
     CDialogEx::OnSysCommand(nID, lParam);
 }
@@ -116,7 +116,7 @@ void CLab3Dlg::OnSysCommand(UINT nID, LPARAM lParam)
 //  to draw the icon.  For MFC applications using the document/view model,
 //  this is automatically done for you by the framework.
 
-void CLab3Dlg::OnPaint()
+void CLab1Dlg::OnPaint()
 {
     if (IsIconic())
     {
@@ -142,7 +142,7 @@ void CLab3Dlg::OnPaint()
 }
 
 void
-CLab3Dlg::OnSize(UINT nType, int cx, int cy)
+CLab1Dlg::OnSize(UINT nType, int cx, int cy)
 {
     CRect  itemRect;
     CRect  clRect;
@@ -180,14 +180,14 @@ CLab3Dlg::OnSize(UINT nType, int cx, int cy)
 // The system calls this function to obtain the cursor to display while the user drags
 //  the minimized window.
 HCURSOR
-CLab3Dlg::OnQueryDragIcon()
+CLab1Dlg::OnQueryDragIcon()
 {
     return static_cast<HCURSOR>(m_hIcon);
 }
 
 
 void
-CLab3Dlg::OnTcnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult)
+CLab1Dlg::OnTcnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult)
 {
     RECT rect;
     RECT itemRect;

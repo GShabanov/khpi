@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#ifndef __LAB3_IMPL_H__
-#define __LAB3_IMPL_H__
+#ifndef __LAB1_IMPL_H__
+#define __LAB1_IMPL_H__
 
 template <class Type>
 class  CSolver
@@ -122,6 +122,6 @@ public:
 
 };
 
-#include "Lab3impl.cpp"
+#include "Lab1impl.cpp"
 
-#endif // __LAB3_IMPL_H__
+#endif // __LAB1_IMPL_H__

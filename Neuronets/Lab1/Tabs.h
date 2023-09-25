@@ -3,7 +3,7 @@
 // CTabTemplate.h : header file
 //
 
-#include "Lab3impl.h"
+#include "Lab1impl.h"
 
 
 // CTabTemplate default

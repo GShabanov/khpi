@@ -6,7 +6,7 @@
 #include "framework.h"
 #include <afxdialogex.h>
 #include "Tabs.h"
-#include "Lab3impl.h"
+#include "Lab1impl.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

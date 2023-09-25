@@ -7,7 +7,7 @@
 #include <afxdialogex.h>
 #include "..\..\Shared\MFCGraph.h"
 #include "FourthTab.h"
-#include "Lab3impl.h"
+#include "Lab1impl.h"
 
 
 #ifdef _DEBUG

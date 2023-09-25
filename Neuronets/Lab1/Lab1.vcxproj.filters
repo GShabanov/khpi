@@ -48,20 +48,20 @@
     <ClInclude Include="FourthTab.h">
       <Filter>Header Files\Tabs</Filter>
     </ClInclude>
-    <ClInclude Include="Lab3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lab3Dlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Lab3impl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\Shared\MFCGraph.h">
       <Filter>Shared</Filter>
     </ClInclude>
-    <ClInclude Include="CEdit2.h">
+    <ClInclude Include="Lab1.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lab1Dlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lab1impl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Shared\CEdit2.h">
+      <Filter>Shared</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -83,34 +83,34 @@
     <ClCompile Include="FourthTab.cpp">
       <Filter>Source Files\Tabs</Filter>
     </ClCompile>
-    <ClCompile Include="Lab3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Lab3Dlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Lab3impl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Shared\MFCGraph.cpp">
       <Filter>Shared</Filter>
     </ClCompile>
-    <ClCompile Include="CEdit2.cpp">
+    <ClCompile Include="Lab1.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Lab1Dlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Lab1impl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Shared\CEdit2.cpp">
+      <Filter>Shared</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Lab3.rc">
+    <ResourceCompile Include="Lab1.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Lab3.rc2">
+    <None Include="res\Lab1.rc2">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\Lab3.ico">
+    <Image Include="res\Lab1.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

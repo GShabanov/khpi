@@ -5,7 +5,7 @@
 
 #include "pch.h"
 #include "framework.h"
-#include "Lab3.h"
+#include "Lab1.h"
 #include <afxdialogex.h>
 #include "SecondTab.h"
 

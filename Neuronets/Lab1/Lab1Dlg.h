@@ -6,12 +6,12 @@
 
 #include "Lab1impl.h"
 
-// CLab2Dlg dialog
-class CLab3Dlg : public CDialogEx
+// CLab1Dlg dialog
+class CLab1Dlg : public CDialogEx
 {
 // Construction
 public:
-    CLab3Dlg(CWnd* pParent = nullptr);  // standard constructor
+    CLab1Dlg(CWnd* pParent = nullptr);  // standard constructor
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
