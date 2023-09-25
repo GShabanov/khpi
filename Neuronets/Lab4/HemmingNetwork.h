@@ -1,12 +1,13 @@
 #pragma once
 
-#ifndef __HOPFIELD_NETWORK_H__
-#define __HOPFIELD_NETWORK_H__
+#ifndef __HEMMING_NETWORK_H__
+#define __HEMMING_NETWORK_H__
 
 #include "Neuron.h"
 
+
 template <class Type>
-class  CHopfieldNetwork
+class  CHemmingNetwork
 {
 
     bool        m_TrainingDataInitialized;
@@ -16,7 +17,8 @@ class  CHopfieldNetwork
     SIZE_T      m_InputsCount;
 
     CArray<Type>    m_Effectors;    // вх≥дний вектор
-    CArray<Type>    m_weightMatrix; // матриц€ ваг≥в
+    CArray<Type>    m_weightMatrix1; // матриц€ ваг≥в першого р≥вн€
+    CArray<Type>    m_weightMatrix2; // матриц€ ваг≥в другого р≥вн€
 
     CArray<CNeuron<Type> *>    m_Neurons;
 
@@ -33,7 +35,7 @@ class  CHopfieldNetwork
     }
 
 public:
-    CHopfieldNetwork(size_t neuronsCount = (64 * 64));
+    CHemmingNetwork(size_t neuronsCount = (64 * 64));
 
     bool  Init();
 
@@ -43,11 +45,11 @@ public:
 
     void Recovery(const CArray<Type>& input, CArray<Type>& output, CNetworkUpdateCallback<Type> *callbackClass = NULL);
 
-    ~CHopfieldNetwork();
+    ~CHemmingNetwork();
 };
 
 
 
-#include "HopfieldNetwork.cpp"
+#include "HemmingNetwork.cpp"
 
-#endif // __HOPFIELD_NETWORK_H__
+#endif // __HEMMING_NETWORK_H__

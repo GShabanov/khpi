@@ -18,6 +18,8 @@ private:
     CButton              m_RestoreButton;
     CListCtrlMy          m_PictureList;
 
+    HANDLE               m_hThread;
+
     CHopfieldNetwork<double>  *m_pNetwork;
 
     BOOL                 m_bInPicture;

@@ -21,6 +21,7 @@ CFirstTab::CFirstTab()
     : CTabTemplate()
     , m_Picture(NULL)
     , m_bInPicture(FALSE)
+    , m_hThread(NULL)
 {
 }
 
@@ -183,7 +184,7 @@ CFirstTab::LoadImageFile(const CString &filename)
 
     if (drawContext != NULL)
     {
-
+        drawContext->Type = CListCtrlMy::DRAW_ITEM_TYPE::OkType;
         drawContext->bitmap = bitmap;
         drawContext->Learned = FALSE;
 
@@ -240,6 +241,14 @@ CFirstTab::LoadTrainingData(const CString &path)
 void
 CFirstTab::OnDestroy()
 {
+    HANDLE  hThread = (HANDLE)InterlockedExchangePointer(&m_hThread, NULL);
+
+    if (hThread != NULL)
+    {
+        WaitForSingleObject(hThread, INFINITE);
+        CloseHandle(hThread);
+    }
+
 
     m_Picture->DestroyWindow();
     delete m_Picture;
@@ -549,6 +558,12 @@ CFirstTab::RecoveryThreadRoutine()
 
     m_RestoreButton.EnableWindow(TRUE);
 
+    HANDLE  hThread = (HANDLE)InterlockedExchangePointer(&m_hThread, NULL);
+
+    if (hThread != NULL)
+        CloseHandle(hThread);
+
+
     return 0;
 }
 
@@ -570,8 +585,7 @@ CFirstTab::OnRecoveryButton()
 
         m_RestoreButton.EnableWindow(FALSE);
 
-
-        CloseHandle(hThread);
+        m_hThread = hThread;
     }
 }
 

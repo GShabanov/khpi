@@ -7,10 +7,18 @@
 class CListCtrlMy : public CListCtrl
 {
 public:
+    enum DRAW_ITEM_TYPE {
+        OkType = 0,
+        NumberType = 1,
+    };
+
     typedef struct _DRAW_CONTEXT {
+
+        DRAW_ITEM_TYPE  Type;
 
         CBitmap* bitmap;
         BOOL     Learned;
+        ULONG    Number;
 
     } DRAW_CONTEXT, * PDRAW_CONTEXT;
 
@@ -18,6 +26,7 @@ private:
 
     IPicture* m_pPicture;
 
+    CFont     m_BigFont;
 
 public:
 

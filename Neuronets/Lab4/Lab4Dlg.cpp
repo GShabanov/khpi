@@ -58,9 +58,9 @@ BOOL CLab4Dlg::OnInitDialog()
     ti.mask = TCIF_TEXT;
     m_selection.InsertItem(0, &ti);
 
-    /*ti.pszText = _T("Мережа Хеммінгу");
+    ti.pszText = _T("Мережа Хеммінга");
     ti.mask = TCIF_TEXT;
-    m_selection.InsertItem(1, &ti);*/
+    m_selection.InsertItem(1, &ti);
 
 
     m_selection.GetClientRect(&rect);
@@ -75,9 +75,6 @@ BOOL CLab4Dlg::OnInitDialog()
     m_CurrentTab->Create(WS_BORDER, rect, &m_selection);
     m_CurrentTab->ShowWindow(SW_SHOW);
 
-
-    //m_selection.AddTab(m_graph, _T("Графік"), 0, 0);
-    //m_selection.AddTab(m_graph, _T("Графік 2"), 0, 0);
 
 
     return TRUE;  // return TRUE  unless you set the focus to a control
@@ -205,7 +202,7 @@ CLab4Dlg::OnTcnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult)
             m_CurrentTab = new CFirstTab();
 
         }
-        /*else if (selected == 1)
+        else if (selected == 1)
         {
             //
             // create second tab
@@ -213,7 +210,7 @@ CLab4Dlg::OnTcnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult)
             m_CurrentTab = new CSecondTab();
 
 
-        }*/
+        }
         else
         {
             m_CurrentTab = NULL;

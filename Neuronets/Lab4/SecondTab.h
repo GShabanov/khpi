@@ -3,10 +3,14 @@
 #include "Tabs.h"
 
 #include "CListCtrl2.h"
+#include "HemmingNetwork.h"
 
 
 // CSecondTab dialog
-class CSecondTab : public CTabTemplate
+class CSecondTab : 
+    public CTabTemplate, 
+    protected CNetworkUpdateCallback<double>,
+    public CMFCNotify
 {
 private:
 
@@ -14,8 +18,11 @@ private:
 
     CButton              m_LearnButton;
     CButton              m_ResetButton;
-    CButton              m_RestoreButton;
     CListCtrlMy          m_PictureList;
+
+    CHemmingNetwork<double>  *m_pNetwork;
+
+    ULONG                m_Learned;
 
     BOOL                 m_bInPicture;
 
@@ -26,6 +33,7 @@ private:
 
     BOOL   LoadImageFile(const CString &filename);
 
+
     // Construction
 public:
     CSecondTab(); // standard constructor
@@ -35,13 +43,17 @@ public:
     // Implementation
 protected:
 
+    virtual void NetworkUpdateCallback(const CArray<double>& output);
+
     void OnSelectPicture(CListCtrlMy::DRAW_CONTEXT* pContext);
+    void OnLearnButton();
+
+    virtual void ControlCallback(CWnd* from, void* data);
 
     virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult);
     // Generated message map functions
     afx_msg void OnDestroy();
     afx_msg void OnSize(UINT nType, int cx, int cy);
-    afx_msg void OnMouseMove(UINT nFlags, CPoint point);
     afx_msg BOOL OnCommand(WPARAM wParam, LPARAM lParam);
     afx_msg void OnPaint();
     DECLARE_MESSAGE_MAP()

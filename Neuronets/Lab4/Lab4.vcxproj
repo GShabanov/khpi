@@ -188,10 +188,11 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Shared\MFCNotify.h" />
     <ClInclude Include="..\..\Shared\MFCPicture.h" />
-    <ClInclude Include="CEdit2.h" />
     <ClInclude Include="FirstTab.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="HemmingNetwork.h" />
     <ClInclude Include="HopfieldNetwork.h" />
     <ClInclude Include="Lab4.h" />
     <ClInclude Include="Lab4Dlg.h" />
@@ -205,8 +206,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Shared\MFCPicture.cpp" />
-    <ClCompile Include="CEdit2.cpp" />
     <ClCompile Include="FirstTab.cpp" />
+    <ClCompile Include="HemmingNetwork.cpp" />
     <ClCompile Include="HopfieldNetwork.cpp" />
     <ClCompile Include="Lab4.cpp" />
     <ClCompile Include="Lab4Dlg.cpp" />

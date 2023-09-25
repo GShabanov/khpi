@@ -8,6 +8,8 @@
 #include "SecondTab.h"
 #include "resource.h"
 
+
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -19,6 +21,7 @@ CSecondTab::CSecondTab()
     : CTabTemplate()
     , m_Picture(NULL)
     , m_bInPicture(FALSE)
+    , m_Learned(0)
 {
 }
 
@@ -38,6 +41,20 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     CRect  clRect;
     CRect  workRect;
 
+    m_pNetwork = new CHemmingNetwork<double>(64 * 64);
+
+    if (NULL == m_pNetwork)
+        return FALSE;
+
+    if (!m_pNetwork->Init())
+    {
+        delete m_pNetwork;
+        m_pNetwork = NULL;
+
+        return FALSE;
+    }
+
+
     if (__super::Create(dwStyle | WS_CHILD, rect, pParentWnd) != TRUE)
     {
         return FALSE;
@@ -53,7 +70,7 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     workRect.right = workRect.left + 5 * 64 + 2;
     workRect.bottom = workRect.top + 5 * 64 + 2;
 
-    m_Picture = new CArrayPicture();
+    m_Picture = new CArrayPicture(this);
 
     m_Picture->Create(WS_CHILD | WS_VISIBLE | WS_BORDER,
         workRect, this);
@@ -77,8 +94,6 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     workRect.left = workRect.right + 5;
     workRect.right += 100;
 
-    m_RestoreButton.Create(
-        _T("Відновити"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | WS_DISABLED, workRect, this, NULL);
 
     workRect.top = workRect.bottom + 10;
     workRect.bottom = clRect.bottom - 10;
@@ -93,7 +108,6 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
 
 
     LoadTrainingData(CString(_T(".\\data\\")));
-
 
 
     return TRUE;  // return TRUE  unless you set the focus to a control
@@ -168,9 +182,10 @@ CSecondTab::LoadImageFile(const CString &filename)
 
     if (drawContext != NULL)
     {
-
+        drawContext->Type = CListCtrlMy::DRAW_ITEM_TYPE::NumberType;
         drawContext->bitmap = bitmap;
         drawContext->Learned = FALSE;
+        drawContext->Number = 0;
 
         m_BitmapTable.Add(drawContext);
 
@@ -240,6 +255,9 @@ CSecondTab::OnDestroy()
         m_BitmapTable.RemoveAt(0, 1);
     }
 
+    delete m_pNetwork;
+    m_pNetwork = NULL;
+
     __super::OnDestroy();
 }
 
@@ -275,39 +293,6 @@ CSecondTab::OnPaint()
 }
 
 
-afx_msg void 
-CSecondTab::OnMouseMove(UINT nFlags, CPoint point)
-{
-    //::ShowCursor(TRUE);
-    /*RECT inwindow;
-
-    m_Picture->GetClientRect(&inwindow);
-
-    this->MapWindowPoints(m_Picture, &inwindow);
-    //this->ClientToScreen(&point);
-
-    if (PtInRect(&inwindow, point))
-    {
-        if (m_bInPicture == FALSE)
-        {
-            m_bInPicture = TRUE;
-
-            ::ShowCursor(FALSE);
-        }
-    }
-    else
-    {
-
-        if (m_bInPicture == TRUE)
-        {
-            ::ShowCursor(TRUE);
-        }
-        
-        m_bInPicture = FALSE;
-    }*/
-    
-}
-
 void
 CSecondTab::OnSelectPicture(CListCtrlMy::DRAW_CONTEXT* pContext)
 {
@@ -317,7 +302,6 @@ CSecondTab::OnSelectPicture(CListCtrlMy::DRAW_CONTEXT* pContext)
 
     if (!Bitmap->GetBitmap(&bitmap))
         return;
-
 
 
     CArrayEx<CArrayEx<COLORREF>>  newArray;
@@ -394,6 +378,122 @@ CSecondTab::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult)
     return __super::OnNotify(wParam, lParam, pResult);
 }
 
+void
+CSecondTab::ControlCallback(CWnd* from, void* data)
+{
+    if (from != m_Picture)
+        return;
+
+
+    CArrayEx<COLORREF> curPicture = m_Picture->Serialize();
+
+    CArrayEx<double>  learnArray;
+
+
+    for (INT_PTR i = 0; i < curPicture.GetCount(); i++)
+    {
+        COLORREF  color = curPicture[i];
+
+        ULONG  grayScale =
+            (GetRValue(color) +
+                GetGValue(color) +
+                GetBValue(color)) / 3;
+
+
+        if (grayScale > 0x20)
+        {
+            learnArray.Add(1.0);
+        }
+        else
+        {
+            learnArray.Add(-1.0);
+        }
+
+    }
+
+    //m_pNetwork->Teach(learnArray);
+
+}
+
+void
+CSecondTab::OnLearnButton()
+{
+    POSITION pos = m_PictureList.GetFirstSelectedItemPosition();
+
+    if (pos == NULL)
+    {
+        return;
+    }
+
+    int nItem = m_PictureList.GetNextSelectedItem(pos);
+
+    CListCtrlMy::DRAW_CONTEXT* m_pItemData = (CListCtrlMy::DRAW_CONTEXT*)m_PictureList.GetItemData(nItem);
+
+    m_pItemData->Learned = TRUE;
+    m_pItemData->Number = m_Learned;
+
+    m_Learned++;
+
+
+    CArrayEx<COLORREF> curPicture = m_Picture->Serialize();
+
+
+    CArrayEx<double>  learnArray;
+
+
+    for (INT_PTR i = 0; i < curPicture.GetCount(); i++)
+    {
+        COLORREF  color = curPicture[i];
+
+        ULONG  grayScale = 
+            (GetRValue(color) +
+            GetGValue(color) +
+            GetBValue(color)) / 3;
+
+
+        if (grayScale > 0x20)
+        {
+            learnArray.Add(1.0);
+        }
+        else
+        {
+            learnArray.Add(-1.0);
+        }
+
+    }
+
+    m_pNetwork->Teach(learnArray);
+
+    m_LearnButton.EnableWindow(FALSE);
+    m_PictureList.Invalidate(TRUE);
+
+}
+
+void
+CSecondTab::NetworkUpdateCallback(const CArray<double>& output)
+{
+
+    CArrayEx<CArrayEx<COLORREF>>  newArray;
+
+    for (LONG y = 0; y < m_Picture->GetHeight(); y++)
+    {
+        newArray.Add(CArrayEx<COLORREF>());
+
+        for (LONG x = 0; x < m_Picture->GetWidth(); x++)
+        {
+            COLORREF  color = output[y * m_Picture->GetWidth() + x] > 0 ? RGB(0xFF, 0xFF, 0xFF) : RGB(0x00, 0x00, 0x00);
+
+            newArray[y].Add(color);
+        }
+    }
+
+
+    m_Picture->SetInputArray(newArray);
+
+    Sleep(100);
+}
+
+
 BOOL
 CSecondTab::OnCommand(
     WPARAM wParam,
@@ -409,26 +509,15 @@ CSecondTab::OnCommand(
         HIWORD(wParam) == BN_CLICKED)
     {
 
-        POSITION pos = m_PictureList.GetFirstSelectedItemPosition();
-
-        if (pos != NULL)
-        {
-            int nItem = m_PictureList.GetNextSelectedItem(pos);
-
-            CListCtrlMy::DRAW_CONTEXT *m_pItemData = (CListCtrlMy::DRAW_CONTEXT*)m_PictureList.GetItemData(nItem);
-
-            m_pItemData->Learned = TRUE;
-
-            m_LearnButton.EnableWindow(FALSE);
-            m_PictureList.Invalidate(TRUE);
-        }
-
-
+        OnLearnButton();
     }
 
     if ((HWND)lParam == m_ResetButton.m_hWnd &&
         HIWORD(wParam) == BN_CLICKED)
     {
+        m_pNetwork->Reset();
+        m_Learned = 0;
+
         for (INT_PTR i = 0, j = m_BitmapTable.GetSize(); i < j; i++)
         {
             m_BitmapTable[i]->Learned = FALSE;
@@ -445,6 +534,8 @@ CSecondTab::OnCommand(
             m_PictureList.Invalidate(TRUE);
 
         }
+
+
     }
 
     return __super::OnCommand(wParam, lParam);
@@ -488,10 +579,6 @@ CSecondTab::OnSize(UINT nType, int cx, int cy)
 
     m_ResetButton.SetWindowPos(this, workRect.left, workRect.top, workRect.Width(), workRect.Height(), SWP_NOZORDER);
 
-    workRect.left = workRect.right + 5;
-    workRect.right += 100;
-
-    m_RestoreButton.SetWindowPos(this, workRect.left, workRect.top, workRect.Width(), workRect.Height(), SWP_NOZORDER);
 
     workRect.top = workRect.bottom + 10;
     workRect.bottom = clRect.bottom - 10;

@@ -26,5 +26,13 @@ public:
 
 };
 
+template <class Type>
+class CNetworkUpdateCallback
+{
+public:
+    virtual void NetworkUpdateCallback(const CArray<Type>& output) = 0;
+};
+
+
 
 #endif // __NEURON_H__

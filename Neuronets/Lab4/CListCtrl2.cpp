@@ -10,10 +10,10 @@
 *                                                                                       *
 *   Revision History:                                                                   *
 \***************************************************************************************/
-
 #include "pch.h"
 #include "Lab4.h"
 #include "CListCtrl2.h"
+
 
 BEGIN_MESSAGE_MAP(CListCtrlMy, CListCtrl)
     ON_WM_MEASUREITEM_REFLECT()
@@ -47,6 +47,21 @@ CListCtrlMy::Create(_In_ DWORD dwStyle, _In_ const RECT& rect, _In_ CWnd* pParen
     column.fmt = LVCFMT_LEFT;
     column.cx = 66;
 
+    m_BigFont.CreateFontW(
+        40,                       // nHeight
+        0,                        // nWidth
+        0,                        // nEscapement
+        0,                        // nOrientation
+        FW_NORMAL,                // nWeight
+        FALSE,                    // bItalic
+        FALSE,                    // bUnderline
+        0,                        // cStrikeOut
+        ANSI_CHARSET,             // nCharSet
+        OUT_DEFAULT_PRECIS,       // nOutPrecision
+        CLIP_DEFAULT_PRECIS,      // nClipPrecision
+        DEFAULT_QUALITY,          // nQuality
+        DEFAULT_PITCH | FF_SWISS, // nPitchAndFamily
+        _T("Arial"));            // lpszFacename
 
     this->InsertColumn(0, &column);
 
@@ -185,20 +200,57 @@ CListCtrlMy::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
         &bitmapInfo,            // bitmap information
         DIB_RGB_COLORS);        // RGB or palette indexes
 
-    if (drawContext->Learned == TRUE)
+    if (drawContext->Type == OkType)
     {
-        long hmHeight;
-        long hmWidth;
-        this->m_pPicture->get_Height(&hmHeight);
-        this->m_pPicture->get_Width(&hmWidth);
+        if (drawContext->Learned == TRUE)
+        {
 
-        m_pPicture->Render(
-            lpDrawItemStruct->hDC,
-            rect.left, rect.top,
-            rect.Width(), rect.Height(),
-            0, hmHeight,
-            hmWidth, -hmHeight,
-            NULL);
+            long hmHeight;
+            long hmWidth;
+            this->m_pPicture->get_Height(&hmHeight);
+            this->m_pPicture->get_Width(&hmWidth);
+
+            m_pPicture->Render(
+                lpDrawItemStruct->hDC,
+                rect.left, rect.top,
+                rect.Width(), rect.Height(),
+                0, hmHeight,
+                hmWidth, -hmHeight,
+                NULL);
+
+        }
+    }
+    else
+    if (drawContext->Type == NumberType)
+    {
+        if (drawContext->Learned == TRUE)
+        {
+
+            HGDIOBJ oldFont = SelectObject(lpDrawItemStruct->hDC, m_BigFont.GetSafeHandle());
+
+            CBrush  brush;
+
+            TCHAR   string[10];
+            string[0] = 0;
+
+            _itot(drawContext->Number, string, 10);
+            SIZE_T len = _tcslen(string);
+
+            ::SetTextColor(lpDrawItemStruct->hDC, RGB(0x00, 0xFF, 0x00));
+
+            TextOut(
+                lpDrawItemStruct->hDC,
+                rect.left + rect.Width() / 2,
+                rect.top + rect.Height() / 2,
+                string, (int)len);
+
+            SelectObject(lpDrawItemStruct->hDC, oldFont);
+        }
+
+    }
+    else
+    {
+        assert(false);
     }
 
 }
