@@ -2,7 +2,7 @@
 Demonstration program demonstrating the operation of Hopfield and Hamming networks.
 
 ## Brief:
-# Hopfield network demonstration
+### Hopfield network demonstration
 
 The program learns several images
 ![https://github.com/GShabanov/khpi/blob/master/Neuronets/Lab4/images/program1.jpg](https://github.com/GShabanov/khpi/blob/master/Neuronets/Lab4/images/program1.jpg)
@@ -12,7 +12,7 @@ After this, the image can be restored by pressing the appropriate button. The sy
 ![https://github.com/GShabanov/khpi/blob/master/Neuronets/Lab4/images/program3.jpg](https://github.com/GShabanov/khpi/blob/master/Neuronets/Lab4/images/program3.jpg)
 
 
-# Hamming network demonstration
+### Hamming network demonstration
 
 ## Build
 MS Studio 2019 is required to build this project
