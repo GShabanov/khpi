@@ -21,7 +21,7 @@
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions
 #include <afxcontrolbars.h>
-#include <vector>
+#include "MFCNotify.h"
 
 #ifndef __AFXWIN_H__
 #error "include 'stdafx.h' before including this file for PCH"
@@ -63,7 +63,7 @@ public:
 class CArrayPicture : public CWnd
 {
 public:
-    CArrayPicture();
+    CArrayPicture(CMFCNotify* notify = NULL);
     ~CArrayPicture();
 
 private:
@@ -79,6 +79,7 @@ private:
     BOOL                            m_LButtonPressed;
 
     CArrayEx<CArrayEx<COLORREF>>    m_InputArray;
+    CMFCNotify*                     m_parentNotify;
 
     int                             m_cx;
     int                             m_cy;

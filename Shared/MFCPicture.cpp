@@ -50,7 +50,7 @@ END_MESSAGE_MAP()
 
 // CGraphControl construction
 
-CArrayPicture::CArrayPicture()
+CArrayPicture::CArrayPicture(CMFCNotify* notify)
     : CWnd()
 {
     //m_graphs.SetSize(0)
@@ -58,6 +58,8 @@ CArrayPicture::CArrayPicture()
     m_granularity = 4;
     m_cx = 64;
     m_cy = 64;
+
+    m_parentNotify = notify;
 
     for (int i = 0; i < m_cy; i++)
     {
@@ -176,9 +178,19 @@ CArrayPicture::OnLButtonDown(UINT nFlags, CPoint point)
 
         m_LButtonPressed = TRUE;
 
+
         ::SetCursor(m_hDrawCursor);
 
         this->Invalidate(FALSE);
+
+        if (m_parentNotify != NULL)
+        {
+            POINT  point;
+            point.x = dx;
+            point.y = dy;
+
+            m_parentNotify->ControlCallback(this, &point);
+        }
     }
 
 }
