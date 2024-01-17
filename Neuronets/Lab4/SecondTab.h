@@ -3,6 +3,7 @@
 #include "Tabs.h"
 
 #include "CListCtrl2.h"
+#include "InfoWindow.h"
 #include "HemmingNetwork.h"
 
 
@@ -19,6 +20,7 @@ private:
     CButton              m_LearnButton;
     CButton              m_ResetButton;
     CListCtrlMy          m_PictureList;
+    CInfoWindow          m_InfoWindow;
 
     CHemmingNetwork<double>  *m_pNetwork;
 

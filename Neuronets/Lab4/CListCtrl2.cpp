@@ -41,12 +41,6 @@ CListCtrlMy::Create(_In_ DWORD dwStyle, _In_ const RECT& rect, _In_ CWnd* pParen
     }
 
 
-    LVCOLUMN  column;
-
-    column.mask = LVCF_WIDTH | LVCF_FMT;
-    column.fmt = LVCFMT_LEFT;
-    column.cx = 66;
-
     m_BigFont.CreateFontW(
         40,                       // nHeight
         0,                        // nWidth
@@ -62,6 +56,13 @@ CListCtrlMy::Create(_In_ DWORD dwStyle, _In_ const RECT& rect, _In_ CWnd* pParen
         DEFAULT_QUALITY,          // nQuality
         DEFAULT_PITCH | FF_SWISS, // nPitchAndFamily
         _T("Arial"));            // lpszFacename
+
+    LVCOLUMN  column;
+
+    column.mask = LVCF_WIDTH | LVCF_FMT;
+    column.fmt = LVCFMT_LEFT;
+    column.cx = 66;
+
 
     this->InsertColumn(0, &column);
 
@@ -226,7 +227,7 @@ CListCtrlMy::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
         if (drawContext->Learned == TRUE)
         {
 
-            HGDIOBJ oldFont = SelectObject(lpDrawItemStruct->hDC, m_BigFont.GetSafeHandle());
+            HGDIOBJ oldFont = pDC->SelectObject(m_BigFont.GetSafeHandle());
 
             CBrush  brush;
 
@@ -236,21 +237,20 @@ CListCtrlMy::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct)
             _itot(drawContext->Number, string, 10);
             SIZE_T len = _tcslen(string);
 
-            ::SetTextColor(lpDrawItemStruct->hDC, RGB(0x00, 0xFF, 0x00));
+            pDC->SetTextColor(RGB(0x00, 0xFF, 0x00));
 
-            TextOut(
-                lpDrawItemStruct->hDC,
+            pDC->TextOut(
                 rect.left + rect.Width() / 2,
                 rect.top + rect.Height() / 2,
                 string, (int)len);
 
-            SelectObject(lpDrawItemStruct->hDC, oldFont);
+            pDC->SelectObject(oldFont);
         }
 
     }
     else
     {
-        assert(false);
+        //assert(false);
     }
 
 }

@@ -28,7 +28,6 @@ BEGIN_MESSAGE_MAP(CFourthTab, CTabTemplate)
     ON_WM_SIZE()
     ON_WM_DESTROY()
     ON_WM_PAINT()
-    ON_MESSAGE(WM_USER + 1, (LRESULT(__thiscall CWnd::*)(WPARAM, LPARAM))&OnGraphClick)
 END_MESSAGE_MAP()
 
 
@@ -48,7 +47,7 @@ CFourthTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     clRect.top += 40;
     clRect.right -= 110;
 
-    m_graphCtrl = new CGraphControl();
+    m_graphCtrl = new CGraphControl(this);
 
     m_graphCtrl->Create(WS_CHILD | WS_VISIBLE | WS_BORDER,
         clRect, this);
@@ -207,14 +206,16 @@ CFourthTab::DispayTestData()
 }
 
 void
-CFourthTab::OnGraphClick(WPARAM wParam, LPARAM lParam)
+CFourthTab::ControlCallback(CWnd* from, void* data)
 {
-    CGraph::GRAPH_POINT* a = (CGraph::GRAPH_POINT*)wParam;
+    if (from == m_graphCtrl)
+    {
+        CGraph::GRAPH_POINT* a = (CGraph::GRAPH_POINT*)data;
 
+        m_TestPoints.Add({ a->x, a->y });
 
-    m_TestPoints.Add({ a->x, a->y });
-
-    DispayTestData();
+        DispayTestData();
+    }
 }
 
 BOOL

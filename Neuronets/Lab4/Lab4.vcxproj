@@ -194,6 +194,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="HemmingNetwork.h" />
     <ClInclude Include="HopfieldNetwork.h" />
+    <ClInclude Include="InfoWindow.h" />
     <ClInclude Include="Lab4.h" />
     <ClInclude Include="Lab4Dlg.h" />
     <ClInclude Include="Lab4impl.h" />
@@ -209,6 +210,7 @@
     <ClCompile Include="FirstTab.cpp" />
     <ClCompile Include="HemmingNetwork.cpp" />
     <ClCompile Include="HopfieldNetwork.cpp" />
+    <ClCompile Include="InfoWindow.cpp" />
     <ClCompile Include="Lab4.cpp" />
     <ClCompile Include="Lab4Dlg.cpp" />
     <ClCompile Include="Lab4impl.cpp" />

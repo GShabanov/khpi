@@ -91,11 +91,16 @@ CSecondTab::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd)
     m_ResetButton.Create(
         _T("Скинути"), WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON, workRect, this, NULL);
 
-    workRect.left = workRect.right + 5;
-    workRect.right += 100;
+    workRect.top = clRect.top + 130;
+    workRect.bottom = workRect.top + 100;
+    workRect.left = 5 * 64 + 124;
+    workRect.right = workRect.left + 100;
+
+    m_InfoWindow.Create(
+        WS_CHILD | WS_VISIBLE | WS_BORDER, workRect, this);
 
 
-    workRect.top = workRect.bottom + 10;
+    workRect.top = clRect.top + 110;
     workRect.bottom = clRect.bottom - 10;
     workRect.left = 5 * 64 + 2 + 10;
     workRect.right = workRect.left + 110;
@@ -246,6 +251,7 @@ CSecondTab::OnDestroy()
 
     m_LearnButton.DestroyWindow();
     m_PictureList.DestroyWindow();
+    m_InfoWindow.DestroyWindow();
 
     while (m_BitmapTable.GetSize() > 0)
     {
@@ -579,12 +585,20 @@ CSecondTab::OnSize(UINT nType, int cx, int cy)
 
     m_ResetButton.SetWindowPos(this, workRect.left, workRect.top, workRect.Width(), workRect.Height(), SWP_NOZORDER);
 
+    workRect.top = clRect.top + 110;
+    workRect.bottom = workRect.top + 100;
+    workRect.left = 5 * 64 + 124;
+    workRect.right = workRect.left + 100;
 
-    workRect.top = workRect.bottom + 10;
+    m_InfoWindow.SetWindowPos(this, workRect.left, workRect.top, workRect.Width(), workRect.Height(), SWP_NOZORDER);
+
+
+    workRect.top = clRect.top + 110;
     workRect.bottom = clRect.bottom - 10;
     workRect.left = 5 * 64 + 2 + 10;
     workRect.right = workRect.left + 110;
 
     m_PictureList.SetWindowPos(this, workRect.left, workRect.top, workRect.Width(), workRect.Height(), SWP_NOZORDER);
+
 
 }
