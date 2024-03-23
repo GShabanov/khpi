@@ -55,6 +55,16 @@ public:
     } GRAPH_POINT2;
 
 protected:
+    typedef struct _GRAPH_MINMAX {
+
+        double   min_x;
+        double   max_x;
+        double   min_y;
+        double   max_y;
+
+    } GRAPH_MINMAX;
+
+protected:
     CString                 m_graphName;
     COLORREF                m_chartColor;
     Type                    m_GraphType;
@@ -74,6 +84,7 @@ protected:
         CDC* cdc,
         const CRect &boundingRect,
         const CPoint& centralPoint,
+        const GRAPH_MINMAX &minMax,
         double  horisontalAspectRatio,
         double  verticalAspectRatio
     ) { };
@@ -212,7 +223,6 @@ public:
 
 
     friend class CGraphControl;
-    friend class CPixelGraph;
 
 };
 
@@ -230,6 +240,7 @@ private:
         CDC* cdc,
         const CRect& boundingRect,
         const CPoint& centralPoint,
+        const GRAPH_MINMAX& minMax,
         double  horisontalAspectRatio,
         double  verticalAspectRatio
     );
@@ -328,6 +339,7 @@ private:
         CDC* cdc,
         const CRect& boundingRect,
         const CPoint& centralPoint,
+        const GRAPH_MINMAX& minMax,
         double  horisontalAspectRatio,
         double  verticalAspectRatio
     );
@@ -428,6 +440,7 @@ private:
         CDC* cdc,
         const CRect& boundingRect,
         const CPoint& centralPoint,
+        const GRAPH_MINMAX& minMax,
         double  horisontalAspectRatio,
         double  verticalAspectRatio
     );
@@ -507,6 +520,7 @@ private:
         CDC* cdc,
         const CRect& boundingRect,
         const CPoint& centralPoint,
+        const GRAPH_MINMAX& minMax,
         double  horisontalAspectRatio,
         double  verticalAspectRatio
     );
@@ -581,6 +595,7 @@ private:
         CDC* cdc,
         const CRect& boundingRect,
         const CPoint& centralPoint,
+        const GRAPH_MINMAX& minMax,
         double  horisontalAspectRatio,
         double  verticalAspectRatio
     );
@@ -656,38 +671,40 @@ public:
     CGraphControl(CMFCNotify* notify = NULL);
     ~CGraphControl();
 
+
+protected:
+
 private:
-    typedef struct _GRAPH_MINMAX {
 
-        double   min_x;
-        double   max_x;
-        double   min_y;
-        double   max_y;
+    CGraph::GRAPH_MINMAX            m_axisDefMinMax;
 
-    } GRAPH_MINMAX;
+    COLORREF                        m_bkColor;
+    COLORREF                        m_AxisColor;
+    COLORREF                        m_GridColor;
+    COLORREF                        m_NamesColor;
 
-    GRAPH_MINMAX                    m_axisDefMinMax;
-
-    CMFCNotify                     *m_parentNotify;
     CFont                           m_axisFont;
     CString                         m_vericalAxisName;
     CString                         m_horizontalAxisName;
     CString                         m_chartName;
+
     CCriticalSection                m_chartUpdateLock;
     CArray<CGraph *>                m_graphs;
+
+    CMFCNotify*                     m_parentNotify;
     CDC                             m_memoryDC;
     CBitmap                         m_memoryBitmap;
     bool                            m_absolute;
 
     void Draw(CDC  *cdc);
 
-    void BuildMinMax(const CArray<CGraph*>& graph, GRAPH_MINMAX  &minmaxRect);
-    void DrawAxis(CDC *cdc, const CRect &rect, const CPoint& centralPoint,  const GRAPH_MINMAX &minMax);
+    void BuildMinMax(const CArray<CGraph*>& graph, CGraph::GRAPH_MINMAX& minmaxRect);
+    void DrawAxis(CDC *cdc, const CRect &rect, const CPoint& centralPoint, const CGraph::GRAPH_MINMAX &minMax);
 
     void DrawGraph(
         CDC* cdc,
         CGraph& graph,
-        const GRAPH_MINMAX& minMax,
+        const CGraph::GRAPH_MINMAX& minMax,
         const CRect& drawRect,
         const CPoint& centralPoint
     );
@@ -715,13 +732,55 @@ public:
         m_axisDefMinMax.max_y = value;
     }
 
+    //
+    // name for vertical axis
+    //
     void  setVerticalName(const CString &name) {
         m_vericalAxisName = name;
     }
 
+    //
+    // global name for a chart
+    //
     void setChartName(const CString &name) {
-
         m_chartName = name;
+    }
+
+    //
+    // background color
+    //
+    void setBkColor(const COLORREF color) {
+        m_bkColor = color;
+    }
+
+    //
+    // color for axis
+    //
+    void setAxisColor(const COLORREF color) {
+        m_AxisColor = color;
+    }
+
+    //
+    // color for grid
+    //
+    void setGridColor(const COLORREF color) {
+        m_GridColor = color;
+    }
+
+    //
+    // color for names
+    //
+    void setNamesColor(const COLORREF color) {
+        m_NamesColor = color;
+    }
+
+    //
+    // set axis font if not default
+    //
+    void setAxisFont(const HFONT& font) {
+
+        m_axisFont.DeleteObject();
+        m_axisFont.FromHandle(font);
     }
 
     //

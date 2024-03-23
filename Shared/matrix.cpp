@@ -15,6 +15,8 @@
 
 #ifndef __MATRIX_CPP__
 #define __MATRIX_CPP__
+
+
 #include "matrix.h"
 
 #ifndef _DEBUG
@@ -699,7 +701,7 @@ CMatrix<Type>::operator() (const unsigned& row)
 {
     if ((row + 1) > m_rows)
     {
-        this->mat.resize(row);
+        this->mat.resize(row + 1);
         m_rows++;
     }
 
@@ -714,6 +716,36 @@ CMatrix<Type>::operator() (const unsigned& row) const
     assert(row < m_rows);
 
     return this->mat[row];
+}
+
+template<typename Type>
+void
+CMatrix<Type>::dump()
+{
+    Type output = 0;
+
+    for (unsigned i = 0; i < m_rows; i++)
+    {
+        TCHAR  output[1000];
+        output[0] = 0;
+
+        for (unsigned j = 0; j < this->mat[i].size(); j++)
+        {
+            TCHAR  element[100];
+            //_ftot(this->mat[i][j])
+            _stprintf(element, _T("%f "), this->mat[i][j]);
+
+            _tcscat(output, element);
+
+        }
+
+        _tcscat(output, _T("\n"));
+
+
+        OutputDebugString(output);
+
+    }
+
 }
 
 #endif // __MATRIX_CPP__

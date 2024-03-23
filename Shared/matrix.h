@@ -100,6 +100,7 @@ public:
         return this->m_cols;
     }
 
+    void dump();
 
 };
 
