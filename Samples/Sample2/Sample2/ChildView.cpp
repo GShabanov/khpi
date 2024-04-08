@@ -18,7 +18,8 @@ CChildView::CChildView()
 {
     m_planet1 = 0.0;
     m_planet2 = 0.0;
-    m_planet2_orbit = 0.0;
+    m_orbit2Angle = 0.0;
+    m_orbit3Angle = 3.14156;
 }
 
 CChildView::~CChildView()
@@ -149,7 +150,7 @@ void CChildView::Draw(CDC& dc)
 
 
     double   fi = 0.0;
-    double   rotate = m_planet2_orbit;
+    double   thetta = m_orbit2Angle;
 
     while (fi < 6.28)
     {
@@ -166,15 +167,25 @@ void CChildView::Draw(CDC& dc)
 
 
 
+    LONG  RadiusX = 340;
+    LONG  RadiusY = 260;
+
     while (fi < 6.28)
     {
 
-        LONG X = (LONG)(340 * cos(fi));
-        LONG Y = (LONG)(260 * sin(fi));
+        //
+        // regular ellipse
+        // 
+        //LONG X = (LONG)(RadiusX * cos(fi));
+        //LONG Y = (LONG)(RadiusY * sin(fi));
 
 
-        //X = (LONG)(X * cos(rotate) - Y * sin(rotate));
-        //Y = (LONG)(X * sin(rotate) + Y * cos(rotate));
+        //
+        // rotated ellipse on the angle thetta
+        // 
+
+        LONG X = (LONG)(RadiusX * cos(fi) * cos(thetta) - RadiusY * sin(fi) * sin(thetta));
+        LONG Y = (LONG)(RadiusX * cos(fi) * sin(thetta) + RadiusY * sin(fi) * cos(thetta));
 
         X += center.x;
         Y += center.y;
@@ -219,11 +230,19 @@ void CChildView::Draw(CDC& dc)
     // JUPITER
     //
 
-    Xplanet = (LONG)(340 * cos(m_planet2));
-    Yplanet = (LONG)(260 * sin(m_planet2));
+    //
+    // regular ellipse
+    // 
 
-    //Xplanet = (LONG)(Xplanet * cos(rotate) - Yplanet * sin(rotate));
-    //Yplanet = (LONG)(Xplanet * sin(rotate) + Yplanet * cos(rotate));
+    // Xplanet = (LONG)(RadiusX * cos(m_planet2));
+    // Yplanet = (LONG)(RadiusY * sin(m_planet2));
+
+    //
+    // rotated ellipse on the angle thetta
+    // 
+    Xplanet = (LONG)(RadiusX * cos(m_planet2) * cos(thetta) - RadiusY * sin(m_planet2) * sin(thetta));
+    Yplanet = (LONG)(RadiusX * cos(m_planet2) * sin(thetta) + RadiusY * sin(m_planet2) * cos(thetta));
+
 
     Xplanet += center.x;
     Yplanet += center.y;

@@ -21,7 +21,9 @@ private:
 
     double                          m_planet1;
     double                          m_planet2;
-    double                          m_planet2_orbit;
+    double                          m_planet3;
+    double                          m_orbit2Angle;
+    double                          m_orbit3Angle;
 
 // Operations
 public:
@@ -50,11 +52,11 @@ public:
             m_planet2 = 0.0;
         }
 
-        m_planet2_orbit += 0.01;
+        m_orbit2Angle += 0.01;
 
-        if (m_planet2_orbit >= 6.28)
+        if (m_orbit2Angle >= 6.28)
         {
-            m_planet2_orbit = 0.0;
+            m_orbit2Angle = 0.0;
         }
 
     }
