@@ -22,7 +22,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{68E68457-1C5F-4F7C-B26D-4D70A7AC264C}</ProjectGuid>
     <Keyword>MFCProj</Keyword>
-    <RootNamespace>Sample2</RootNamespace>
+    <RootNamespace>Sample3</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -185,14 +185,18 @@
   <ItemGroup>
     <ClInclude Include="ChildView.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="GraphicScene.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Planet.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="Sample2.h" />
+    <ClInclude Include="Sample3.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ChildView.cpp" />
+    <ClCompile Include="GraphicScene.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -200,16 +204,18 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Sample2.cpp" />
+    <ClCompile Include="Planet.cpp" />
+    <ClCompile Include="Sample3.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Sample2.rc" />
+    <ResourceCompile Include="Sample3.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Sample2.rc2" />
+    <None Include="ClassDiagram.cd" />
+    <None Include="res\Sample3.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\Sample2.ico" />
+    <Image Include="res\Sample3.ico" />
     <Image Include="res\Toolbar.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
