@@ -1,4 +1,4 @@
-
+п»ї
 #include "pch.h"
 #include "framework.h"
 #include "Planet.h"
@@ -38,6 +38,9 @@ CPlanet::DrawOrbite(CDC& dc, CRect& drawRect, CRect& boundingRect)
         //
         // rotated ellipse on the angle thetta
         // 
+        // LONG X = (LONG)(m_orbitRadius1 * cos(fi) - m_orbitRadius2 * sin(fi));
+        //
+        //
 
         LONG X = (LONG)(m_orbitRadius1 * cos(fi) * cos(m_orbitAngle) - m_orbitRadius2 * sin(fi) * sin(m_orbitAngle));
         LONG Y = (LONG)(m_orbitRadius1 * cos(fi) * sin(m_orbitAngle) + m_orbitRadius2 * sin(fi) * cos(m_orbitAngle));
@@ -120,13 +123,13 @@ CEarth::CEarth()
     m_speed = 0.01;
 
 
-    m_orbitRadius1 = 149.5 / 2; // велика піввісь  149 598 261 км
-                            // ексентриситтет 0,01671123
+    m_orbitRadius1 = 149.5 / 2; // РІРµР»РёРєР° РїС–РІРІС–СЃСЊ  149 598 261 РєРј
+                                // РµРєСЃРµРЅС‚СЂРёСЃРёС‚С‚РµС‚  0,01671123
 
     double e = 0.01671123;
     m_orbitRadius2 = m_orbitRadius1 * sqrt(1 - e * e);
     m_currentAngle = 0.0;
-    m_orbitAngle = 0.0;
+    m_orbitAngle = 2.0;
 }
 
 BOOL
@@ -139,7 +142,7 @@ void
 CEarth::Update(double speedFactor)
 {
     m_currentAngle += (m_speed * speedFactor);
-    m_orbitAngle = 0.005;
+    m_orbitAngle = 0.25;
 }
 
 //
@@ -151,8 +154,8 @@ CMars::CMars()
     m_radius = 15;
     m_speed = 0.02;
 
-    m_orbitRadius1 = 227.9 / 2; // велика піввісь  227 943 820
-                            // ексентриситтет 0,0933941
+    m_orbitRadius1 = 227.9 / 2; // РІРµР»РёРєР° РїС–РІРІС–СЃСЊ  227 943 820
+                            // РµРєСЃРµРЅС‚СЂРёСЃРёС‚С‚РµС‚ 0,0933941
 
     double e = 0.0933941;
     m_orbitRadius2 = m_orbitRadius1 * sqrt(1 - e * e);
@@ -183,8 +186,8 @@ CJupiter::CJupiter()
     m_radius = 28;
     m_speed = 0.005;
 
-    m_orbitRadius1 = 778.5 / 2; // велика піввісь  778 547 200 
-                                // ексентриситтет 0,0484
+    m_orbitRadius1 = 778.5 / 2; // РІРµР»РёРєР° РїС–РІРІС–СЃСЊ  778 547 200 
+                                // РµРєСЃРµРЅС‚СЂРёСЃРёС‚С‚РµС‚ 0,0484
 
     double e = 0.0484;
     m_orbitRadius2 = m_orbitRadius1 * sqrt(1 - e * e);

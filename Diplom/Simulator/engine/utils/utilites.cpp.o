@@ -1,0 +1,578 @@
+/***************************************************************************************\
+*   File:                                                                               *
+*       utilites.cpp                                                                    *
+*                                                                                       *
+*   Abstract:                                                                           *
+*       sprite renderer                                                                 *
+*                                                                                       *
+*   Author:                                                                             *
+*       Gennady Shabanov (gennady.shabanov@gmail.com) 4-Jan-2014                        *
+*                                                                                       *
+*   Revision History:                                                                   *
+\***************************************************************************************/
+// $Revision: 63 $
+#include "stdafx.h"
+#include "utilites.h"
+#include "winfont.h"
+#define XMD_H
+#undef FAR
+#include "jpeglib.h"
+#include "libgif.h"
+#include "windows.h"
+#include <memory.h>
+
+#include "filestream.h"
+
+
+// partialy from: http://doxygen.reactos.org/d7/d3b/win32ss_2drivers_2font_2bmfd_2font_8c_source.html
+//                http://doxygen.reactos.org/d8/d12/bmfd_8h_source.html
+#pragma pack(push)
+#pragma pack(1)
+//
+// Define OS/2 executable resource information structure.
+//
+
+#define FONT_DIRECTORY 0x8007
+#define FONT_RESOURCE 0x8008
+
+typedef struct _RESOURCE_TYPE_INFORMATION {
+    USHORT Ident;
+    USHORT Number;
+    LONG Proc;
+} RESOURCE_TYPE_INFORMATION, *PRESOURCE_TYPE_INFORMATION;
+
+//
+// Define OS/2 executable resource name information structure.
+//
+
+typedef struct _RESOURCE_NAME_INFORMATION {
+    USHORT Offset;
+    USHORT Length;
+    USHORT Flags;
+    USHORT Ident;
+    USHORT Handle;
+    USHORT Usage;
+} RESOURCE_NAME_INFORMATION, *PRESOURCE_NAME_INFORMATION;
+
+
+#pragma pack(pop)
+
+unsigned char *
+RtlFindNewElf(unsigned char *buffer, unsigned int len)
+/*++
+
+   Routine:
+        RtlFindNewElf()
+
+   Description:
+        Search for new ELF after DOS header
+
+   Arguments:
+        buffer   - [in] buffer with data
+
+        len      - [in] length of a data
+
+   Return:
+        unsigned char * - pointer in buffer where is data
+
+--*/
+{
+    if (len < (sizeof(IMAGE_DOS_HEADER) + sizeof(IMAGE_NT_HEADERS)))
+    {
+        return NULL;
+    }
+
+    IMAGE_DOS_HEADER *pDosHeader = (IMAGE_DOS_HEADER *)buffer;
+
+    if (pDosHeader->e_magic != IMAGE_DOS_SIGNATURE)
+    {
+        return NULL;
+    }
+
+    if ((pDosHeader->e_lfanew + sizeof(IMAGE_DOS_HEADER) + sizeof(IMAGE_FILE_HEADER) + sizeof(DWORD)) > len)
+    {
+        return NULL;
+    }
+
+    return (buffer + pDosHeader->e_lfanew);
+}
+
+BOOL
+Load_Font(unsigned char *fbuffer, unsigned int len, unsigned int preferedWidth,  FONT_INFO *fontInfo)
+{
+    IMAGE_OS2_HEADER *imageOs2Header = (IMAGE_OS2_HEADER *)RtlFindNewElf(fbuffer, len);
+
+    if (imageOs2Header == NULL)
+    {
+        return FALSE;
+    }
+
+    if (imageOs2Header->ne_magic != IMAGE_OS2_SIGNATURE)
+    {
+        return FALSE;
+    }
+
+    //
+    // Check if the resource table exists.
+    //
+
+    if ((imageOs2Header->ne_restab - imageOs2Header->ne_rsrctab) == 0) {
+        return FALSE;
+    }
+
+
+    //
+    // Compute address of resource table and search the table for a font
+    // resource.
+    //
+
+    RESOURCE_TYPE_INFORMATION *TableAddress =
+        (PRESOURCE_TYPE_INFORMATION)((PUCHAR)imageOs2Header + imageOs2Header->ne_rsrctab);
+
+    RESOURCE_TYPE_INFORMATION *TableEnd =
+        (PRESOURCE_TYPE_INFORMATION)((PUCHAR)imageOs2Header + imageOs2Header->ne_restab);
+
+    ULONG scaleFactor = *(SHORT *)TableAddress;
+
+    TableAddress = (RESOURCE_TYPE_INFORMATION *)((USHORT *)TableAddress + 1);
+
+    while ((TableAddress < TableEnd) &&
+           (TableAddress->Ident != 0) &&
+           (TableAddress->Ident != FONT_RESOURCE)) {
+
+        TableAddress =
+                (PRESOURCE_TYPE_INFORMATION)((PUCHAR)(TableAddress + 1) +
+                    (TableAddress->Number * sizeof(RESOURCE_NAME_INFORMATION)));
+    }
+
+    if ((TableAddress >= TableEnd) || (TableAddress->Ident != FONT_RESOURCE)) {
+        return FALSE;
+    }
+
+    //
+    // Compute address of resource name information and check if the resource
+    // is within the file.
+    //
+    RESOURCE_NAME_INFORMATION *TableName = (PRESOURCE_NAME_INFORMATION)(TableAddress + 1);
+
+    OEM_FONT_FILE_HEADER *fontHeaderPrevios = NULL;
+    OEM_FONT_FILE_HEADER *fontHeaderCurrent = NULL;
+    OEM_FONT_FILE_HEADER *fontHeader = NULL;
+
+    for (ULONG i = 0; i < TableAddress->Number; i++)
+    {
+
+        if (len < ((TableName->Offset << scaleFactor) + sizeof(OEM_FONT_FILE_HEADER))) {
+            TableName++;
+            continue;
+        }
+
+        //
+        // Compute the address of the font file header and check if the header
+        // contains correct information.
+        //
+        OEM_FONT_FILE_HEADER *FontHeader = (POEM_FONT_FILE_HEADER)((PCHAR)fbuffer +
+                                                (TableName->Offset << scaleFactor));
+        if ((FontHeader->Version != OEM_FONT_VERSION) ||
+            (FontHeader->Type != OEM_FONT_TYPE) ||
+            (FontHeader->Italic != OEM_FONT_ITALIC) ||
+            (FontHeader->Underline != OEM_FONT_UNDERLINE) ||
+            (FontHeader->StrikeOut != OEM_FONT_STRIKEOUT) ||
+            (FontHeader->CharSet != OEM_FONT_CHARACTER_SET) ||
+            (FontHeader->PixelWidth > 32))
+        {
+            if (fontHeaderPrevios != NULL)
+            {
+                fontHeader = fontHeaderPrevios;
+            }
+            else
+            {
+                return FALSE;
+            }
+        }
+
+        fontHeaderCurrent = FontHeader;
+
+        if (fontHeaderPrevios != NULL)
+        {
+            if (fontHeaderCurrent->PixelWidth > preferedWidth && 
+                fontHeaderPrevios->PixelWidth <= preferedWidth)
+            {
+                fontHeader = fontHeaderPrevios;
+                break;
+            }
+        }
+
+        fontHeaderPrevios = fontHeaderCurrent;
+
+        TableName++;
+    }
+
+    if (fontHeader == NULL || 
+        fontHeader->FirstCharacter > fontHeader->LastCharacter)
+    {
+        return FALSE;
+    }
+
+    FONT_MAP *fontMap = (FONT_MAP *)(fontHeader + 1);
+
+    fontInfo->charCount = fontHeader->LastCharacter - fontHeader->FirstCharacter;
+    fontInfo->BytesPerChar = (fontHeader->PixelHeight * ROUND_UP(fontHeader->PixelWidth, 8)) >> 3;
+
+    fontInfo->glyphData = (unsigned char *)malloc(fontInfo->BytesPerChar * fontInfo->charCount);
+
+    if (fontInfo->glyphData == NULL)
+    {
+        return FALSE;
+    }
+
+
+    {
+        unsigned char *dst = fontInfo->glyphData;
+        SIZE_T bytesPerChar = fontInfo->BytesPerChar;
+
+        for (ULONG i = 0, j = fontInfo->charCount; i < j; i++)
+        {
+            unsigned char *src = (UCHAR *)((PCHAR)fontHeader + fontMap[i].Offset);
+
+            memcpy(dst, src, bytesPerChar);
+
+            dst = (unsigned char *)dst + bytesPerChar;
+        }
+    }
+
+    fontInfo->PixelHeight = fontHeader->PixelHeight;
+    fontInfo->PixelWidth = fontHeader->PixelWidth;
+    fontInfo->FirstCharacter = fontHeader->FirstCharacter;
+    fontInfo->LastCharacter = fontHeader->LastCharacter;
+
+    return TRUE;
+}
+
+BOOL LoadJPGBuff(unsigned char *fbuffer, unsigned int len, GFX_INFO *gfxInfo);
+BOOL LoadBMPBuff(unsigned char *fbuffer, unsigned int len, GFX_INFO *gfxInfo);
+
+BOOL
+Load_Picture(
+    unsigned char *fbuffer,
+    unsigned int len,
+    GFX_INFO  *gfxInfo)
+{
+
+    GFX_INFO   gfxInfoLocal = { 0, };
+
+    BOOL _return = LoadJPGBuff(
+        fbuffer,
+        len,
+        &gfxInfoLocal);
+
+    if (_return == TRUE)
+    {
+        *gfxInfo = gfxInfoLocal;
+
+        return TRUE;
+    }
+
+    _return = LoadBMPBuff(
+        fbuffer,
+        len, 
+        &gfxInfoLocal);
+
+    if (_return == TRUE)
+    {
+        *gfxInfo = gfxInfoLocal;
+        return TRUE;
+    }
+
+    _return = LoadGIFBuff(
+        fbuffer,
+        len,
+        &gfxInfoLocal);
+
+    if (_return == TRUE)
+    {
+        *gfxInfo = gfxInfoLocal;
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+
+BOOL 
+LoadJPGBuff(
+    unsigned char *fbuffer,
+    unsigned int   len, 
+    GFX_INFO      *gfxInfo) 
+{
+
+    if (fbuffer == 0 || gfxInfo == 0 || len < 10)
+    {
+        return FALSE;
+    }
+    /* This struct contains the JPEG decompression parameters and pointers to
+    * working space (which is allocated as needed by the JPEG library).
+    */
+    struct jpeg_decompress_struct cinfo;
+    /* We use our private extension JPEG error handler.
+    * Note that this struct must live as long as the main JPEG parameter
+    * struct, to avoid dangling-pointer problems.
+    */
+    /* This struct represents a JPEG error handler.  It is declared separately
+    * because applications often want to supply a specialized error handler
+    * (see the second half of this file for an example).  But here we just
+    * take the easy way out and use the standard error handler, which will
+    * print a message on stderr and call exit() if compression fails.
+    * Note that this struct must live as long as the main JPEG parameter
+    * struct, to avoid dangling-pointer problems.
+    */
+
+    struct jpeg_error_mgr jerr;
+    /* More stuff */
+    JSAMPARRAY buffer;	/* Output row buffer */
+    int row_stride;		/* physical row width in output buffer */
+    unsigned char *out;
+    unsigned char *bbuf;
+    int nSize;
+
+    /* Step 1: allocate and initialize JPEG decompression object */
+
+    /* We have to set up the error handler first, in case the initialization
+    * step fails.  (Unlikely, but it could happen if you are out of memory.)
+    * This routine fills in the contents of struct jerr, and returns jerr's
+    * address which we place into the link field in cinfo.
+    */
+    cinfo.err = jpeg_std_error(&jerr);
+
+    /* Now we can initialize the JPEG decompression object. */
+    jpeg_create_decompress(&cinfo);
+
+    /* Step 2: specify data source (eg, a file) */
+
+    jpeg_stdio_src(&cinfo, fbuffer, len);
+
+    /* Step 3: read file parameters with jpeg_read_header() */
+
+    int _return = jpeg_read_header(&cinfo, TRUE);
+
+    if (_return != JPEG_HEADER_OK)
+    {
+        jpeg_destroy_decompress(&cinfo);
+        return FALSE;
+    }
+    /* We can ignore the return value from jpeg_read_header since
+    *   (a) suspension is not possible with the stdio data source, and
+    *   (b) we passed TRUE to reject a tables-only JPEG file as an error.
+    * See libjpeg.doc for more info.
+    */
+
+    /* Step 4: set parameters for decompression */
+    //cinfo.do_block_smoothing = FALSE;
+
+    /* In this example, we don't need to change any of the defaults set by
+    * jpeg_read_header(), so we do nothing here.
+    */
+
+    /* Step 5: Start decompressor */
+
+    (void) jpeg_start_decompress(&cinfo);
+    /* We can ignore the return value since suspension is not possible
+    * with the stdio data source.
+    */
+
+    /* We may need to do some setup of our own at this point before reading
+    * the data.  After jpeg_start_decompress() we have the correct scaled
+    * output image dimensions available, as well as the output colormap
+    * if we asked for color quantization.
+    * In this example, we need to make an output work buffer of the right size.
+    */ 
+    /* JSAMPLEs per row in output buffer */
+    row_stride = cinfo.output_width * cinfo.output_components;
+
+    nSize = cinfo.output_width*cinfo.output_height*cinfo.output_components;
+    out = reinterpret_cast<unsigned char*>(malloc(nSize+1));
+    memset(out, 0, nSize+1);
+
+    gfxInfo->pic = out;
+    gfxInfo->width = (unsigned int)cinfo.output_width;
+    gfxInfo->height = (unsigned int)cinfo.output_height;
+    gfxInfo->bgColor = RGB(0, 0, 0);
+
+    /* Step 6: while (scan lines remain to be read) */
+    /*           jpeg_read_scanlines(...); */
+
+    /* Here we use the library's state variable cinfo.output_scanline as the
+    * loop counter, so that we don't have to keep track ourselves.
+    */
+    while (cinfo.output_scanline < cinfo.output_height) {
+        /* jpeg_read_scanlines expects an array of pointers to scanlines.
+        * Here the array is only one element long, but you could ask for
+        * more than one scanline at a time if that's more convenient.
+        */
+        bbuf = ((out + (row_stride * cinfo.output_scanline)));
+        buffer = &bbuf;
+        (void) jpeg_read_scanlines(&cinfo, buffer, 1);
+    }
+
+    // clear all the alphas to 255
+    /*{
+    int	i, j;
+    byte	*buf;
+
+    buf = *pic;
+
+    j = cinfo.output_width * cinfo.output_height * 4;
+    for ( i = 3 ; i < j ; i+=4 ) {
+    buf[i] = 255;
+    }
+    }*/
+
+    /* Step 7: Finish decompression */
+
+    (void) jpeg_finish_decompress(&cinfo);
+    /* We can ignore the return value since suspension is not possible
+    * with the stdio data source.
+    */
+
+    /* Step 8: Release JPEG decompression object */
+
+    /* This is an important step since it will release a good deal of memory. */
+    jpeg_destroy_decompress(&cinfo);
+
+    /* After finish_decompress, we can close the input file.
+    * Here we postpone it until after no more JPEG errors are possible,
+    * so as to simplify the setjmp error logic above.  (Actually, I don't
+    * think that jpeg_destroy can do an error exit, but why assume anything...)
+    */
+    //free (fbuffer);
+
+    /* At this point you may want to check to see whether any corrupt-data
+    * warnings occurred (test whether jerr.pub.num_warnings is nonzero).
+    */
+
+    /* And we're done! */
+
+    return TRUE;
+}
+
+BOOL 
+LoadBMPBuff(
+    unsigned char *fbuffer,
+    unsigned int len,
+    GFX_INFO      *gfxInfo) 
+{
+
+    if (fbuffer == 0 || len <= sizeof(BITMAPFILEHEADER) || gfxInfo == 0)
+    {
+        return FALSE;
+    }
+
+    BITMAPFILEHEADER   *bmpFileHeader = 
+        reinterpret_cast<BITMAPFILEHEADER *>(fbuffer);
+
+    /*
+    *  check the header
+    */
+    if (bmpFileHeader->bfType != 'MB' ||
+        bmpFileHeader->bfSize > len)
+    {
+        return FALSE;
+    }
+
+    BITMAPCOREHEADER *bmpInfoHeader = 
+        reinterpret_cast<BITMAPCOREHEADER *>(bmpFileHeader + 1);
+
+    if (bmpInfoHeader->bcSize < sizeof(BITMAPCOREHEADER))
+    {
+        return FALSE;
+    }
+
+    DWORD   biWidth = 0;
+    DWORD   biHeight = 0;
+    int     biBitCount = 0;
+    WORD    biPlanes = 0;
+
+    BITMAPCOREHEADER *corHeader = 0;
+    BITMAPINFOHEADER *infoHeader = 0;
+    BITMAPV4HEADER *info4Header = 0;
+    BITMAPV5HEADER *info5Header = 0;
+
+    switch (bmpInfoHeader->bcSize)
+    {
+    case sizeof(BITMAPCOREHEADER):
+        corHeader = reinterpret_cast<BITMAPCOREHEADER *>(bmpFileHeader + 1);
+
+        biWidth = corHeader->bcWidth;
+        biHeight = corHeader->bcWidth;
+        break;
+
+    case sizeof(BITMAPINFOHEADER):
+        infoHeader = reinterpret_cast<BITMAPINFOHEADER *>(bmpFileHeader + 1);
+
+        biWidth = infoHeader->biWidth;
+        biHeight = infoHeader->biHeight;
+        biPlanes = infoHeader->biPlanes;
+        
+        if (infoHeader->biCompression != BI_RGB)
+            return FALSE;
+
+        biBitCount = infoHeader->biBitCount;
+
+        
+        break;
+
+    case sizeof(BITMAPV4HEADER):
+        info4Header = reinterpret_cast<BITMAPV4HEADER *>(bmpFileHeader + 1);
+
+        biWidth = info4Header->bV4Width;
+        biHeight = info4Header->bV4Height;
+
+        if (info4Header->bV4V4Compression != BI_RGB)
+            return FALSE;
+
+        return FALSE;
+        break;
+
+    case sizeof(BITMAPV5HEADER):
+        info5Header = reinterpret_cast<BITMAPV5HEADER *>(bmpFileHeader + 1);
+
+        biWidth = info5Header->bV5Width;
+        biHeight = info5Header->bV5Height;
+
+        if (info5Header->bV5Compression != BI_RGB)
+            return FALSE;
+
+        return FALSE;
+        break;
+
+    default:
+        return FALSE;
+    }
+
+    
+
+    unsigned char *pictureData =  ((unsigned char *)bmpInfoHeader + bmpInfoHeader->bcSize);
+
+    DWORD *pPictureBuffer = (DWORD *)
+        malloc(biWidth * biHeight * sizeof(DWORD));
+
+    if (pPictureBuffer == 0)
+        return FALSE;
+
+
+    for (DWORD  _y = 0; _y < biHeight; _y++)
+    {
+        for (DWORD _x = 0; _x < biWidth; _x++)
+        {
+            COLORREF color = *(DWORD *)(pictureData + ((biHeight - _y - 1) * biWidth + _x) * (biBitCount >> 3));
+            *(pPictureBuffer + _y * biWidth + _x) = color;
+        }
+    }
+
+    gfxInfo->pic = (unsigned char *)pPictureBuffer;
+    gfxInfo->width = (int)biWidth;
+    gfxInfo->height = (int)biHeight;
+    gfxInfo->bgColor = RGB(0, 0, 0);
+
+    return TRUE;
+}
