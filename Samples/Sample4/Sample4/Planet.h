@@ -3,13 +3,13 @@
 #define __PLANET_H__
 
 #include "Object.h"
+#include "Sprite.h"
 
 class CPlanet : public CBaseObject
 {
 protected:
 
     LONG        m_radius;
-
     double      m_speed;     // radial speed
 
     COLORREF    m_color;
@@ -20,14 +20,17 @@ protected:
     double      m_orbitRadius1;
     double      m_orbitRadius2;
 
+    CSprite     m_Planet;
+
 private:
-    void  DrawOrbite(CDC& dc, CRect& drawRect, CRect& boundingRect);
+    void DrawOrbite(DWORD* canvas, CRect& canvasDimensions, CRect& drawRect);
+    void DrawFilledCircle(DWORD* canvas, CRect& canvasDimensions, CRect& drawRect);
 
 public:
     CPlanet();
 
     virtual BOOL Init();
-    virtual void Draw(CDC& dc, CRect& drawRect, CRect& boundingRect);
+    virtual void Draw(DWORD* canvas, CRect& canvasSize, CRect& drawRect);
     virtual void Update(double speedFactor);
 
     virtual ~CPlanet();

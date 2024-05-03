@@ -39,6 +39,15 @@ CGraphicScene::Init()
 
     m_Planetarium.push_back(planet);
 
+    planet = new CSaturn();
+
+    if (planet == NULL)
+        return FALSE;
+
+    planet->Init();
+
+    m_Planetarium.push_back(planet);
+
     return TRUE;
 }
 

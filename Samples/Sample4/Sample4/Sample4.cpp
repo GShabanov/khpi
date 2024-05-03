@@ -1,12 +1,12 @@
 ﻿
-// Sample1.cpp : Defines the class behaviors for the application.
+// Sample4.cpp : Defines the class behaviors for the application.
 //
 
 #include "pch.h"
 #include "framework.h"
 #include "afxwinappex.h"
 #include "afxdialogex.h"
-#include "Sample3.h"
+#include "Sample4.h"
 #include "MainFrm.h"
 
 
@@ -15,40 +15,32 @@
 #endif
 
 
-// CSample3App
+// CSample4App
 
-BEGIN_MESSAGE_MAP(CSample3App, CWinApp)
-	ON_COMMAND(ID_APP_ABOUT, &CSample3App::OnAppAbout)
+BEGIN_MESSAGE_MAP(CSample4App, CWinApp)
+	ON_COMMAND(ID_APP_ABOUT, &CSample4App::OnAppAbout)
 END_MESSAGE_MAP()
 
 
-// CSample3App construction
+// CSample4App construction
 
-CSample3App::CSample3App() noexcept
+CSample4App::CSample4App() noexcept
 {
 
 	// support Restart Manager
 	m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_ALL_ASPECTS;
-#ifdef _MANAGED
-	// If the application is built using Common Language Runtime support (/clr):
-	//     1) This additional setting is needed for Restart Manager support to work properly.
-	//     2) In your project, you must add a reference to System.Windows.Forms in order to build.
-	System::Windows::Forms::Application::SetUnhandledExceptionMode(System::Windows::Forms::UnhandledExceptionMode::ThrowException);
-#endif
 
-	// TODO: replace application ID string below with unique ID string; recommended
-	// format for string is CompanyName.ProductName.SubProduct.VersionInformation
-	SetAppID(_T("Sample2.AppID.NoVersion"));
+	SetAppID(_T("Sample4.AppID.NoVersion"));
 
     m_dwTicksCount = GetTickCount();
 }
 
 
-CSample3App theApp;
+CSample4App theApp;
 
 
 BOOL
-CSample3App::OnIdle(LONG lCount)
+CSample4App::OnIdle(LONG lCount)
 {
 
 
@@ -82,9 +74,9 @@ CSample3App::OnIdle(LONG lCount)
     return TRUE;
 }
 
-// CSample3App initialization
+// CSample4App initialization
 
-BOOL CSample3App::InitInstance()
+BOOL CSample4App::InitInstance()
 {
 	// InitCommonControlsEx() is required on Windows XP if an application
 	// manifest specifies use of ComCtl32.dll version 6 or later to enable
@@ -107,6 +99,7 @@ BOOL CSample3App::InitInstance()
 	if (!pFrame)
 		return FALSE;
 
+
 	m_pMainWnd = pFrame;
 	// create and load the frame with its resources
 	pFrame->LoadFrame(IDR_MAINFRAME,
@@ -120,7 +113,7 @@ BOOL CSample3App::InitInstance()
 	return TRUE;
 }
 
-int CSample3App::ExitInstance()
+int CSample4App::ExitInstance()
 {
 	return CWinApp::ExitInstance();
 }
@@ -161,13 +154,13 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 // App command to run the dialog
-void CSample3App::OnAppAbout()
+void CSample4App::OnAppAbout()
 {
 	CAboutDlg aboutDlg;
 	aboutDlg.DoModal();
 }
 
-// CSample1App message handlers
+// CSample4App message handlers
 
 
 

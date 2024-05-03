@@ -3,6 +3,8 @@
 #include "framework.h"
 #include "Planet.h"
 
+#include "resource.h"
+
 
 CPlanet::CPlanet()
 {
@@ -22,7 +24,7 @@ CPlanet::Init()
 }
 
 void
-CPlanet::DrawOrbite(CDC& dc, CRect& drawRect, CRect& boundingRect)
+CPlanet::DrawOrbite(DWORD* canvas, CRect& canvasSize, CRect& drawRect)
 {
     CPoint   center;
 
@@ -42,13 +44,24 @@ CPlanet::DrawOrbite(CDC& dc, CRect& drawRect, CRect& boundingRect)
         //
         //
 
-        LONG X = (LONG)(m_orbitRadius1 * cos(fi) * cos(m_orbitAngle) - m_orbitRadius2 * sin(fi) * sin(m_orbitAngle));
-        LONG Y = (LONG)(m_orbitRadius1 * cos(fi) * sin(m_orbitAngle) + m_orbitRadius2 * sin(fi) * cos(m_orbitAngle));
+        LONG X = (LONG)(m_orbitRadius1 * m_math.cos(fi) * m_math.cos(m_orbitAngle) - m_orbitRadius2 * m_math.sin(fi) * m_math.sin(m_orbitAngle));
+        LONG Y = (LONG)(m_orbitRadius1 * m_math.cos(fi) * m_math.sin(m_orbitAngle) + m_orbitRadius2 * m_math.sin(fi) * m_math.cos(m_orbitAngle));
 
         X += center.x;
         Y += center.y;
 
-        dc.SetPixel(X, Y, m_color);
+        if (Y < 0 || X < 0) {
+
+            fi += 0.01;
+            continue;
+        }
+
+        if (Y < (LONG)canvasSize.bottom &&
+            X < (LONG)canvasSize.right)
+        {
+
+            canvas[Y * canvasSize.Width() + X] = m_color;
+        }
 
         fi += 0.01;
     }
@@ -56,10 +69,53 @@ CPlanet::DrawOrbite(CDC& dc, CRect& drawRect, CRect& boundingRect)
 }
 
 void
-CPlanet::Draw(CDC& dc, CRect& drawRect, CRect& boundingRect)
+CPlanet::DrawFilledCircle(DWORD* canvas, CRect& canvasSize, CRect& drawRect)
 {
 
-    DrawOrbite(dc, drawRect, boundingRect);
+    DWORD Radius = drawRect.Width() / 2;
+    DWORD* drawOffset = canvas + (drawRect.top * canvasSize.Width());
+    //
+    // Y loop
+    //
+    for (LONG i = 0; i < drawRect.Height(); i++)
+    {
+        double fi = asin(((double)Radius - i) / (double)Radius);
+
+        DWORD X = (DWORD)(Radius * m_math.cos(fi));
+
+        LONG X1 = drawRect.left + Radius - X;
+        LONG X2 = drawRect.left + Radius + X;
+
+        if ((i + drawRect.top) > canvasSize.bottom)
+            break;
+
+        if (X1 < canvasSize.left)
+            break;
+
+        //
+        // X loop
+        //
+        LONG j = X1;
+
+        while (j < X2)
+        {
+            if (j > canvasSize.right)
+                break;
+
+            *(drawOffset + j) = m_color;
+
+            j++;
+        }
+
+        drawOffset += canvasSize.Width();
+    }
+}
+
+void
+CPlanet::Draw(DWORD* canvas, CRect& canvasDimensions, CRect& drawRect)
+{
+
+    DrawOrbite(canvas, canvasDimensions, drawRect);
 
     CPoint   center;
 
@@ -70,20 +126,12 @@ CPlanet::Draw(CDC& dc, CRect& drawRect, CRect& boundingRect)
     //
     // rotated ellipse on the angle thetta
     // 
-    LONG Xplanet = (LONG)(m_orbitRadius1 * cos(m_currentAngle) * cos(m_orbitAngle) - m_orbitRadius2 * sin(m_currentAngle) * sin(m_orbitAngle));
-    LONG Yplanet = (LONG)(m_orbitRadius1 * cos(m_currentAngle) * sin(m_orbitAngle) + m_orbitRadius2 * sin(m_currentAngle) * cos(m_orbitAngle));
+    LONG Xplanet = (LONG)(m_orbitRadius1 * m_math.cos(m_currentAngle) * m_math.cos(m_orbitAngle) - m_orbitRadius2 * m_math.sin(m_currentAngle) * m_math.sin(m_orbitAngle));
+    LONG Yplanet = (LONG)(m_orbitRadius1 * m_math.cos(m_currentAngle) * m_math.sin(m_orbitAngle) + m_orbitRadius2 * m_math.sin(m_currentAngle) * m_math.cos(m_orbitAngle));
 
 
     Xplanet += center.x;
     Yplanet += center.y;
-
-
-    CPen    drawPenGraph2(PS_SOLID, 1, m_color);
-    CBrush  drawBrush2;
-    drawBrush2.CreateSolidBrush(m_color);
-
-    CPen   *oldPen = dc.SelectObject(&drawPenGraph2);
-    CBrush *oldBrush = dc.SelectObject(&drawBrush2);
 
     CRect   planetRect;
 
@@ -94,11 +142,14 @@ CPlanet::Draw(CDC& dc, CRect& drawRect, CRect& boundingRect)
     planetRect.top = Yplanet - r_div2;
     planetRect.bottom = Yplanet + r_div2;
 
-    dc.Ellipse(&planetRect);
-
-
-    dc.SelectObject(oldBrush);
-    dc.SelectObject(oldPen);
+    if (m_Planet.IsLoaded())
+    {
+        m_Planet.Draw(canvas, canvasDimensions, planetRect, FALSE);
+    }
+    else
+    {
+        DrawFilledCircle(canvas, canvasDimensions, planetRect);
+    }
 
 }
 
@@ -135,6 +186,7 @@ CEarth::CEarth()
 BOOL
 CEarth::Init()
 {
+    m_Planet.Init(MAKEINTRESOURCE(IDR_EARTH));
     return TRUE;
 }
 
@@ -166,6 +218,7 @@ CMars::CMars()
 BOOL
 CMars::Init()
 {
+    m_Planet.Init(MAKEINTRESOURCE(IDR_MARS));
     return TRUE;
 }
 
@@ -199,6 +252,8 @@ CJupiter::CJupiter()
 BOOL
 CJupiter::Init()
 {
+    m_Planet.Init(MAKEINTRESOURCE(IDR_JUPITER));
+
     return TRUE;
 }
 
@@ -219,10 +274,11 @@ CSaturn::CSaturn()
     m_radius = 26;
     m_speed = 0.007;
 
-    m_orbitRadius1 = 800 / 2; // велика піввісь  778 547 200 
+    m_orbitRadius1 = 1000 / 2; // велика піввісь  1 429 394 069
                                 // ексентриситтет 0,0484
 
-    double e = 0.5;
+    //double e = 0.5;
+    double e = 0.055723219;
     m_orbitRadius2 = m_orbitRadius1 * sqrt(1 - e * e);
     m_currentAngle = 3.5;
     m_orbitAngle = 2.0;
@@ -232,6 +288,8 @@ CSaturn::CSaturn()
 BOOL
 CSaturn::Init()
 {
+    m_Planet.Init(MAKEINTRESOURCE(IDR_SATURN));
+
     return TRUE;
 }
 

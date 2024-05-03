@@ -14,18 +14,18 @@
       <FileName>ChildView.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CGraphicScene" Collapsed="true">
-    <Position X="7.25" Y="1.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAQAAAIAABAAAhAAAAAAAAAAABAAAAAAAAACAAAAAAA=</HashCode>
-      <FileName>GraphicScene.h</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="CMainFrame" Collapsed="true">
     <Position X="9.75" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAACAAAAAAQAAAACAYAiAAAgCAAAgAAAAAAAAAAAAA=</HashCode>
       <FileName>MainFrm.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CSample3App" Collapsed="true">
+    <Position X="11.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAABAAIAgAQAAAABAAAAAAA=</HashCode>
+      <FileName>Sample3.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CBaseObject" Collapsed="true">
@@ -35,39 +35,39 @@
       <FileName>Object.h</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="CGraphicScene" Collapsed="true">
+    <Position X="0.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAIAABAAAhAAAAAAAAAAABAAAAAAAAACAAAAAAA=</HashCode>
+      <FileName>GraphicScene.h</FileName>
+    </TypeIdentifier>
+  </Class>
   <Class Name="CPlanet" Collapsed="true">
-    <Position X="2.75" Y="1.75" Width="1.5" />
+    <Position X="5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQEBAAAAAAIQggAAAAAAAAEAgAAAgAAAAACBAgAAAA=</HashCode>
       <FileName>Planet.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CEarth" Collapsed="true">
-    <Position X="2.75" Y="3.25" Width="1.5" />
+    <Position X="7.25" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAECAAAAAAA=</HashCode>
       <FileName>Planet.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CMars" Collapsed="true">
-    <Position X="5" Y="3.25" Width="1.5" />
+    <Position X="2.75" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAg=</HashCode>
       <FileName>Planet.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="CJupiter" Collapsed="true">
-    <Position X="0.5" Y="3.25" Width="1.5" />
+    <Position X="5" Y="3.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACCAAAAAAA=</HashCode>
       <FileName>Planet.h</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="CSample3App" Collapsed="true">
-    <Position X="11.5" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AACAAAAAAAAAAAAAAAAAAAABAAIAgAQAAAABAAAAAAA=</HashCode>
-      <FileName>Sample3.h</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
