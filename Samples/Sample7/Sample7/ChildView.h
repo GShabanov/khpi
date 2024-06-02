@@ -30,10 +30,10 @@ private:
     LONG                            m_currentDay;
     LONG                            m_year;
 
-    CGraphicButton                  m_Up;
-    CGraphicButton                  m_Down;
-    CGraphicButton                  m_Left;
-    CGraphicButton                  m_Right;
+    double                          m_scaleFactor;
+
+    CGraphicButton                  m_Scaleup;
+    CGraphicButton                  m_Scaledown;
 
     CGraphicButton                  m_Pause;
     CGraphicButton                  m_Run;
@@ -67,7 +67,7 @@ protected:
     void Draw(CDC& cdc);
     virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
 
-    afx_msg int OnCreate(LPCREATESTRUCT cs);
+    afx_msg int  OnCreate(LPCREATESTRUCT cs);
     afx_msg void OnPaint();
     afx_msg void OnSize(UINT nType, int cx, int cy);
 

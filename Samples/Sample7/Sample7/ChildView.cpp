@@ -21,6 +21,8 @@ CChildView::CChildView()
 {
     m_rawPixels = NULL;
     m_State = vid_Run;
+    m_scaleFactor = 1.0;
+
 }
 
 CChildView::~CChildView()
@@ -52,43 +54,36 @@ int CChildView::OnCreate(LPCREATESTRUCT cs)
     CSprite  buttonPushed;
     CSprite  sprite;
 
+
     m_graphicScene.Init();
+
+
 
     CRect rectDummy;
     rectDummy.SetRectEmpty();
 
     sprite.Init(MAKEINTRESOURCE(IDR_EDIT_FONT), _T("RT_JPG"));
 
-    m_EarthTime.Create(sprite, WS_CHILD | WS_VISIBLE | ES_LEFT, rectDummy, this, NULL);
+    m_EarthTime.Create(sprite, WS_CHILD | WS_VISIBLE | WS_DISABLED | ES_LEFT, rectDummy, this, NULL);
 
 
     m_EarthTime.SetWindowText(CString("12/12/2024"));
     m_currentDay = 0;
     m_year = 2024;
 
-    button.Init(MAKEINTRESOURCE(IDR_BUTTON_UP), _T("RT_JPG"));
-    buttonPushed.Init(MAKEINTRESOURCE(IDR_BUTTON_UP_P), _T("RT_JPG"));
+    button.Init(MAKEINTRESOURCE(IDR_SCALE_UP), _T("RT_JPG"));
+    buttonPushed.Init(MAKEINTRESOURCE(IDR_SCALE_UP_P), _T("RT_JPG"));
 
-    m_Up.Create(button, buttonPushed, WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+
+    m_Scaleup.Create(button, buttonPushed, WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
         rectDummy, this, NULL);
 
-    button.Init(MAKEINTRESOURCE(IDR_BUTTON_DOWN), _T("RT_JPG"));
-    buttonPushed.Init(MAKEINTRESOURCE(IDR_BUTTON_DOWN_P), _T("RT_JPG"));
+    button.Init(MAKEINTRESOURCE(IDR_SCALE_DOWN), _T("RT_JPG"));
+    buttonPushed.Init(MAKEINTRESOURCE(IDR_SCALE_DOWN_P), _T("RT_JPG"));
 
-    m_Down.Create(button, buttonPushed, WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+    m_Scaledown.Create(button, buttonPushed, WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
         rectDummy, this, NULL);
 
-    button.Init(MAKEINTRESOURCE(IDR_BUTTON_LEFT), _T("RT_JPG"));
-    buttonPushed.Init(MAKEINTRESOURCE(IDR_BUTTON_LEFT_P), _T("RT_JPG"));
-
-    m_Left.Create(button, buttonPushed, WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-        rectDummy, this, NULL);
-
-    button.Init(MAKEINTRESOURCE(IDR_BUTTON_RIGHT), _T("RT_JPG"));
-    buttonPushed.Init(MAKEINTRESOURCE(IDR_BUTTON_RIGHT_P), _T("RT_JPG"));
-
-    m_Right.Create(button, buttonPushed, WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
-        rectDummy, this, NULL);
 
 
     //
@@ -189,6 +184,28 @@ CChildView::OnCommand(WPARAM wParam, LPARAM lParam)
         return TRUE;
     }
 
+    if ((HWND)lParam == m_Scaleup.m_hWnd &&
+        HIWORD(wParam) == BN_CLICKED)
+    {
+        m_scaleFactor += 0.1;
+        if (m_scaleFactor > 8.000000)
+            m_scaleFactor = 8.0;
+
+        m_graphicScene.SetScaleFactor(m_scaleFactor);
+        return TRUE;
+    }
+
+    if ((HWND)lParam == m_Scaledown.m_hWnd &&
+        HIWORD(wParam) == BN_CLICKED)
+    {
+        m_scaleFactor -= 0.1;
+        if (m_scaleFactor <= 0.1)
+            m_scaleFactor = 0.1;
+
+        m_graphicScene.SetScaleFactor(m_scaleFactor);
+        return TRUE;
+    }
+
     return CWnd::OnCommand(wParam, lParam);
 }
 
@@ -252,7 +269,7 @@ CChildView::OnSize(UINT nType, int cx, int cy)
     m_rawPixels = malloc(bmpInfo.bi.bmiHeader.biSizeImage);
 
 
-    if (m_Up.m_hWnd == NULL)
+    if (this->m_hWnd == NULL)
         return;
 
     GetClientRect(&clRect);
@@ -266,7 +283,7 @@ CChildView::OnSize(UINT nType, int cx, int cy)
     CPoint buttons;
 
     buttons.x = clRect.right - 90;
-    buttons.y = clRect.bottom - 100;
+    buttons.y = clRect.top + 190;
 
 
 
@@ -281,28 +298,14 @@ CChildView::OnSize(UINT nType, int cx, int cy)
     button.right = button.left + 30;
 
 
-    m_Up.SetWindowPos(this, button.left, button.top, button.Width(), button.Height(), SWP_NOZORDER);
+    m_Scaleup.SetWindowPos(this, button.left, button.top, button.Width(), button.Height(), SWP_NOZORDER);
 
     button.top = buttons.y + 30;
     button.bottom = button.top + 30;
     button.left = buttons.x;
     button.right = button.left + 30;
 
-    m_Down.SetWindowPos(this, button.left, button.top, button.Width(), button.Height(), SWP_NOZORDER);
-
-    button.top = buttons.y;
-    button.bottom = button.top + 30;
-    button.left = buttons.x - 30;
-    button.right = button.left + 30;
-
-    m_Left.SetWindowPos(this, button.left, button.top, button.Width(), button.Height(), SWP_NOZORDER);
-
-    button.top = buttons.y;
-    button.bottom = button.top + 30;
-    button.left = buttons.x + 30;
-    button.right = button.left + 30;
-
-    m_Right.SetWindowPos(this, button.left, button.top, button.Width(), button.Height(), SWP_NOZORDER);
+    m_Scaledown.SetWindowPos(this, button.left, button.top, button.Width(), button.Height(), SWP_NOZORDER);
 
 
     //
@@ -442,7 +445,7 @@ CChildView::ClockTick()
 
         m_EarthTime.SetWindowText(text);
 
-        m_graphicScene.Update(1);
+        m_graphicScene.Update(0.1);
     }
 }
 
@@ -497,10 +500,8 @@ CChildView::Draw(CDC& dc)
     m_graphicScene.Draw((DWORD *)m_rawPixels, worksArrea, worksArrea);
 
 
-    m_Up.Draw((DWORD*)m_rawPixels, worksArrea, worksArrea);
-    m_Down.Draw((DWORD*)m_rawPixels, worksArrea, worksArrea);
-    m_Left.Draw((DWORD*)m_rawPixels, worksArrea, worksArrea);
-    m_Right.Draw((DWORD*)m_rawPixels, worksArrea, worksArrea);
+    m_Scaleup.Draw((DWORD*)m_rawPixels, worksArrea, worksArrea);
+    m_Scaledown.Draw((DWORD*)m_rawPixels, worksArrea, worksArrea);
 
     m_EarthTime.Draw((DWORD*)m_rawPixels, worksArrea, worksArrea);
 

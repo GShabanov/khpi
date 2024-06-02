@@ -45,13 +45,13 @@
     <ClInclude Include="Sprite.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sample5.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CGraphicButton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CGraphicEdit.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sample7.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,32 +74,33 @@
     <ClCompile Include="Sprite.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sample5.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CGraphicButton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CGraphicEdit.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Sample7.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Sample5.rc">
+    <ResourceCompile Include="Sample7.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\Sample5.rc2">
+    <None Include="res\Sample7.rc2">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\Sample5.ico">
+    <Image Include="res\Space.ico">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="res\Space.ico">
+    <Image Include="res\Sample7.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

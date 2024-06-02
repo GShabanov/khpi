@@ -39,6 +39,8 @@ private:
     CSprite               m_Background;
     CSprite               m_Sun;
 
+    double                m_scaleFactor;
+
     void DrawCrosshair(DWORD* canvas, CRect& canvasSize);
 
 
@@ -47,6 +49,7 @@ public:
 
     CGraphicScene();
 
+    void   SetScaleFactor(double  scaleFactor);
 
 
     virtual BOOL Init();

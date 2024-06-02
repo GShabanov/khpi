@@ -20,17 +20,10 @@
 #define IDR_URANUS                              148
 #define IDR_NEPTUN                              149
 
-
-
-
-#define IDR_BUTTON_UP                           150
-#define IDR_BUTTON_DOWN                         151
-#define IDR_BUTTON_LEFT                         152
-#define IDR_BUTTON_RIGHT                        153
-#define IDR_BUTTON_UP_P                         154
-#define IDR_BUTTON_DOWN_P                       155
-#define IDR_BUTTON_LEFT_P                       156
-#define IDR_BUTTON_RIGHT_P                      157
+#define IDR_SCALE_UP                            150
+#define IDR_SCALE_DOWN                          151
+#define IDR_SCALE_UP_P                          152
+#define IDR_SCALE_DOWN_P                        153
 
 #define IDR_BUTTON_PAUSE                        158
 #define IDR_BUTTON_RUN                          159

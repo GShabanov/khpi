@@ -11,6 +11,7 @@ CMath    m_math;
 
 CGraphicScene::CGraphicScene()
 {
+    m_scaleFactor = 1.0;
 }
 
 BOOL
@@ -70,6 +71,24 @@ CGraphicScene::Init()
     m_Planetarium.push_back(planet);
 
     planet = new CSaturn();
+
+    if (planet == NULL)
+        return FALSE;
+
+    planet->Init();
+
+    m_Planetarium.push_back(planet);
+
+    planet = new CUranus();
+
+    if (planet == NULL)
+        return FALSE;
+
+    planet->Init();
+
+    m_Planetarium.push_back(planet);
+
+    planet = new CNeptun();
 
     if (planet == NULL)
         return FALSE;
@@ -203,10 +222,10 @@ CGraphicScene::Draw(DWORD* canvas, CRect& canvasSize, CRect& drawRect)
 
     CRect   solarRect;
 
-    solarRect.left = center.x - 50;
-    solarRect.right = center.x + 50;
-    solarRect.top = center.y - 50;
-    solarRect.bottom = center.y + 50;
+    solarRect.left   = center.x - (LONG)(50 * m_scaleFactor);
+    solarRect.right  = center.x + (LONG)(50 * m_scaleFactor);
+    solarRect.top    = center.y - (LONG)(50 * m_scaleFactor);
+    solarRect.bottom = center.y + (LONG)(50 * m_scaleFactor);
 
     m_Sun.Draw((DWORD*)canvas, canvasSize, solarRect, FALSE);
 
@@ -220,6 +239,20 @@ CGraphicScene::Draw(DWORD* canvas, CRect& canvasSize, CRect& drawRect)
 
 
 }
+
+void 
+CGraphicScene::SetScaleFactor(double  scaleFactor)
+{
+    m_scaleFactor = scaleFactor;
+
+    for (_planets i = m_Planetarium.begin(); i != m_Planetarium.end(); i++)
+    {
+        CPlanet* planet = *i;
+
+        planet->SetScaleFactor(scaleFactor);
+    }
+}
+
 
 void
 CGraphicScene::Update(double speedFactor)
