@@ -23,18 +23,61 @@ CModel::~CModel()
     }
 }
 
+static
+void
+ExtractExtension(const TCHAR* filename, char extension[10])
+{
+    const TCHAR* ptr;
+    int          index = 0;
+
+    extension[0] = 0;
+    ptr = filename;
+
+    while (*ptr != 0)
+    {
+        ptr++;
+    }
+
+    while (ptr != filename)
+    {
+        if (*ptr == _T('.'))
+        {
+            ptr++;
+
+            while (*ptr != 0)
+            {
+                extension[index++] = (char)*ptr;
+
+                if (index > 9)
+                    break;
+
+                ptr++;
+            }
+
+            extension[index] = 0;
+            break;
+        }
+
+        ptr--;
+    }
+
+}
+
 BOOL
 CModel::loadModel(const TCHAR* path)
 {
 
     unsigned char* meshData;
     size_t         meshSize;
+    char           hint[10];
+
+    ExtractExtension(path, hint);
 
     if (!ReadToBuffer(path, &meshData, &meshSize))
         return FALSE;
 
     Assimp::Importer import;
-    const aiScene *scene = import.ReadFileFromMemory(meshData, meshSize, 0, "3mf");  //aiProcess_FlipUVs
+    const aiScene *scene = import.ReadFileFromMemory(meshData, meshSize, 0, hint);  //aiProcess_FlipUVs
 
     delete[] meshData;
 

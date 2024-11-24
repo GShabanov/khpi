@@ -221,10 +221,12 @@ CRenderer::Init(_In_ CWnd* parent)
     }
 
 
-    m_ArrowModel.loadModel(_T("data/Arrow.3MF"));
+    //m_ArrowModel.loadModel(_T("data/Arrow.3MF"));
+    m_ArrowModel.loadModel(_T("data/Arrow.OBJ"));
     m_ArrowModel.setColor(RGB(128, 255, 128));
 
-    m_CraneArrowModel.loadModel(_T("data/Crane_arrow.3MF"));
+    //m_CraneArrowModel.loadModel(_T("data/Crane_arrow.3MF"));
+    m_CraneArrowModel.loadModel(_T("data/CraneArrow.OBJ"));
     m_CraneArrowModel.setColor(RGB(255, 128, 128));
 
     m_CrankModel.loadModel(_T("data/Crank.3MF"));
