@@ -174,15 +174,16 @@ CMesh::Draw(CShader &shader)
     // Set fragment shader uniforms
     // Material lighting properties
     //
-    glm::vec3 material_ambient = glm::vec3(0.4, 0.4, 0.4);
+    //glm::vec3 material_ambient = glm::vec3(0.6, 0.6, 0.6);
+    glm::vec3 material_ambient = glm::vec3(m_color);
     shader.setVec3("material.ambient", material_ambient);
 
-    glm::vec3 material_diffuse = glm::vec3(m_color);
-    //glm::vec3 material_diffuse = glm::vec3(0.7, 0.7, 0.7);
+    //glm::vec3 material_diffuse = glm::vec3(m_color);
+    glm::vec3 material_diffuse = glm::vec3(0.4, 0.4, 0.4);
     shader.setVec3("material.diffuse", material_diffuse);
 
-    //glm::vec3 material_specular = glm::vec3(0.8, 0.8, 0.8);
-    glm::vec3 material_specular = glm::vec3(m_color);
+    glm::vec3 material_specular = glm::vec3(0.8, 0.8, 0.8);
+    //glm::vec3 material_specular = glm::vec3(m_color);
     shader.setVec3("material.specular", material_specular);
 
     float material_shininess = 32.0;

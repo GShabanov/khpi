@@ -15,8 +15,6 @@ private:
     typedef std::vector<class CMesh*>::iterator  meshIterator;
 
     bool                        m_initialized;
-    std::vector<Vertex>         m_volumeVertices;
-    std::vector<uint32_t>       m_volumeIndices;
 
 
     // Recursively process each Node by calling processMesh on each node's 
@@ -26,10 +24,6 @@ private:
     class CMesh* processMesh(const aiMesh *mesh, const aiScene *scene);
     class CMesh* processMesh2(const aiMesh* mesh, const aiScene* scene, glm::mat4& relTransform);
 
-    std::vector<Texture>
-    loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
-
-    void buildVolumeCubeForModel();
 
 public:
     CModel(class CLogCallback* logcallback)
@@ -39,6 +33,8 @@ public:
     }
 
     ~CModel();
+
+    void setColor(COLORREF  modelColor);
 
     // Load model and call processNode
     BOOL loadModel(const TCHAR* path);

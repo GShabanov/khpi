@@ -20,26 +20,69 @@ class CMathModel
 {
 private:
 
-    float   m_angle1;
-    float   m_angle2;
+    float   m_ArrowAngle;
+    float   m_CrankAngle;
+    float   m_CraneArrowAngle;
+    float   m_RodAngle;
 
-    glm::mat4   m_chains[4];
+    glm::mat4   m_chains[6];
 
 public:
 
     CMathModel()
     {
-        m_angle1 = 0.0f;
+        m_ArrowAngle = 0.0f;
+        m_CrankAngle = 0.2f;
+        m_CraneArrowAngle = 0.0f;
+        m_RodAngle = 0.0f;
 
-        m_angle2 = -0.2f;
+        memset(m_chains, 0, sizeof(m_chains));
     }
 
     void UpdateAngles();
 
 
-    glm::mat4 getArrowMatrix();
-    glm::mat4 getCraneMatrix();
+    void setArrowAngle(float angle)
+    {
+        m_ArrowAngle = angle;
+        UpdateAngles();
+    }
 
+    void setCrankAngle(float angle)
+    {
+        m_CrankAngle = angle;
+        UpdateAngles();
+    }
+
+    glm::mat4 &getArrowMatrix()
+    {
+        return m_chains[0];
+    }
+
+    glm::mat4 &getCraneMatrix()
+    {
+        return m_chains[1];
+    }
+
+    glm::mat4& getRod1Matrix()
+    {
+        return m_chains[2];
+    }
+
+    glm::mat4& getRod2Matrix()
+    {
+        return m_chains[3];
+    }
+
+    glm::mat4& getCrank1Matrix()
+    {
+        return m_chains[4];
+    }
+
+    glm::mat4& getCrank2Matrix()
+    {
+        return m_chains[5];
+    }
 
 };
 

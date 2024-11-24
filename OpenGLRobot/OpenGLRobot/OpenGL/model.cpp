@@ -49,8 +49,6 @@ CModel::loadModel(const TCHAR* path)
 
     processNode(scene->mRootNode, scene, transform);
 
-    buildVolumeCubeForModel();
-
     m_initialized = true;
 
     return TRUE;
@@ -91,6 +89,17 @@ CModel::processNode(const aiNode *node, const aiScene *scene, glm::mat4& parentT
         processNode(node->mChildren[i], scene, relTransform);
     }
 }
+
+void
+CModel::setColor(COLORREF  modelColor)
+{
+    for (std::vector<CMesh*>::iterator i = m_meshes.begin(); i != m_meshes.end(); i++)
+    {
+        (*i)->setColor(modelColor);
+    }
+        
+}
+
 
 CMesh *
 CModel::processMesh(const aiMesh *mesh, const aiScene *scene)
@@ -276,11 +285,8 @@ CModel::processMesh2(const aiMesh* mesh, const aiScene* scene, glm::mat4 &relTra
         // build normals
         //
         vertex[0].Normal = glm::triangleNormal(vertex[0].Position, vertex[1].Position, vertex[2].Position);
-        //vertex[0].Normal = CalcNormal(vertex[1].Position, vertex[0].Position, vertex[2].Position);
         vertex[1].Normal = glm::triangleNormal(vertex[1].Position, vertex[2].Position, vertex[0].Position);
-        //vertex[1].Normal = CalcNormal(vertex[2].Position, vertex[1].Position, vertex[0].Position);
         vertex[2].Normal = glm::triangleNormal(vertex[2].Position, vertex[0].Position, vertex[1].Position);
-        //vertex[2].Normal = CalcNormal(vertex[0].Position, vertex[2].Position, vertex[1].Position);
 
         vertices.push_back(vertex[0]);
         indices.push_back(i * 3 + 0);
@@ -294,66 +300,22 @@ CModel::processMesh2(const aiMesh* mesh, const aiScene* scene, glm::mat4 &relTra
     if (scene->HasMaterials())
     {
 
-        //cmesh->setColor(RGB(mesh->mMaterialIndex * 30 + 30, 100, 100));
         cmesh->setColor(RGB(0, 0, 0));
         //
         // process materials
         //
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
+        aiColor4D color;
 
-        //aiMaterial* material = scene->mMaterials[3];
-
-        for (unsigned int i = 0; i < material->mNumProperties; i++)
+        if (material->Get(AI_MATKEY_COLOR_DIFFUSE, color) == aiReturn_SUCCESS)
         {
-            aiMaterialProperty* prop = material->mProperties[i];
-
-            if (prop->mType == aiPTI_String)
-            {
-                if (prop->mDataLength == sizeof(aiColor4D))
-                {
-                    aiColor4D* colors = (aiColor4D*)prop->mData;
-
-                    //cmesh->setColor(colors->r, colors->g, colors->b, colors->a);
-                }
-            }
-            else if (prop->mType == aiPTI_Float)
-            {
-                if (prop->mDataLength == sizeof(aiColor4D))
-                {
-                    aiColor4D* colors = (aiColor4D*)prop->mData;
-
-                    cmesh->setColor(colors->r, colors->g, colors->b, colors->a);
-                }
-                else
-                if (prop->mDataLength == sizeof(aiColor3D))
-                {
-                    
-                    aiColor3D* colors = (aiColor3D*)prop->mData;
-
-                    cmesh->setColor(colors->r, colors->g, colors->b);
-                }
-                else
-                {
-                    ASSERT(FALSE);
-                }
-            }
-            else if (prop->mType == aiPTI_Integer)
-            {
-                /*if (prop->mDataLength == sizeof(COLORREF))
-                {
-                    const BYTE* colors = (const BYTE*)prop->mData;
-
-                    cmesh->setColor(colors[0], colors[1], colors[2], colors[3]);
-                }*/
-
-            }
-            else
-            {
-                ASSERT(FALSE);
-            }
+            cmesh->setColor(color.r * 1.5f, color.g * 1.5f, color.b * 1.5f, color.a);
         }
-
+        else
+        {
+            cmesh->setColor(0.0, 0.0, 0.0, 1.0);
+        }
 
     }
 
@@ -366,158 +328,7 @@ CModel::processMesh2(const aiMesh* mesh, const aiScene* scene, glm::mat4 &relTra
     return cmesh;
 }
 
-void
-CModel::buildVolumeCubeForModel()
-{
-    if (m_meshes.size() < 1)
-        return;
 
-    //
-    //     6 *------------*  5
-    //      /|          / |
-    //     / |         /  |
-    //  2 / 7|      1 /   |
-    //   *-----------*    *  4
-    //   |           |   /
-    //   |           |  /
-    //   |           | /
-    //  3*-----------*  0
-    //
-    glm::float32_t  minX, maxX;
-    glm::float32_t  minY, maxY;
-    glm::float32_t  minZ, maxZ;
-
-    CMesh* pMesh;
-
-    pMesh = *(m_meshes.begin());
-
-    if (pMesh->m_vertices.size() < 1)
-        return;
-
-    minX = maxX = pMesh->m_vertices[0].Position.x;
-    minY = maxY = pMesh->m_vertices[0].Position.y;
-    minZ = maxZ = pMesh->m_vertices[0].Position.z;
-
-
-    for (meshIterator i = m_meshes.begin(); i != m_meshes.end(); ++i)
-    {
-
-        CMesh* pMesh = *i;
-
-        for (size_t j = 0, k = pMesh->m_vertices.size(); j < k; ++j)
-        {
-            glm::vec3 vertex = pMesh->m_vertices[j].Position;
-
-            if (vertex.x < minX) minX = vertex.x;
-            if (vertex.x > maxX) maxX = vertex.x;
-            if (vertex.y < minY) minY = vertex.y;
-            if (vertex.y > maxY) maxY = vertex.y;
-            if (vertex.z < minZ) minZ = vertex.z;
-            if (vertex.z > maxZ) maxZ = vertex.z;
-        }
-    }
-
-    std::vector<Vertex> vertices;
-    std::vector<uint32_t> indices;
-
-    Vertex   vertex;
-    vertex.Position = glm::vec3(minX, minY, minZ);  // 0
-    vertices.push_back(vertex);
-    vertex.Position = glm::vec3(minX, maxY, minZ);  // 1
-    vertices.push_back(vertex);
-    vertex.Position = glm::vec3(maxX, maxY, minZ);  // 2
-    vertices.push_back(vertex);
-    vertex.Position = glm::vec3(maxX, minY, minZ);  // 3
-    vertices.push_back(vertex);
-
-    vertex.Position = glm::vec3(minX, minY, maxZ);  // 4
-    vertices.push_back(vertex);
-    vertex.Position = glm::vec3(minX, maxY, maxZ);  // 5
-    vertices.push_back(vertex);
-    vertex.Position = glm::vec3(maxX, maxY, maxZ);  // 6
-    vertices.push_back(vertex);
-    vertex.Position = glm::vec3(maxX, minY, maxZ);  // 7
-    vertices.push_back(vertex);
-
-
-    // front 
-    indices.push_back(0);
-    indices.push_back(1);
-    indices.push_back(2);
-
-    indices.push_back(2);
-    indices.push_back(3);
-    indices.push_back(0);
-
-    // back 
-    indices.push_back(4);
-    indices.push_back(6);
-    indices.push_back(5);
-
-    indices.push_back(4);
-    indices.push_back(7);
-    indices.push_back(6);
-
-    for (int i = 0; i < 4; i++)
-    {
-        int next = i + 1;
-        if (next > 3)
-            next = 0;
-
-        indices.push_back(i);
-        indices.push_back(i + 4);
-        indices.push_back(next + 4);
-
-        indices.push_back(next);
-        indices.push_back(i);
-        indices.push_back(next + 4);
-    }
-
-
-    m_volumeIndices  = indices;
-    m_volumeVertices = vertices;
-
-}
-
-
-// checks all material textures of a given type and loads the textures if they're not loaded yet.
-// the required info is returned as a Texture struct.
-std::vector<Texture>
-CModel::loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName)
-{
-    std::vector<Texture> textures;
-
-    for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
-    {
-        aiString str;
-        mat->GetTexture(type, i, &str);
-
-        // check if texture was loaded before and if so, continue to next iteration: skip loading a new texture
-        /*bool skip = false;
-
-        for (unsigned int j = 0; j < textures_loaded.size(); j++)
-        {
-            if (std::strcmp(textures_loaded[j].path.data(), str.C_Str()) == 0)
-            {
-                textures.push_back(textures_loaded[j]);
-                skip = true; // a texture with the same filepath has already been loaded, continue to next one. (optimization)
-                break;
-            }
-        }
-
-        if (!skip)
-        {   // if texture hasn't been loaded already, load it
-            Texture texture;
-            texture.id = TextureFromFile(str.C_Str(), this->directory);
-            texture.type = typeName;
-            texture.path = str.C_Str();
-            textures.push_back(texture);
-            textures_loaded.push_back(texture);  // store it as texture loaded for entire model, to ensure we won't unnecessary load duplicate textures.
-        }*/
-    }
-
-    return textures;
-}
 
 void
 CModel::Draw(CShader &shader)

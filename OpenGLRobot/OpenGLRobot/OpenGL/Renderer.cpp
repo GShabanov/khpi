@@ -40,7 +40,7 @@ CRenderer::CRenderer(CLogCallback* log)
 
     m_baseMatrix = glm::mat4(1.0f);
 
-    //m_baseMatrix = glm::translate(m_baseMatrix, glm::vec3(0.0, -5.0, 0.0));
+    m_baseMatrix = glm::translate(m_baseMatrix, glm::vec3(0.0, -3.0, 0.0));
     m_baseMatrix = glm::scale(m_baseMatrix, glm::vec3(0.05f));
 
 
@@ -222,9 +222,16 @@ CRenderer::Init(_In_ CWnd* parent)
 
 
     m_ArrowModel.loadModel(_T("data/Arrow.3MF"));
+    m_ArrowModel.setColor(RGB(128, 255, 128));
+
     m_CraneArrowModel.loadModel(_T("data/Crane_arrow.3MF"));
+    m_CraneArrowModel.setColor(RGB(255, 128, 128));
+
     m_CrankModel.loadModel(_T("data/Crank.3MF"));
+    m_CrankModel.setColor(RGB(128, 128, 255));
+
     m_RodModel.loadModel(_T("data/Rod.3MF"));
+    m_RodModel.setColor(RGB(128, 255, 255));
 
 
     glfwWindowHint(GLFW_VISIBLE, TRUE);
@@ -369,16 +376,37 @@ CRenderer::Draw()
 
     m_ModelShader.setMat4("projection", proj_mat);
     m_ModelShader.setMat4("view", view_mat);
-    m_ModelShader.setMat4("model", m_baseMatrix * m_mathModel.getArrowMatrix());
 
+    //
+    // arrow
+    //
+    m_ModelShader.setMat4("model", m_baseMatrix * m_mathModel.getArrowMatrix());
     m_ArrowModel.Draw(m_ModelShader);
 
+    //
+    // crank
+    //
+    m_ModelShader.setMat4("model", m_baseMatrix * m_mathModel.getCrank1Matrix());
+    m_CrankModel.Draw(m_ModelShader);
 
+    m_ModelShader.setMat4("model", m_baseMatrix * m_mathModel.getCrank2Matrix());
+    m_CrankModel.Draw(m_ModelShader);
+
+    //
+    // crane arrow
+    //
     m_ModelShader.setMat4("model", m_baseMatrix * m_mathModel.getCraneMatrix());
     m_CraneArrowModel.Draw(m_ModelShader);
 
 
+    //
+    // crane rod
+    //
+    m_ModelShader.setMat4("model", m_baseMatrix * m_mathModel.getRod1Matrix());
+    m_RodModel.Draw(m_ModelShader);
 
+    m_ModelShader.setMat4("model", m_baseMatrix * m_mathModel.getRod2Matrix());
+    m_RodModel.Draw(m_ModelShader);
 
     glfwSwapBuffers(m_pGlWindow);
 }

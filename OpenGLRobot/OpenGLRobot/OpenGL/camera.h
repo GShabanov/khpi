@@ -12,7 +12,7 @@ private:
 
     // Camera view state attributes
     double        m_fov             = 45.0;
-    double        m_distance        = 20.0;
+    double        m_distance        = 10.0;
 
     double        m_position_xangle = 90.0;
     double        m_position_yangle = 30.0;

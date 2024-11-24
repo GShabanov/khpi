@@ -25,20 +25,9 @@ void CCamera::updateCameraVectors(void)
 
     m_up_vec = glm::normalize(glm::cross(right_vec, front_vec));
 
-    // build light direction matrix
-    /*glm::mat4 light_pos = glm::mat4(
-        glm::vec4(right_vec, 0.0f),  // righ vector
-        glm::vec4(m_up_vec, 0.0f),   // up vector
-        glm::vec4(-front_vec, 0.0f),  // front vector
-        glm::vec4(0.0f, 0.0f, 0.0f, 1.0f)
-    );
-
-    light_pos = glm::rotate(light_pos, 0.3f, glm::vec3(0.0, 1.0, 0.0));
-    glm::vec4 light_dir_homogeneous = light_pos * glm::vec4(m_position_coords, 1.0f);
-    m_lightVector = light_dir_homogeneous;*/
 
     glm::mat4 light_pos = glm::lookAt(m_position_coords, glm::vec3(0.0, 0.0, 0.0), m_up_vec);
-    light_pos = glm::rotate(light_pos, 0.6f, glm::vec3(0.0, 1.0, 0.0));
+    //light_pos = glm::rotate(light_pos, 0.6f, glm::vec3(0.0, 1.0, 0.0));
     light_pos = glm::inverse(light_pos);    
 
     m_lightVector = glm::vec3(light_pos * glm::vec4(1.0));
