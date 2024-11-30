@@ -5,7 +5,6 @@
 #include "framework.h"
 #include "2dSample.h"
 #include <math.h>
-#include "Matrix.h"
 
 #define MAX_LOADSTRING 100
 
