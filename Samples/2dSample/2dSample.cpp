@@ -5,8 +5,24 @@
 #include "framework.h"
 #include "2dSample.h"
 #include <math.h>
+#include "Matrix.h"
 
 #define MAX_LOADSTRING 100
+
+#ifndef _USE_MATH_DEFINES
+
+#define M_PI       (float)3.14159265358979323846   // pi
+
+#endif // _USE_MATH_DEFINES
+
+float radians(float degrees)
+{
+    return degrees * static_cast<float>(0.01745329251994329576923690768489);
+}
+
+float _abs(float value) {
+    return value < 0.0f ? -value : value;
+}
 
 // Global Variables:
 HINSTANCE hInst;                                // current instance
@@ -22,10 +38,24 @@ LRESULT OnCreate(HWND, UINT, WPARAM, LPARAM);
 LRESULT OnPaint(HWND, UINT, WPARAM, LPARAM);
 LRESULT OnCommand(HWND, UINT, WPARAM, LPARAM);
 
-HWND hButtonCW;
-HWND hButtonCCW;
+HWND hButtonCW1;
+HWND hButtonCCW1;
+HWND hButtonCW2;
+HWND hButtonCCW2;
 
-float  angle = 0.0;
+float  angle1 = radians(290);
+float  angle2 = radians(10);
+
+float AB = 25.96f;
+float AD = 95.00f;
+float BC = 104.33f;
+float CD = 29.27f;
+
+float AB2 = AB * AB;
+float AD2 = AD * AD;
+float BC2 = BC * BC;
+float CD2 = CD * CD;
+
 
 
 int APIENTRY
@@ -129,11 +159,17 @@ InitInstance(HINSTANCE hInstance, int nCmdShow)
 LRESULT
 OnCreate(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    hButtonCW = 
+    hButtonCW1 = 
         CreateWindow(_T("BUTTON"), _T("CW"), WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 20, 20, 100, 20, hWnd, NULL, hInst, NULL);
 
-    hButtonCCW =
+    hButtonCCW1 =
         CreateWindow(_T("BUTTON"), _T("CCW"), WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 20, 40, 100, 20, hWnd, NULL, hInst, NULL);
+
+    hButtonCW2 =
+        CreateWindow(_T("BUTTON"), _T("CW"), WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 20, 70, 100, 20, hWnd, NULL, hInst, NULL);
+
+    hButtonCCW2 =
+        CreateWindow(_T("BUTTON"), _T("CCW"), WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON, 20, 90, 100, 20, hWnd, NULL, hInst, NULL);
 
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
@@ -143,34 +179,65 @@ OnCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 
     //
-    // змінюємо кут
+    // змінюємо кут 1
     //
-    if ((HWND)lParam == hButtonCW)
+    if ((HWND)lParam == hButtonCW1)
     {
-        angle += 0.1f;
+        angle1 += 0.1f;
 
-        if (angle > 6.28f)
+        if (angle1 > 6.28f)
         {
-            angle = 0;
+            angle1 = 0;
         }
 
         InvalidateRect(hWnd, NULL, TRUE);
     }
 
     //
-    // змінюємо кут
+    // змінюємо кут 1
     //
-    if ((HWND)lParam == hButtonCCW)
+    if ((HWND)lParam == hButtonCCW1)
     {
-        angle -= 0.1f;
+        angle1 -= 0.1f;
 
-        if (angle < 0.0f)
+        if (angle1 < 0.0f)
         {
-            angle = 6.28f;
+            angle1 = 6.28f;
         }
 
         InvalidateRect(hWnd, NULL, TRUE);
     }
+
+    //
+    // змінюємо кут 2
+    //
+    if ((HWND)lParam == hButtonCW2)
+    {
+        angle2 += 0.1f;
+
+        if (angle2 > 6.28f)
+        {
+            angle2 = 0;
+        }
+
+        InvalidateRect(hWnd, NULL, TRUE);
+    }
+
+    //
+    // змінюємо кут 2
+    //
+    if ((HWND)lParam == hButtonCCW2)
+    {
+        angle2 -= 0.1f;
+
+        if (angle2 < 0.0f)
+        {
+            angle2 = 6.28f;
+        }
+
+        InvalidateRect(hWnd, NULL, TRUE);
+    }
+
 
     int wmId = LOWORD(wParam);
     // Parse the menu selections:
@@ -191,35 +258,184 @@ OnCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
+bool
+CalcAngles(float BD2, float angle1, float angle2, float& gamma, float& lambda, float& fi)
+{
+    float alfa1 = angle1 + angle2;
+
+    float BD = sqrtf(BD2);
+
+    float a = (BD2 + AB2 - AD2) / (2 * BD * AB);  // gamma
+    float b = (BD2 + AD2 - AB2) / (2 * BD * AD);  // fi
+
+    if (a > 1.0f || a < -1.0f)
+    {
+        return false;
+    }
+
+    float gamma1 = 0.0f;
+    float fi1 = 0.0f;
+
+    //
+    // We calculate the arccosine on the larger side, thus we reduce the calculation error
+    //
+    if (_abs(a) > _abs(b))
+    {
+        gamma1 = acosf(a);
+        fi1 = M_PI - (alfa1 + gamma1);
+    }
+    else
+    {
+        fi1 = acosf(b);
+        gamma1 = M_PI - (alfa1 + fi1);
+    }
+
+    //-----------------------
+    // Second triangle
+    //-----------------------
+    float gamma2 = 0.0;
+
+    a = (BD2 + BC2 - CD2) / (2 * BD * BC);
+
+    if (a > 1.0 || a < -1.0)
+    {
+        return false;
+    }
+
+    gamma2 = acosf(a);
+
+    gamma = M_PI - (gamma1 + gamma2);
+
+
+
+    float lamda1 = 0.0f;
+    float fi2 = 0.0f;
+
+    a = (BD2 + CD2 - BC2) / (2 * BD * CD);   // fi2
+    b = (BC2 + CD2 - BD2) / (2 * BC * CD);   // lambda
+
+    if (a > 1.0 || a < -1.0)
+        return false;
+
+
+    if (_abs(a) > _abs(b))
+    {
+        fi2 = acosf(a);
+        lamda1 = M_PI - (gamma2 + fi2);
+    }
+    else
+    {
+        lamda1 = acosf(b);
+        fi2 = M_PI - (gamma2 + lamda1);
+    }
+
+
+    lambda = (float)(M_PI - lamda1);
+
+    //
+    // check if to close
+    //
+    /*if ((gamma1 + gamma2) < 0.9)
+        return false;*/
+
+
+    //
+    // Last calculations. We need the outer angles of the triangle.
+    //
+    fi = M_PI - (fi1 + fi2);
+
+    return true;
+}
+
 LRESULT
 OnPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    float radius = 100.0f;
-    LONG  baseX = 200;
-    LONG  baseY = 200;
+    //
+    // початкова точка
+    //
+    LONG  baseX = 400;
+    LONG  baseY = 400;
+
 
     PAINTSTRUCT ps;
     HDC hdc = BeginPaint(hWnd, &ps);
 
 
+    LOGBRUSH brush;
+
+    brush.lbStyle = BS_SOLID;
+    brush.lbColor = RGB(255, 0, 0);
+    brush.lbHatch = BS_HATCHED;
+
+
+    HBRUSH hBrush = CreateBrushIndirect(&brush);
+
+    HBRUSH hOldBrush = (HBRUSH)SelectObject(hdc, hBrush);
+    
+    Ellipse(hdc, baseX - 5, baseY - 5, baseX + 5, baseY + 5);
+
+    SelectObject(hdc, hOldBrush);
+
     //
-    // початкова точка
+    // перша лінія (стріла)
     //
     MoveToEx(hdc, (int)baseX, (int)baseY, (LPPOINT)NULL);
 
-    float  dx = radius * cosf(angle);
-    float  dy = radius * sinf(angle);
+    float  Dx = AD * cosf(angle1);
+    float  Dy = AD * sinf(angle1);
+
+    LONG toX = (LONG)(baseX + Dx * 2);
+    LONG toY = (LONG)(baseY + Dy * 2);
+
+    LineTo(hdc, toX, toY);
+    Ellipse(hdc, toX - 5, toY - 5, toX + 5, toY + 5);
 
     //
-    // перша лінія
+    // друга лінія (крівошип)
     //
-    LineTo(hdc, (int)(baseX + dx), (int)(baseY + dy));
+    MoveToEx(hdc, (int)baseX, (int)baseY, (LPPOINT)NULL);
+
+    float  Bx = AB * cosf(angle2);
+    float  By = AB * sinf(angle2);
+
+    toX = (LONG)(baseX + Bx * 2);
+    toY = (LONG)(baseY + By * 2);
+
+    LineTo(hdc, toX, toY);
+    Ellipse(hdc, toX - 5, toY - 5, toX + 5, toY + 5);
+
+    //
+    // відстань BD
+    // 
+    float BD2 = powf(Bx - Dx, 2) + powf(By - Dy, 2);
+    float BD = sqrtf(BD2);
+
+    float gamma, fi, lambda;
+
+    if (CalcAngles(BD2, angle1, angle2, gamma, fi, lambda) != true) {
+        EndPaint(hWnd, &ps);
+
+        return 0;
+    }
+
+    MoveToEx(hdc, (int)(baseX + Bx * 2), (int)(baseY + By * 2), (LPPOINT)NULL);
+
+    float  Cx = Bx + BC * cosf(gamma - angle2);
+    float  Cy = By + BC * sinf(gamma - angle2);
+
+    toX = (LONG)(baseX + Cx * 2);
+    toY = (LONG)(baseY + Cy * 2);
+
+    LineTo(hdc, toX, toY);
+    Ellipse(hdc, toX - 5, toY - 5, toX + 5, toY + 5);
 
 
-    //
-    // друга лінія
-    //
-    LineTo(hdc, (int)(2 * baseX), (int)(2 * baseY));
+    MoveToEx(hdc, (int)(baseX + Cx * 2), (int)(baseY + Cy * 2), (LPPOINT)NULL);
+
+    float  D2x = Cx + (CD + 50.0f) * cosf(lambda - (gamma - angle2));
+    float  D2y = Cy + (CD + 50.0f) * sinf(lambda - (gamma - angle2));
+
+    LineTo(hdc, (int)(baseX + D2x * 2), (int)(baseY + D2y * 2));
 
 
     EndPaint(hWnd, &ps);
