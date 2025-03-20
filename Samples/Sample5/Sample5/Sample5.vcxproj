@@ -221,6 +221,7 @@
     <ResourceCompile Include="Sample5.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="res\Sample5.rc2" />
   </ItemGroup>
   <ItemGroup>

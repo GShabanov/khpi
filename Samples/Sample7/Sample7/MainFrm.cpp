@@ -32,8 +32,8 @@ CMainFrame::~CMainFrame()
 int
 CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
-	if (CFrameWnd::OnCreate(lpCreateStruct) == -1)
-		return -1;
+    if (CFrameWnd::OnCreate(lpCreateStruct) == -1)
+        return -1;
 
     m_smallFont.CreateFont(
         14,                       // nHeight
@@ -59,25 +59,25 @@ CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
     clRect.top += 50;
 
-	// create a view to occupy the client area of the frame
-	if (!m_wndView.Create(nullptr, nullptr, AFX_WS_DEFAULT_VIEW, clRect, this, AFX_IDW_PANE_FIRST, nullptr))
-	{
-		TRACE0("Failed to create view window\n");
-		return -1;
-	}
+    // create a view to occupy the client area of the frame
+    if (!m_wndView.Create(nullptr, nullptr, AFX_WS_DEFAULT_VIEW, clRect, this, AFX_IDW_PANE_FIRST, nullptr))
+    {
+        TRACE0("Failed to create view window\n");
+	return -1;
+    }
 
-	return 0;
+    return 0;
 }
 
 BOOL
 CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
-	if( !CFrameWnd::PreCreateWindow(cs) )
-		return FALSE;
+    if (!CFrameWnd::PreCreateWindow(cs))
+        return FALSE;
 
-	cs.dwExStyle &= ~WS_EX_CLIENTEDGE;
-	cs.lpszClass = AfxRegisterWndClass(0);
-	return TRUE;
+    cs.dwExStyle &= ~WS_EX_CLIENTEDGE;
+    cs.lpszClass = AfxRegisterWndClass(0);
+    return TRUE;
 }
 
 // CMainFrame diagnostics
@@ -86,13 +86,13 @@ CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 void
 CMainFrame::AssertValid() const
 {
-	CFrameWnd::AssertValid();
+    CFrameWnd::AssertValid();
 }
 
 void
 CMainFrame::Dump(CDumpContext& dc) const
 {
-	CFrameWnd::Dump(dc);
+    CFrameWnd::Dump(dc);
 }
 #endif //_DEBUG
 
@@ -102,8 +102,8 @@ CMainFrame::Dump(CDumpContext& dc) const
 void
 CMainFrame::OnSetFocus(CWnd* /*pOldWnd*/)
 {
-	// forward focus to the view window
-	m_wndView.SetFocus();
+    // forward focus to the view window
+    m_wndView.SetFocus();
 }
 
 void
@@ -178,13 +178,13 @@ CMainFrame::OnSize(UINT nType, int cx, int cy)
 BOOL
 CMainFrame::OnCmdMsg(UINT nID, int nCode, void* pExtra, AFX_CMDHANDLERINFO* pHandlerInfo)
 {
-	// let the view have first crack at the command
-	if (m_wndView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
-		return TRUE;
+    // let the view have first crack at the command
+    if (m_wndView.OnCmdMsg(nID, nCode, pExtra, pHandlerInfo))
+        return TRUE;
 
 
-	// otherwise, do default handling
-	return CFrameWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
+    // otherwise, do default handling
+    return CFrameWnd::OnCmdMsg(nID, nCode, pExtra, pHandlerInfo);
 }
 
 // CMainFrame construction/destruction
