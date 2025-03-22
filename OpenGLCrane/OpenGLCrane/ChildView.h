@@ -6,29 +6,31 @@
 #pragma once
 #include "LogWindow.h"
 #include "OpenGl\Renderer.h"
+#include "OpenGl\MathModel.h"
+#include "controlState.h"
 
 
 // CChildView window
 
-class CChildView : public CWnd, public CLogCallback
+class CChildView : public CWnd, public CStateComponent, public CLogCallback
 {
 protected:
+    DECLARE_DYNCREATE(CChildView)
+
+    CMathModel m_mathModel;
     CRenderer  m_renderer;
 
+    CString* LogFormatMessage(const TCHAR* format, va_list vl);
 
     virtual void LogMessage(LOG_TYPE logType, const TCHAR* format, va_list va);
     virtual void LogMessage(const TCHAR* format, ...);
     virtual void LogMessage(LOG_TYPE logType, const TCHAR* format, ...);
 
+    virtual void  OnSetAngle(int num, float angle);
     // Construction
 public:
 	CChildView();
 
-// Attributes
-public:
-
-// Operations
-public:
 
 // Overrides
 protected:

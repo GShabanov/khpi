@@ -40,7 +40,7 @@ public:
     BOOL loadModel(const TCHAR* path);
 
     // Call draw function of all meshes in m_meshes
-    void Draw(class  CShader& shader);
+    void Draw(glm::mat4 transform, class  CShader& shader);
 
 };
 

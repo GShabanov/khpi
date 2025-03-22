@@ -25,19 +25,14 @@ private:
     float   m_CraneArrowAngle;
     float   m_RodAngle;
 
+    const float  m_ArrowLength = 95.0f;
+    const float  m_crankLength = 25.0f;
+
     glm::mat4   m_chains[6];
 
 public:
 
-    CMathModel()
-    {
-        m_ArrowAngle = 0.0f;
-        m_CrankAngle = 0.2f;
-        m_CraneArrowAngle = 0.0f;
-        m_RodAngle = 0.0f;
-
-        memset(m_chains, 0, sizeof(m_chains));
-    }
+    CMathModel();
 
     void UpdateAngles();
 

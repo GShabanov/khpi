@@ -16,6 +16,7 @@
 
 #include "GlUtils.h"
 #include "Renderer.h"
+#include "MathModel.h"
 
 
 
@@ -24,14 +25,16 @@ CRenderer::CRenderer(CLogCallback* log)
     , m_parent(NULL)
     , m_DefaultShader(log)
     , m_ModelShader(log)
+    , m_SpriteShader(log)
     , m_ArrowModel(log)
     , m_CraneArrowModel(log)
     , m_CrankModel(log)
     , m_RodModel(log)
+    , m_arrowLabel(log)
     , m_hwndOpenGl(NULL)
     , m_glVerMajor(2)
     , m_glVerMinor(0)
-
+    , m_mathModel(NULL)
 {
     m_prev_x = 0.0;
     m_prev_y = 0.0;
@@ -43,8 +46,6 @@ CRenderer::CRenderer(CLogCallback* log)
     m_baseMatrix = glm::translate(m_baseMatrix, glm::vec3(0.0, -3.0, 0.0));
     m_baseMatrix = glm::scale(m_baseMatrix, glm::vec3(0.05f));
 
-
-    m_mathModel.UpdateAngles();
 }
 
 CRenderer::~CRenderer()
@@ -94,6 +95,7 @@ CRenderer::LogMessage(const TCHAR* format, ...)
 
         m_log->LogMessage(CLogCallback::LOG_GL, format, args);
 
+
         va_end(args);
     }
 
@@ -101,24 +103,25 @@ CRenderer::LogMessage(const TCHAR* format, ...)
 
 
 BOOL
-CRenderer::Init(_In_ CWnd* parent)
+CRenderer::Init(_In_ HWND  parent, _In_ CMathModel* mathModel)
 {
     GLenum err;
     GLFWwindow* pGlWindow = NULL;
     GLFWmonitor* monitor = NULL;
 
     m_parent = parent;
+    m_mathModel = mathModel;
 
     CString  output = _T("Initializing GLFW...");
 
     if (!glfwInit())
     {
-        output += _T("FAILED");
+        output += _T("FAILED\n");
         LogMessage(output);
         return FALSE;
     }
 
-    output += _T("OK");
+    output += _T("OK\n");
     LogMessage(output);
 
 
@@ -151,10 +154,7 @@ CRenderer::Init(_In_ CWnd* parent)
     const LONG nNewStyle = (GetWindowLong(m_hwndOpenGl, GWL_STYLE) & ~WS_POPUP) | WS_CHILDWINDOW;
     SetWindowLong(m_hwndOpenGl, GWL_STYLE, nNewStyle);
 
-    CWnd *window = CWnd::FromHandle(m_hwndOpenGl);
-    window->SetParent(parent);
-
-    //SetWindowLong(glWindow.m_hWnd, )
+    ::SetParent(m_hwndOpenGl, parent);
 
     glfwMakeContextCurrent(pGlWindow);
 
@@ -172,7 +172,7 @@ CRenderer::Init(_In_ CWnd* parent)
 
     if (err != GLEW_OK) {
 
-        LogMessage(_T("[-] Failed to init GLEW: %S"), glewGetErrorString(err));
+        LogMessage(_T("[-] Failed to init GLEW: %S\n"), glewGetErrorString(err));
         return FALSE;
     }
 
@@ -186,7 +186,7 @@ CRenderer::Init(_In_ CWnd* parent)
 
     if (glVersion) {
 
-        LogMessage(_T("[*] OpenGL version: %S"), glVersion);
+        LogMessage(_T("[*] OpenGL version: %S\n"), glVersion);
     }
 
     // Set vsync
@@ -220,13 +220,18 @@ CRenderer::Init(_In_ CWnd* parent)
         LogMessage(_T("[-] Failed to load sharers"));
     }
 
+    if (m_SpriteShader.Init(
+        _T("shaders/sprite/sprite.vert"),
+        _T("shaders/sprite/sprite.frag"),
+        NULL) != TRUE)
+    {
+        LogMessage(_T("[-] Failed to load sharers"));
+    }
 
-    //m_ArrowModel.loadModel(_T("data/Arrow.3MF"));
-    m_ArrowModel.loadModel(_T("data/Arrow.OBJ"));
+    m_ArrowModel.loadModel(_T("data/Arrow.3MF"));
     m_ArrowModel.setColor(RGB(128, 255, 128));
 
-    //m_CraneArrowModel.loadModel(_T("data/Crane_arrow.3MF"));
-    m_CraneArrowModel.loadModel(_T("data/CraneArrow.OBJ"));
+    m_CraneArrowModel.loadModel(_T("data/Crane_arrow.3MF"));
     m_CraneArrowModel.setColor(RGB(255, 128, 128));
 
     m_CrankModel.loadModel(_T("data/Crank.3MF"));
@@ -235,13 +240,14 @@ CRenderer::Init(_In_ CWnd* parent)
     m_RodModel.loadModel(_T("data/Rod.3MF"));
     m_RodModel.setColor(RGB(128, 255, 255));
 
+    CRect  label(0, 0, 100, 10);
+    m_arrowLabel.setup(label, NULL);
 
-    glfwWindowHint(GLFW_VISIBLE, TRUE);
-    
-    window->ShowWindow(SW_SHOW);
 
     m_pGlWindow = pGlWindow;
-    //glfwMakeContextCurrent(NULL);
+
+    glfwWindowHint(GLFW_VISIBLE, TRUE);    
+    ::ShowWindow(m_hwndOpenGl, SW_SHOW);
 
     return TRUE;
 }
@@ -274,7 +280,7 @@ CRenderer::OnScrollCallback(GLFWwindow* window, double x_offset, double y_offset
     UNREFERENCED_PARAMETER(window);
 
     m_Camera.zoom(y_offset);    
-    m_parent->Invalidate(FALSE);
+    ::InvalidateRect(this->m_parent, NULL, FALSE);
 }
 
 
@@ -299,7 +305,7 @@ CRenderer::OnMouseCallback(GLFWwindow* window, double x_pos, double y_pos)
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS)
     {
         m_Camera.orbit(x_offset, y_offset);
-        m_parent->Invalidate(FALSE);
+        ::InvalidateRect(this->m_parent, NULL, FALSE);
         return;
     }
 
@@ -322,6 +328,9 @@ void
 CRenderer::Draw()
 {
     if (!m_pGlWindow)
+        return;
+
+    if (!m_mathModel)
         return;
 
     glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
@@ -365,50 +374,97 @@ CRenderer::Draw()
     m_ModelShader.setVec3("light.ambient", light_ambient);
     m_ModelShader.setVec3("light.diffuse", light_diffuse);
     m_ModelShader.setVec3("light.specular", light_specular);
+    m_ModelShader.setVec3("light.position", light_position);
 
     m_ModelShader.setMat4("view", view_mat);
     m_ModelShader.setMat4("projection", proj_mat);
-
-    m_ModelShader.setVec3("light.position", light_position);
-
     m_ModelShader.setVec3("view_pos", view_pos);
 
 
     m_ModelShader.use();
-
     m_ModelShader.setMat4("projection", proj_mat);
     m_ModelShader.setMat4("view", view_mat);
+
+    m_SpriteShader.use();
+    m_SpriteShader.setMat4("projection", proj_mat);
+    m_SpriteShader.setMat4("view", view_mat);
 
     //
     // arrow
     //
-    m_ModelShader.setMat4("model", m_baseMatrix * m_mathModel.getArrowMatrix());
-    m_ArrowModel.Draw(m_ModelShader);
+    
+    m_ArrowModel.Draw(m_baseMatrix * m_mathModel->getArrowMatrix(), m_ModelShader);
 
     //
     // crank
     //
-    m_ModelShader.setMat4("model", m_baseMatrix * m_mathModel.getCrank1Matrix());
-    m_CrankModel.Draw(m_ModelShader);
-
-    m_ModelShader.setMat4("model", m_baseMatrix * m_mathModel.getCrank2Matrix());
-    m_CrankModel.Draw(m_ModelShader);
+    m_CrankModel.Draw(m_baseMatrix * m_mathModel->getCrank1Matrix(), m_ModelShader);
+    m_CrankModel.Draw(m_baseMatrix * m_mathModel->getCrank2Matrix(), m_ModelShader);
 
     //
     // crane arrow
     //
-    m_ModelShader.setMat4("model", m_baseMatrix * m_mathModel.getCraneMatrix());
-    m_CraneArrowModel.Draw(m_ModelShader);
+    m_CraneArrowModel.Draw(m_baseMatrix * m_mathModel->getCraneMatrix(), m_ModelShader);
 
 
     //
     // crane rod
     //
-    m_ModelShader.setMat4("model", m_baseMatrix * m_mathModel.getRod1Matrix());
-    m_RodModel.Draw(m_ModelShader);
+    m_RodModel.Draw(m_baseMatrix * m_mathModel->getRod1Matrix(), m_ModelShader);
+    m_RodModel.Draw(m_baseMatrix * m_mathModel->getRod2Matrix(), m_ModelShader);
 
-    m_ModelShader.setMat4("model", m_baseMatrix * m_mathModel.getRod2Matrix());
-    m_RodModel.Draw(m_ModelShader);
+
+    glm::mat4  arrowLabel = m_baseMatrix * m_mathModel->getCraneMatrix();
+    arrowLabel = glm::translate(arrowLabel, glm::vec3(0.0f, 20.000f, 0.0f));
+
+    m_arrowLabel.Draw(arrowLabel, m_SpriteShader);
+
+    arrowLabel = m_baseMatrix * m_mathModel->getRod1Matrix();
+    arrowLabel = glm::translate(arrowLabel, glm::vec3(0.0f, 20.000f, 0.0f));
+
+    m_arrowLabel.Draw(arrowLabel, m_SpriteShader);
+
+
+    glUseProgram(0);
+
+    // Установка матриц проекции и вида
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glLoadMatrixf(glm::value_ptr(proj_mat));
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    glLoadMatrixf(glm::value_ptr(view_mat));
+
+    glm::vec4  zerro = m_baseMatrix * glm::vec4(1.0f);
+
+    glLineWidth(2.0f); // line thin
+    glColor3fv(glm::value_ptr(glm::vec3(1.0f, 0.0f, 0.0f)));
+    //
+    glBegin(GL_LINES);
+    glVertex4f(zerro.x, zerro.y, zerro.z - 5.0f, zerro.w);
+    glVertex4f(zerro.x, zerro.y, zerro.z + 5.0f, zerro.w);
+    glEnd();
+
+
+    zerro =  m_baseMatrix * m_mathModel->getArrowMatrix() * glm::vec4(1.0f);
+
+    glLineWidth(2.0f); // line thin
+    glColor3fv(glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.0f)));
+    //
+    glBegin(GL_LINES);
+    glVertex4f(zerro.x, zerro.y, zerro.z - 3.0f, zerro.w);
+    glVertex4f(zerro.x, zerro.y, zerro.z + 3.0f, zerro.w);
+    glEnd();
+
+    zerro = m_baseMatrix * m_mathModel->getCrank1Matrix() * glm::vec4(1.0f);
+
+    glColor3fv(glm::value_ptr(glm::vec3(1.0f, 1.0f, 0.0f)));
+    glBegin(GL_LINES);
+    glVertex4f(zerro.x, zerro.y, zerro.z - 3.0f, zerro.w);
+    glVertex4f(zerro.x, zerro.y, zerro.z + 3.0f, zerro.w);
+    glEnd();
+    glLineWidth(1.0f); // line thin
 
     glfwSwapBuffers(m_pGlWindow);
 }

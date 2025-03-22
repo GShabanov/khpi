@@ -18,5 +18,5 @@ void main()
     gl_Position = view * model * vec4(position, 1.0);
 
     vs_out.frag_pos = vec3(model * vec4(position, 1.0));
-    vs_out.frag_norm = vec3(vec4(normalMatrix * normal, 0.0));  
+    vs_out.frag_norm = normalize(normalMatrix * normal);
 }

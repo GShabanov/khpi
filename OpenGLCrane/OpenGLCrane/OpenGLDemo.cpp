@@ -53,6 +53,9 @@ COpenGLDemoApp theApp;
 
 BOOL COpenGLDemoApp::InitInstance()
 {
+    //_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_CRT_DF);
+    //_CrtSetBreakAlloc(482);
+
 	// InitCommonControlsEx() is required on Windows XP if an application
 	// manifest specifies use of ComCtl32.dll version 6 or later to enable
 	// visual styles.  Otherwise, any window creation will fail.

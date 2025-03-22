@@ -374,11 +374,14 @@ CModel::processMesh2(const aiMesh* mesh, const aiScene* scene, glm::mat4 &relTra
 
 
 void
-CModel::Draw(CShader &shader)
+CModel::Draw(glm::mat4 transform, CShader &shader)
 {
 
     if (!m_initialized)
         return;
+
+    shader.use();
+    shader.setMat4("model", transform);
 
     for (unsigned int i = 0; i < m_meshes.size(); i++)
     {

@@ -14,6 +14,8 @@
 
 // CChildView
 
+IMPLEMENT_DYNCREATE(CChildView, CWnd)
+
 CChildView::CChildView()
     : m_renderer(this)
 {
@@ -21,6 +23,7 @@ CChildView::CChildView()
 
 CChildView::~CChildView()
 {
+    this->m_pMediator->unsubscribe(this);
 }
 
 
@@ -52,7 +55,8 @@ int
 CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 
-    m_renderer.Init(this);
+    m_mathModel.UpdateAngles();
+    m_renderer.Init(this->GetSafeHwnd(), &m_mathModel);
 
     this->Invalidate(TRUE);
 
@@ -60,9 +64,69 @@ CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 }
 
 void
+CChildView::OnSetAngle(int num, float angle)
+{
+    if (num == 0) {
+        m_mathModel.setArrowAngle(angle);
+    }
+
+    if (num == 1) {
+        m_mathModel.setCrankAngle(angle);
+    }
+
+    this->Invalidate(FALSE);
+}
+
+CString*
+CChildView::LogFormatMessage(const TCHAR* format, va_list vl)
+{
+    TCHAR  stackBuffer[200];
+    TCHAR* logBuffer = stackBuffer;
+
+    int chars = _vsctprintf(format, vl);
+
+    if (chars > (sizeof(stackBuffer) / sizeof(TCHAR) + 2))
+    {
+        logBuffer = (TCHAR*)malloc((chars + 2) * sizeof(TCHAR));
+    }
+
+    _vsntprintf(logBuffer, chars, format, vl);
+
+    if (chars < 1)
+    {
+        if (logBuffer != stackBuffer)
+            free(logBuffer);
+
+        return NULL;
+    }
+
+    logBuffer[chars] = 0;
+
+    CString* pStr = new CString(logBuffer);
+
+#ifdef _DEBUG
+    logBuffer[chars] = _T('\n');
+    logBuffer[chars + 1] = 0;
+    OutputDebugString(logBuffer);
+#endif // _DEBUG
+
+
+    if (logBuffer != stackBuffer)
+        free(logBuffer);
+
+    return pStr;
+}
+
+void
 CChildView::LogMessage(LOG_TYPE logType, const TCHAR* format, va_list va)
 {
     //m_mainFrame->LogMessage(logType, format, va);
+
+    CString  *log = LogFormatMessage(format, va);
+
+    OutputDebugString(log->GetString());
+
+    delete log;
 }
 
 void
@@ -90,7 +154,7 @@ void CChildView::LogMessage(LOG_TYPE logType, const TCHAR* format, ...)
 void
 CChildView::OnPaint() 
 {
-	CPaintDC dc(this); // device context for painting
+	//CPaintDC dc(this); // device context for painting
 
     m_renderer.Draw();
 	

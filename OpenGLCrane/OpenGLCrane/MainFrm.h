@@ -4,6 +4,7 @@
 
 #pragma once
 #include "ChildView.h"
+#include "controlState.h"
 
 class CMainFrame : public CFrameWnd
 {
@@ -33,14 +34,19 @@ public:
 #endif
 
 protected:  // control bar embedded members
+    virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
+
 	CToolBar          m_wndToolBar;
 	CStatusBar        m_wndStatusBar;
-	CChildView    m_wndView;
+	//CChildView        m_wndView;
+    CSplitterWndEx    m_wndSplitter;
+    CStateMediator    m_mediator;
 
 // Generated message map functions
 protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSetFocus(CWnd *pOldWnd);
+    afx_msg void OnDestroy();
 	DECLARE_MESSAGE_MAP()
 
 };

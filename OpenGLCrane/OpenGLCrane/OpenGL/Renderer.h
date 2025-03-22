@@ -19,8 +19,7 @@
 #include "Shader.h"
 #include "Model.h"
 #include "Camera.h"
-
-#include "MathModel.h"
+#include "Sprite.h"
 
 
 class CRenderer
@@ -28,21 +27,22 @@ class CRenderer
 protected:
     class CLogCallback*       m_log;
 
-    CWnd*               m_parent;
+    HWND                m_parent;
     HWND                m_hwndOpenGl;
     GLFWwindow*         m_pGlWindow;
     CModel              m_ArrowModel;
     CModel              m_CraneArrowModel;
     CModel              m_CrankModel;
     CModel              m_RodModel;
-
+    CSprite             m_arrowLabel;
 
     CCamera             m_Camera;
 
     CShader             m_DefaultShader;
     CShader             m_ModelShader;
+    CShader             m_SpriteShader;
 
-    CMathModel          m_mathModel;
+    class CMathModel   *m_mathModel;
 
     double              m_prev_x;
     double              m_prev_y;
@@ -61,7 +61,7 @@ public:
     CRenderer(class CLogCallback *log);
     ~CRenderer();
 
-    BOOL   Init(_In_ CWnd  *parent);
+    BOOL   Init(_In_ HWND  parent, _In_ CMathModel* mathModel);
     void   SetSize(int cx, int cy);
     void   Draw();
 
