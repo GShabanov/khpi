@@ -257,9 +257,9 @@ CRenderer::Init(_In_ HWND  parent, _In_ CMathModel* mathModel)
     m_arrowLabel.setup(glm::vec2(129.7f, 10.0f), textureDim);
     m_rodLabel.setup(glm::vec2(104.19f, 10.0f), textureDim);
 
-    glm::vec3 start(0.0f, 0.0f, 0.0f);
-    glm::vec3 direction(1.0f, 0.5f, 0.2f);
-    float length = 100.5f;
+    glm::vec3 start(100.0f, 0.0f, 0.0f);
+    glm::vec3 direction(0.0f, 1.0f, 0.0f);
+    float length = 30.5f;
 
 
     m_vector.setup(start, direction, length);
@@ -429,6 +429,7 @@ CRenderer::Draw()
     // crane arrow
     //
     m_CraneArrowModel.Draw(m_baseMatrix * m_mathModel->getCraneMatrix(), m_ModelShader);
+    m_vector.Draw(m_baseMatrix * m_mathModel->getCraneMatrix(), m_VectorShader);
 
 
     //
@@ -447,9 +448,6 @@ CRenderer::Draw()
     labelMatrix = glm::translate(labelMatrix, glm::vec3(0.0f, 10.0f, 0.0f));
 
     m_rodLabel.Draw(labelMatrix, m_SpriteShader);
-
-
-    m_vector.Draw(labelMatrix, m_VectorShader);
 
 
     glUseProgram(0);
