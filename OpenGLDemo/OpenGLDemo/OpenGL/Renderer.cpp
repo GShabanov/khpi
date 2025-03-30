@@ -200,6 +200,8 @@ CRenderer::Init(_In_ CWnd* parent)
         LogMessage(_T("[-] Failed to load sharers"));
     }
 
+
+    m_fone.setup();
     //
     // Instantiate and load models
     //
@@ -314,7 +316,7 @@ CRenderer::drawLine3f(float cx, float cy, float cx2, float cy2)
 {
     glBegin(GL_LINES);
 
-    glVertex3f(cx, cy, 0.0f);  // начало
+    glVertex3f(cx, cy, 0.0f);    // начало
     glVertex3f(cx2, cy2, 0.0f);  // конец
 
     glEnd();
@@ -360,13 +362,21 @@ CRenderer::Draw()
     m_DefaultShader.setVec3("view_pos", view_pos);
 
 
-
     m_DefaultShader.use();
-
 
     m_DefaultShader.setMat4("projection", proj_mat);
     m_DefaultShader.setMat4("view", view_mat);
     m_DefaultShader.setMat4("model", glm::mat4(1.0));
+
+
+    //-----------------------------------------//
+    //============= РИСОВАНИЕ =================//
+    //-----------------------------------------//
+    CRect  rect;
+    GetClientRect(m_hwndOpenGl, &rect);
+
+    m_fone.Draw(rect);
+
 
     this->drawCircle3f(0.0, 0.0, 0.5, 100);
 

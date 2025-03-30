@@ -88,7 +88,7 @@ void CChildView::LogMessage(LOG_TYPE logType, const TCHAR* format, ...)
 
 
 void
-CChildView::OnPaint() 
+CChildView::OnPaint()  // WM_PAINT
 {
 	CPaintDC dc(this); // device context for painting
 
