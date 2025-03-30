@@ -1,8 +1,18 @@
+/***************************************************************************************\
+*   File:                                                                               *
+*       Sprite.cpp                                                                      *
+*                                                                                       *
+*   Abstract:                                                                           *
+*       Sprite drawing implementation                                                   *
+*                                                                                       *
+*   Author:                                                                             *
+*       GShabanov ()    28-Mar-2025                                                     *
+*                                                                                       *
+*   Revision History:                                                                   *
+\***************************************************************************************/
 #include "pch.h"
 #include "shader.h"
 #include "Sprite.h"
-
-#include "glm/gtx/normal.hpp"
 
 
 CSprite::~CSprite()
@@ -19,12 +29,12 @@ CSprite::~CSprite()
 
     if (m_initialized)
     {
-        free(m_textureData);
+        free(m_defaultData);
     }
 }
 
 BOOL
-CSprite::InitTextureBuffer(CRect& size, GLuint* id)
+CSprite::InitTextureBuffer(GLuint* id)
 {
 
     GLuint texture;
@@ -42,8 +52,8 @@ CSprite::InitTextureBuffer(CRect& size, GLuint* id)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, size.Width(), size.Height(), 0,
-        GL_RGBA, GL_UNSIGNED_BYTE, m_textureData);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_dimensions.x, m_dimensions.y, 0,
+        GL_RGBA, GL_UNSIGNED_BYTE, m_defaultData);
 
     *id = texture;
 
@@ -51,21 +61,17 @@ CSprite::InitTextureBuffer(CRect& size, GLuint* id)
 }
 
 BOOL
-CSprite::setupTexturedRect(CRect &size)
+CSprite::setupRenderingObject(glm::vec2& imageSize)
 {
-    //-halfSize, -0.1f, halfSize, 0.0f, 1.0f, // Top-left
-    //halfSize, -0.1f, halfSize, 1.0f, 1.0f, // Top-right
-    //-halfSize, -0.1f, -halfSize, 0.0f, 0.0f, // Bottom-left
-    //halfSize, -0.1f, -halfSize, 1.0f, 0.0f  // Bottom-right
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
     float vertices[] = {
-        // positions         // texture coords
-        0.0f,                (float)size.Height(), 0.0f,  0.0f,        0.0f,   // top left
-        (float)size.Width(), (float)size.Height(), 0.0f,  (float)1.0f, 0.0f,   // top right
-        0.0f,                0.0f,                 0.0f,  0.0f, (float)1.0f,   // bottom left
-        (float)size.Width(), 0.0f,                 0.0f,  (float)1.0f, (float)1.0f,   // bottom right
+        // positions                                   // texture coords U/V
+        0.0f,               (float)imageSize.y, 0.0f,  0.0f,        0.0f,   // top left
+        (float)imageSize.x, (float)imageSize.y, 0.0f,  (float)1.0f, 0.0f,   // top right
+        0.0f,               0.0f,               0.0f,  0.0f, (float)1.0f,   // bottom left
+        (float)imageSize.x, 0.0f,               0.0f,  (float)1.0f, (float)1.0f,   // bottom right
     };
 
 
@@ -91,53 +97,54 @@ CSprite::setupTexturedRect(CRect &size)
     return TRUE;
 }
 
+void
+CSprite::UpdateData(PVOID data, POINT& textureSize)
+{
+    glBindTexture(GL_TEXTURE_2D, m_Texture);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, textureSize.x, textureSize.y, 0,
+        GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 // Load texture
 BOOL
-CSprite::setup(CRect& size, LPCTSTR type)
+CSprite::setup(glm::vec2& imageSize, POINT& textureSize)
 {
     BOOL   _return = FALSE;
     SIZE_T imageDataSize;
 
-    imageDataSize = size.Width() * size.Height() * sizeof(DWORD);
+    imageDataSize = textureSize.x * textureSize.y * sizeof(DWORD);
 
-    m_textureData = malloc(imageDataSize);
+    m_defaultData = malloc(imageDataSize);
 
-    if (!m_textureData)
+    if (!m_defaultData)
         return FALSE;
 
-    memset(m_textureData, 0xFF, imageDataSize);
+    memset(m_defaultData, 0xFF, imageDataSize);
 
-    unsigned char* buffer = (unsigned char*)m_textureData;
+    unsigned char* buffer = (unsigned char*)m_defaultData;
 
-    for (unsigned int j = 0; j < size.Height(); ++j) {
+    for (LONG j = 0; j < textureSize.y; ++j)
+    {
+        size_t yoff = j * textureSize.x;
 
-        for (unsigned int i = 0; i < size.Width(); ++i) {
+        for (LONG i = 0; i < textureSize.x; ++i)
+        {
 
-            size_t index = j * size.Width() + i;
-
-            buffer[4 * index + 0] = 0xFF;
-            buffer[4 * index + 1] = 0xFF;
-            buffer[4 * index + 2] = 0x00;
-            buffer[4 * index + 3] = 0x30;
+            buffer[4 * (yoff + i) + 0] = 0xFF;   // r
+            buffer[4 * (yoff + i) + 1] = 0xFF;   // g
+            buffer[4 * (yoff + i) + 2] = 0x00;   // b
+            buffer[4 * (yoff + i) + 3] = 0x30;   // a
         }
     }
 
-    for (unsigned int i = 0; i < size.Width(); ++i) {
-        size_t index = 5 * size.Width() + i;
-
-        buffer[4 * index + 0] = 0xFF;   // r
-        buffer[4 * index + 1] = 0xFF;   // g
-        buffer[4 * index + 2] = 0xFF;   // b
-        buffer[4 * index + 3] = 0xFF;   // a
-
-    }
-
-
-    _return = setupTexturedRect(size);
+    _return = setupRenderingObject(imageSize);
 
     if (_return)
     {
-        _return = InitTextureBuffer(size, &m_Texture);
+        _return = InitTextureBuffer(&m_Texture);
     }
 
     if (_return)

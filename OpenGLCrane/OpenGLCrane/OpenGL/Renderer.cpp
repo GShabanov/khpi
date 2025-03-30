@@ -26,11 +26,14 @@ CRenderer::CRenderer(CLogCallback* log)
     , m_DefaultShader(log)
     , m_ModelShader(log)
     , m_SpriteShader(log)
+    , m_VectorShader(log)
     , m_ArrowModel(log)
     , m_CraneArrowModel(log)
     , m_CrankModel(log)
     , m_RodModel(log)
     , m_arrowLabel(log)
+    , m_rodLabel(log)
+    , m_vector(log)
     , m_hwndOpenGl(NULL)
     , m_glVerMajor(2)
     , m_glVerMinor(0)
@@ -135,7 +138,7 @@ CRenderer::Init(_In_ HWND  parent, _In_ CMathModel* mathModel)
     //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 
-    pGlWindow = glfwCreateWindow(40, 40, "OpenGlDemo", monitor, NULL);
+    pGlWindow = glfwCreateWindow(40, 40, "OpenGlCrane", monitor, NULL);
 
     if (!pGlWindow)
     {
@@ -228,6 +231,16 @@ CRenderer::Init(_In_ HWND  parent, _In_ CMathModel* mathModel)
         LogMessage(_T("[-] Failed to load sharers"));
     }
 
+    
+    if (m_VectorShader.Init(
+        _T("shaders/vector/vector.vert"),
+        _T("shaders/vector/vector.frag"),
+        _T("shaders/vector/vector.geom")
+        ) != TRUE)
+    {
+        LogMessage(_T("[-] Failed to load sharers"));
+    }
+
     m_ArrowModel.loadModel(_T("data/Arrow.3MF"));
     m_ArrowModel.setColor(RGB(128, 255, 128));
 
@@ -240,9 +253,16 @@ CRenderer::Init(_In_ HWND  parent, _In_ CMathModel* mathModel)
     m_RodModel.loadModel(_T("data/Rod.3MF"));
     m_RodModel.setColor(RGB(128, 255, 255));
 
-    CRect  label(0, 0, 100, 10);
-    m_arrowLabel.setup(label, NULL);
+    POINT  textureDim = { 1024, 256 };
+    m_arrowLabel.setup(glm::vec2(129.7f, 10.0f), textureDim);
+    m_rodLabel.setup(glm::vec2(104.19f, 10.0f), textureDim);
 
+    glm::vec3 start(0.0f, 0.0f, 0.0f);
+    glm::vec3 direction(1.0f, 0.5f, 0.2f);
+    float length = 100.5f;
+
+
+    m_vector.setup(start, direction, length);
 
     m_pGlWindow = pGlWindow;
 
@@ -389,6 +409,10 @@ CRenderer::Draw()
     m_SpriteShader.setMat4("projection", proj_mat);
     m_SpriteShader.setMat4("view", view_mat);
 
+    m_VectorShader.use();
+    m_VectorShader.setMat4("projection", proj_mat);
+    m_VectorShader.setMat4("view", view_mat);
+
     //
     // arrow
     //
@@ -414,20 +438,29 @@ CRenderer::Draw()
     m_RodModel.Draw(m_baseMatrix * m_mathModel->getRod2Matrix(), m_ModelShader);
 
 
-    glm::mat4  arrowLabel = m_baseMatrix * m_mathModel->getCraneMatrix();
-    arrowLabel = glm::translate(arrowLabel, glm::vec3(0.0f, 20.000f, 0.0f));
+    glm::mat4  labelMatrix = m_baseMatrix * m_mathModel->getCraneMatrix();
+    labelMatrix = glm::translate(labelMatrix, glm::vec3(-29.7f, 20.000f, 0.0f));
 
-    m_arrowLabel.Draw(arrowLabel, m_SpriteShader);
+    m_arrowLabel.Draw(labelMatrix, m_SpriteShader);
 
-    arrowLabel = m_baseMatrix * m_mathModel->getRod1Matrix();
-    arrowLabel = glm::translate(arrowLabel, glm::vec3(0.0f, 20.000f, 0.0f));
+    labelMatrix = m_baseMatrix * m_mathModel->getRod1Matrix();
+    labelMatrix = glm::translate(labelMatrix, glm::vec3(0.0f, 10.0f, 0.0f));
 
-    m_arrowLabel.Draw(arrowLabel, m_SpriteShader);
+    m_rodLabel.Draw(labelMatrix, m_SpriteShader);
+
+
+    m_vector.Draw(labelMatrix, m_VectorShader);
 
 
     glUseProgram(0);
 
-    // Установка матриц проекции и вида
+    //
+    // static conveur draw
+    //
+
+    // Setup projection and view matrix
+    /*
+    * 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glLoadMatrixf(glm::value_ptr(proj_mat));
@@ -465,7 +498,10 @@ CRenderer::Draw()
     glVertex4f(zerro.x, zerro.y, zerro.z + 3.0f, zerro.w);
     glEnd();
     glLineWidth(1.0f); // line thin
-
+    */
+    //
+    // swap buffers
+    //
     glfwSwapBuffers(m_pGlWindow);
 }
 

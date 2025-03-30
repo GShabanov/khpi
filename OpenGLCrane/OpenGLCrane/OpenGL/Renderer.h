@@ -20,7 +20,8 @@
 #include "Model.h"
 #include "Camera.h"
 #include "Sprite.h"
-
+#include "CDiagram.h"
+#include "GlVector.h"
 
 class CRenderer
 {
@@ -34,13 +35,17 @@ protected:
     CModel              m_CraneArrowModel;
     CModel              m_CrankModel;
     CModel              m_RodModel;
-    CSprite             m_arrowLabel;
+    CDiagram            m_arrowLabel;
+    CDiagram            m_rodLabel;
+
+    CVector             m_vector;
 
     CCamera             m_Camera;
 
     CShader             m_DefaultShader;
     CShader             m_ModelShader;
     CShader             m_SpriteShader;
+    CShader             m_VectorShader;
 
     class CMathModel   *m_mathModel;
 

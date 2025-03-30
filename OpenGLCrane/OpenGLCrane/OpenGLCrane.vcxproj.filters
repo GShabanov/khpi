@@ -19,6 +19,21 @@
     <Filter Include="Header Files\OpenGL">
       <UniqueIdentifier>{dfaf246a-671f-4eb5-b316-07418e9aa90d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{1b00c8df-57ab-4717-bc1b-47ab71feb0ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\model">
+      <UniqueIdentifier>{e45f7ad0-7dae-4123-90bf-a0fbc9fc2015}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\sprite">
+      <UniqueIdentifier>{25022566-4dbe-48e1-bbd4-92828f4e39bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\vector">
+      <UniqueIdentifier>{59cd036f-05d7-4e31-80e5-1ad6d47467f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\default">
+      <UniqueIdentifier>{7826596d-4179-4cfd-b840-c9922a25e162}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OpenGLDemo.h">
@@ -75,6 +90,12 @@
     <ClInclude Include="OpenGL\Sprite.h">
       <Filter>Header Files\OpenGL</Filter>
     </ClInclude>
+    <ClInclude Include="OpenGL\CDiagram.h">
+      <Filter>Header Files\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="OpenGL\GlVector.h">
+      <Filter>Header Files\OpenGL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OpenGLDemo.cpp">
@@ -119,6 +140,12 @@
     <ClCompile Include="OpenGL\Sprite.cpp">
       <Filter>Source Files\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="OpenGL\CDiagram.cpp">
+      <Filter>Source Files\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="OpenGL\GlVector.cpp">
+      <Filter>Source Files\OpenGL</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="OpenGLDemo.rc">
@@ -128,6 +155,36 @@
   <ItemGroup>
     <None Include="res\OpenGLDemo.rc2">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\shaders\default\default.frag">
+      <Filter>Shaders\default</Filter>
+    </None>
+    <None Include="..\shaders\default\default.vert">
+      <Filter>Shaders\default</Filter>
+    </None>
+    <None Include="..\shaders\model\model.frag">
+      <Filter>Shaders\model</Filter>
+    </None>
+    <None Include="..\shaders\model\model.geom">
+      <Filter>Shaders\model</Filter>
+    </None>
+    <None Include="..\shaders\model\model.vert">
+      <Filter>Shaders\model</Filter>
+    </None>
+    <None Include="..\shaders\vector\vector.frag">
+      <Filter>Shaders\vector</Filter>
+    </None>
+    <None Include="..\shaders\vector\vector.geom">
+      <Filter>Shaders\vector</Filter>
+    </None>
+    <None Include="..\shaders\vector\vector.vert">
+      <Filter>Shaders\vector</Filter>
+    </None>
+    <None Include="..\shaders\sprite\sprite.frag">
+      <Filter>Shaders\sprite</Filter>
+    </None>
+    <None Include="..\shaders\sprite\sprite.vert">
+      <Filter>Shaders\sprite</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

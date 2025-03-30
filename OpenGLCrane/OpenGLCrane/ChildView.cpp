@@ -58,7 +58,7 @@ CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
     m_mathModel.UpdateAngles();
     m_renderer.Init(this->GetSafeHwnd(), &m_mathModel);
 
-    this->Invalidate(TRUE);
+    this->Invalidate(FALSE);
 
     return CWnd::OnCreate(lpCreateStruct);
 }
@@ -124,7 +124,7 @@ CChildView::LogMessage(LOG_TYPE logType, const TCHAR* format, va_list va)
 
     CString  *log = LogFormatMessage(format, va);
 
-    OutputDebugString(log->GetString());
+    //OutputDebugString(log->GetString());
 
     delete log;
 }
