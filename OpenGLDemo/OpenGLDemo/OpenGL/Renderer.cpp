@@ -202,6 +202,9 @@ CRenderer::Init(_In_ CWnd* parent)
 
 
     m_fone.setup();
+
+
+    m_fone.prepareFBOData();
     //
     // Instantiate and load models
     //
@@ -378,9 +381,9 @@ CRenderer::Draw()
     m_fone.Draw(rect);
 
 
-    this->drawCircle3f(0.0, 0.0, 0.5, 100);
+    this->drawCircle3f(0.0f, 0.0f, 0.5f, 100);
 
-    this->drawLine3f(0.5, 0.5, 0.8, 0.8);
+    this->drawLine3f(0.5f, 0.5f, 0.8f, 0.8f);
 
     //m_SampleModel.Draw(m_DefaultShader);
 

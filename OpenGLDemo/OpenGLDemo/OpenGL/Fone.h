@@ -32,6 +32,8 @@ public:
 
     bool setup();
 
+    bool prepareFBOData();
+
     void Draw(CRect& drawRect);
 
 };

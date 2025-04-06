@@ -29,10 +29,10 @@ CFone::setup()
 
     memset(m_textureData, 0, m_width * m_height * 4);
 
-    for (int i = 0; i < m_width; i++)
+    /*for (int i = 0; i < m_width; i++)
     {
         *(m_textureData + (m_width * 200) + i) = 0xFFFFFFFF;
-    }
+    }*/
 
     // 1. —оздаЄм текстуру
     glGenTextures(1, &m_texture);
@@ -62,13 +62,44 @@ CFone::setup()
     return true;
 }
 
+bool
+CFone::prepareFBOData()
+{
+    //
+    // ѕример рисовани€ через дополнительный FBO
+    //
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);       // цель Ч искуственный FBO
+
+    //--------------------
+    // –»—ќ¬јЌ»≈ 
+    //--------------------
+
+    // 
+    //  это рисование будет в ƒќѕќЋЌ»“≈Ћ№Ќџ… Ѕ”‘≈–
+    //
+    glClearColor(0.0f, 0.5f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glBegin(GL_LINES);
+
+    glVertex3f(0.0f, 0.0f, 0.0f);    // начало
+    glVertex3f(50.0f, 0.0f, 0.0f);  // конец
+
+    glEnd();
+
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);  // отсоедин€ем
+
+    return true;
+}
+
 
 void
 CFone::Draw(CRect &drawRect)
 {
     // 1. ”казываем, откуда и куда копируем
     glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fbo);        // источник
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);            // цель Ч экран
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);            // цель Ч экранный FBO
 
     //
     // 2.  опируем цветовое содержимое
@@ -85,5 +116,6 @@ CFone::Draw(CRect &drawRect)
     //
     glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);        // источник
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);        // цель Ч экран
+
 
 }
