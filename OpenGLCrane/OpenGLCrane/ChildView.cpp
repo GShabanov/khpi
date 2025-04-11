@@ -55,7 +55,6 @@ int
 CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 
-    m_mathModel.UpdateAngles();
     m_renderer.Init(this->GetSafeHwnd(), &m_mathModel);
 
     this->Invalidate(FALSE);
@@ -154,7 +153,7 @@ void CChildView::LogMessage(LOG_TYPE logType, const TCHAR* format, ...)
 void
 CChildView::OnPaint() 
 {
-	//CPaintDC dc(this); // device context for painting
+	CPaintDC dc(this); // device context for painting
 
     m_renderer.Draw();
 	

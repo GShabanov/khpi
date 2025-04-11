@@ -26,6 +26,14 @@ private:
 
     bool                        m_initialized;
 
+    typedef struct _VBO_STRUCT {
+        glm::vec3  origin;
+        glm::vec3  direction;
+        glm::vec4  color;
+        float      length;
+
+    } VBO_STRUCT;
+
 public:
     CVector(class CLogCallback* logcallback)
     {
@@ -38,11 +46,12 @@ public:
 
     virtual ~CVector();
 
+    BOOL update(glm::vec3& start, glm::vec3& direction, float length);
 
-    BOOL setup(glm::vec3& start, glm::vec3& direction, float length);
+    BOOL setup(glm::vec3& start, glm::vec3& direction, float length, glm::vec4& color = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
     // Call draw function of all meshes in m_meshes
-    void Draw(glm::mat4 transform, class CShader& spriteShader);
+    void Draw(glm::mat4& transform, class CShader& spriteShader);
 
 };
 

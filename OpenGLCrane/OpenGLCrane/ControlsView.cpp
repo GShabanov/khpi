@@ -104,6 +104,8 @@ void CControlsWnd::AdjustLayout()
 
     m_FirstChain.SetWindowPos(nullptr, rectClient.left + 10, rectClient.top + 25, 25, rectClient.Height() - 70, SWP_NOACTIVATE | SWP_NOZORDER);
     m_SecondChain.SetWindowPos(nullptr, rectClient.left + 40, rectClient.top + 25, 25, rectClient.Height() - 70, SWP_NOACTIVATE | SWP_NOZORDER);
+
+    Invalidate(TRUE);
 }
 
 int

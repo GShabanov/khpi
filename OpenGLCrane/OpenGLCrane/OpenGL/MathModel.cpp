@@ -201,74 +201,216 @@ CMathModel::UpdateAngles()
 
     rodMatrix2 = glm::translate(rodMatrix2, glm::vec3(0.0f, 0.0f, -32.0f));
     m_chains[3] = rodMatrix2;
+
+
+    m_epureData = CalcForceMomentEpure(100.0f);
+}
+
+glm::vec2 CMathModel::GetPointInRodLocal(float length)
+{
+    return glm::vec2(0.0f, length); // если шатун направлен вверх
 }
 
 
 CMathModel::ForceMomentResult
-CMathModel::CalcForceMomentEpure(float loadForce /* F1 */)
+CMathModel::CalcForceMomentEpure(float loadForce, glm::vec3 gravityDir)
 {
     ForceMomentResult result{};
 
-    // lengths
-    const float AB = m_ArrowLength;   // 95.0f
-    const float AD = m_crankLength;   // 25.0f
-    const float BC = 29.7f;
-    const float BE = 100.0f; //
-    const float CD = 104.19f;
+    // Geometry constants (in millimeters)
+    //const float AB = m_ArrowLength;
+    //const float BC = 29.7f;
+    //const float CD = 104.19f;
+    //const float crankLength = m_crankLength;
+
+    float density = 7850.0f; // Steel density (kg/m³)
+    float g = 9.81f; // gravity acceleration (m/s²)
+
+    // Cross-sectional areas
+    float upperBeamArea_mm2 = 10.0f * 10.0f; // Upper arm cross-section
+    float lowerBeamArea_mm2 = 15.0f * 15.0f; // Lower arm cross-section
+    float rodArea_mm2 = 5.0f * 5.0f;         // Rod cross-section
+    float crankArea_mm2 = 5.0f * 5.0f;       // Crank cross-section
+
+    // Upper beam weight calculation
+    float upperBeamArea_m2 = upperBeamArea_mm2 * 1e-6f;
+    float upperBeamLength_m = (m_BC + m_BE) / 1000.0f;
+    float upperBeamMass = density * upperBeamArea_m2 * upperBeamLength_m;
+    float upperBeamWeight = upperBeamMass * g;
+
+    // Lower beam weight calculation
+    float lowerBeamArea_m2 = lowerBeamArea_mm2 * 1e-6f;
+    float lowerBeamLength_m = m_AB / 1000.0f;
+    float lowerBeamMass = density * lowerBeamArea_m2 * lowerBeamLength_m;
+    float lowerBeamWeight = lowerBeamMass * g;
+
+    // Rod weight calculation
+    float rodArea_m2 = rodArea_mm2 * 1e-6f;
+    float rodLength_m = m_CD / 1000.0f;
+    float rodMass = density * rodArea_m2 * rodLength_m;
+    float rodWeight = rodMass * g;
+
+    // Crank weight calculation
+    float crankArea_m2 = crankArea_mm2 * 1e-6f;
+    float crankLength_m = m_crankLength / 1000.0f;
+    float crankMass = density * crankArea_m2 * crankLength_m;
+    float crankWeight = crankMass * g;
+
+    // World-space forces
+    glm::vec3 loadWorld = gravityDir * loadForce;
+    glm::vec3 upperBeamWeightWorld = gravityDir * upperBeamWeight;
+    glm::vec3 lowerBeamWeightWorld = gravityDir * lowerBeamWeight;
+    glm::vec3 rodWeightWorld = gravityDir * rodWeight;
+    glm::vec3 crankWeightWorld = gravityDir * crankWeight;
+
+    glm::vec3 totalUpperBeamForceWorld = loadWorld + upperBeamWeightWorld;
 
     //
-    const float AE = AB + BE; // A > B > E
-    const float AC = AB - BC;
-    const float CE = BE;
-
-    // 
-    float A_mm2 = 100.0f; // мм^2
-    float A_m2 = A_mm2 * 1e-6f;
-    float density = 7850.0f;
-    float g = 9.81f;
-    float L_str_m = (BC + BE) / 1000.0f;
-    float mass = density * A_m2 * L_str_m;
-    float weight = mass * g; // 
-
-    float totalLoad = loadForce + weight;
+    // Force at E (top of upper arm)
+    //
+    glm::vec3 forceAtELocal = glm::vec3(glm::inverse(m_chains[1]) * glm::vec4(loadWorld, 0.0f));
+    result.forceAtE.direction = glm::normalize(forceAtELocal);
+    result.forceAtE.magnitude = glm::length(forceAtELocal);
 
     //
-    float r_weight = AB + BE / 2.0f;
-    float r_load = AE; //
+    // Moment at B caused by load at E
+    //
+    glm::vec2 r_BE_local(0.0f, m_BE);
+    result.momentAtB = r_BE_local.x * forceAtELocal.y - r_BE_local.y * forceAtELocal.x;
 
     //
-    float moment_weight = weight * r_weight;
-    float moment_load = loadForce * r_load;
+    // Reaction at E (along the beam towards B)
+    //
+    glm::vec2 beamDirLocal = glm::normalize(glm::vec2(0.0f, -glm::sign(m_BE)));
+    float reactionMagE = glm::dot(-glm::vec2(forceAtELocal), beamDirLocal);
 
-    float moment_total = moment_weight + moment_load;
+    if (reactionMagE < 0.0f)
+    {
+        reactionMagE = -reactionMagE;
+        beamDirLocal = -beamDirLocal;
+    }
+
+    result.reactionAtE.direction = beamDirLocal;
+    result.reactionAtE.magnitude = reactionMagE;
 
     //
-    result.reactionD = moment_total / AD;
-
+    // Reaction at B (base of upper arm)
     //
-    result.reactionA = totalLoad - result.reactionD;
+    glm::vec3 reactionWorldB = -totalUpperBeamForceWorld;
+    glm::vec3 reactionBLocalFull = glm::vec3(glm::inverse(m_chains[1]) * glm::vec4(reactionWorldB, 0.0f));
 
-    //
-    glm::vec2 pointC = GetPointC(); //
-    glm::vec2 pointD = GetPointD(); //
+    glm::vec2 armAxisLocal = glm::normalize(glm::vec2(0.0f, 1.0f));
+    float reactionMagnitudeB = glm::dot(glm::vec2(reactionBLocalFull), armAxisLocal);
 
-    glm::vec2 rCD = pointC - pointD;
-    glm::vec2 F_load(0.0f, -loadForce); // сила вниз
+    if (reactionMagnitudeB < 0.0f)
+    {
+        reactionMagnitudeB = -reactionMagnitudeB;
+        armAxisLocal = -armAxisLocal;
+    }
 
-    //
-    result.momentAtD = rCD.x * F_load.y - rCD.y * F_load.x;
+    result.reactionAtB.direction = armAxisLocal;
+    result.reactionAtB.magnitude = reactionMagnitudeB;
 
-    //
-    glm::vec2 dirCD = glm::normalize(rCD);
+    // Force at B (upper arm force downwards)
+    result.forceAtB.direction = -result.reactionAtB.direction;
+    result.forceAtB.magnitude = result.reactionAtB.magnitude;
 
-    //
-    result.forceInCD = glm::dot(F_load, dirCD);
+    // --- Force at C1
+    glm::vec3 forceC1Local = glm::vec3(glm::inverse(m_chains[4]) * glm::vec4(loadWorld, 0.0f));
+    float lenC1 = glm::length(forceC1Local);
+    if (lenC1 > 1e-6f) {
+        result.forceAtC1.direction = forceC1Local / lenC1;
+        result.forceAtC1.magnitude = lenC1;
+    }
+    else {
+        result.forceAtC1.direction = glm::vec2(0.0f);
+        result.forceAtC1.magnitude = 0.0f;
+    }
 
-    
-    glm::vec2 pointE = pointC + glm::vec2(BE, 0.0f);
-    glm::vec2 pointB = GetPointB();
-    glm::vec2 rBE = pointE - pointB;
-    result.momentAtB = rBE.x * F_load.y - rBE.y * F_load.x;
+    // --- Force at C2
+    glm::vec3 forceC2Local = glm::vec3(glm::inverse(m_chains[5]) * glm::vec4(loadWorld, 0.0f));
+    float lenC2 = glm::length(forceC2Local);
+    if (lenC2 > 1e-6f) {
+        result.forceAtC2.direction = forceC2Local / lenC2;
+        result.forceAtC2.magnitude = lenC2;
+    }
+    else {
+        result.forceAtC2.direction = glm::vec2(0.0f);
+        result.forceAtC2.magnitude = 0.0f;
+    }
+
+    // Total load supported by both cranks (D1 + D2)
+    glm::vec3 rodsTotalWeightWorld = rodWeightWorld * 2.0f;
+    glm::vec3 cranksTotalWeightWorld = crankWeightWorld * 2.0f;
+
+    glm::vec3 reactionWorldD = -(totalUpperBeamForceWorld + rodsTotalWeightWorld + cranksTotalWeightWorld) * 0.5f;
+
+    // --- Reaction at D1 (left crank)
+    glm::vec3 reactionD1Local = glm::vec3(glm::inverse(m_chains[2]) * glm::vec4(reactionWorldD, 0.0f));
+    float lenD1 = glm::length(reactionD1Local);
+    if (lenD1 > 1e-6f) {
+        result.reactionAtD1.direction = reactionD1Local / lenD1;
+        result.reactionAtD1.magnitude = lenD1;
+    }
+    else {
+        result.reactionAtD1.direction = glm::vec2(0.0f);
+        result.reactionAtD1.magnitude = 0.0f;
+    }
+
+    // --- Reaction at D2 (right crank)
+    glm::vec3 reactionD2Local = glm::vec3(glm::inverse(m_chains[3]) * glm::vec4(reactionWorldD, 0.0f));
+    float lenD2 = glm::length(reactionD2Local);
+
+    if (lenD2 > 1e-6f) {
+        result.reactionAtD2.direction = reactionD2Local / lenD2;
+        result.reactionAtD2.magnitude = lenD2;
+    }
+    else {
+        result.reactionAtD2.direction = glm::vec2(0.0f);
+        result.reactionAtD2.magnitude = 0.0f;
+    }
+
+    //--- force at D1
+    result.forceAtD1.direction = -result.reactionAtD1.direction;
+    result.forceAtD1.magnitude = result.reactionAtD1.magnitude;
+
+    //--- force at D2
+    result.forceAtD2.direction = -result.reactionAtD2.direction;
+    result.forceAtD2.magnitude = result.reactionAtD2.magnitude;
+
+    //--- Reaction at C1
+    result.reactionAtC1.direction = -result.forceAtC1.direction;
+    result.reactionAtC1.magnitude = result.forceAtC1.magnitude;
+
+    //--- Reaction at C2
+    result.reactionAtC2.direction = -result.forceAtC2.direction;
+    result.reactionAtC2.magnitude = result.forceAtC2.magnitude;
+
+    //--- force at B
+    result.forceAtB.direction = -result.reactionAtB.direction;
+    result.forceAtB.magnitude = result.reactionAtB.magnitude;
+
+
+    //--- force at A
+    glm::vec3 totalStructureLoadWorld = -(reactionWorldD * 2.0f + totalUpperBeamForceWorld + rodsTotalWeightWorld + cranksTotalWeightWorld);
+    glm::vec3 reactionALocalFull = glm::vec3(glm::inverse(m_chains[0]) * glm::vec4(totalStructureLoadWorld, 0.0f));
+
+    // projection to lower beam axis (local Y)
+    glm::vec2 baseAxisLocal = glm::normalize(glm::vec2(0.0f, 1.0f));
+    float reactionMagnitudeA = glm::dot(glm::vec2(reactionALocalFull), baseAxisLocal);
+
+    if (reactionMagnitudeA < 0.0f)
+    {
+        reactionMagnitudeA = -reactionMagnitudeA;
+        baseAxisLocal = -baseAxisLocal;
+    }
+
+    result.reactionAtA.direction = baseAxisLocal;
+    result.reactionAtA.magnitude = reactionMagnitudeA;
+
+    // force At A:
+    result.forceAtA.direction = -result.reactionAtA.direction;
+    result.forceAtA.magnitude = result.reactionAtA.magnitude;
 
     return result;
 }

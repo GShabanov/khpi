@@ -23,6 +23,41 @@
 #include "CDiagram.h"
 #include "GlVector.h"
 
+class CForceVectors
+{
+private:
+    //
+    // External forces at key points
+    //
+    CVector         m_forceAtE;
+    CVector         m_reactionAtE; // Beam reaction at point E
+
+    CVector         m_forceAtC1;
+    CVector         m_reactionAtC1;
+    CVector         m_forceAtC2;
+    CVector         m_reactionAtC2;
+
+    // Reaction forces at joints and supports
+    CVector         m_forceAtD1;
+    CVector         m_reactionAtD1;
+    CVector         m_forceAtD2;
+    CVector         m_reactionAtD2;
+
+    CVector         m_forceAtB;
+    CVector         m_reactionAtB;
+
+    const float     m_vectorScale = 0.4f;
+
+
+public:
+    CForceVectors(class CLogCallback* log);
+
+    bool Init(class CMathModel* mathModel);
+    void Update(CMathModel* mathModel);
+    void Draw(CMathModel* mathModel, glm::mat4& relativeTransform, CShader& vectorShader);
+
+};
+
 class CRenderer
 {
 protected:
@@ -38,7 +73,7 @@ protected:
     CDiagram            m_arrowLabel;
     CDiagram            m_rodLabel;
 
-    CVector             m_vector;
+    CForceVectors       m_vectors;
 
     CCamera             m_Camera;
 
@@ -47,7 +82,7 @@ protected:
     CShader             m_SpriteShader;
     CShader             m_VectorShader;
 
-    class CMathModel   *m_mathModel;
+    class CMathModel*   m_mathModel;
 
     double              m_prev_x;
     double              m_prev_y;
@@ -56,11 +91,12 @@ protected:
     GLint               m_glVerMajor;
     GLint               m_glVerMinor;
 
-    glm::mat4           m_baseMatrix;
+    const float         m_worldScale = 0.05f;
+    glm::mat4           m_worldTransform;
 
     void  LogMessage(const TCHAR* format, ...);
 
-
+    void UpdateVectors();
 
 public:
     CRenderer(class CLogCallback *log);

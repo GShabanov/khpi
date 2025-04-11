@@ -7,12 +7,13 @@ uniform mat4 view;
 uniform mat4 projection;
 
 in VS_OUT {
-    vec3 start;
-    vec3 direction;
+    vec3  start;
+    vec3  direction;
+    vec4  color;
     float length;
 } gs_in[];
 
-out vec3 fragColor;
+out vec4 fragColor;
 
 vec3 ortho(vec3 v) {
     // ortogonale vector to v
@@ -53,7 +54,7 @@ void emitBox(vec3 center, vec3 dir, float length, float width, float height)
     // triangle emmision
     for (int i = 0; i < 36; i++) {
         gl_Position = projection * view * model * vec4(corners[faces[i]], 1.0);
-        fragColor = vec3(0.7, 0.7, 1.0);
+        fragColor = gs_in[0].color; // vec4(0.7, 0.7, 1.0, 1.0);
 
         EmitVertex();
 
@@ -77,13 +78,13 @@ void emitArrowhead(vec3 tip, vec3 dir, float length, float baseSize)
     for (int i = 0; i < 4; i++) {
 
         gl_Position = projection * view * model * vec4(baseCorners[i], 1.0);
-        fragColor = vec3(1.0, 0.4, 0.2);
+        fragColor = vec4(1.0, 0.4, 0.2, 1.0);
         EmitVertex();
         gl_Position = projection * view * model * vec4(tip, 1.0);
-        fragColor = vec3(1.0, 0.4, 0.2);
+        fragColor = vec4(1.0, 0.4, 0.2, 1.0);
         EmitVertex();
         gl_Position = projection * view * model * vec4(baseCorners[(i + 1) % 4], 1.0);
-        fragColor = vec3(1.0, 0.4, 0.2);
+        fragColor = vec4(1.0, 0.4, 0.2, 1.0);
         EmitVertex();
         EndPrimitive();
     }

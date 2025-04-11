@@ -20,6 +20,142 @@
 
 
 
+CForceVectors::CForceVectors(CLogCallback* log)
+    : m_forceAtE(log)
+    , m_reactionAtE(log)
+    , m_forceAtC1(log)
+    , m_reactionAtC1(log)
+    , m_forceAtC2(log)
+    , m_reactionAtC2(log)
+    , m_forceAtD1(log)
+    , m_reactionAtD1(log)
+    , m_forceAtD2(log)
+    , m_reactionAtD2(log)
+    , m_forceAtB(log)
+    , m_reactionAtB(log)
+{
+}
+
+bool
+CForceVectors::Init(CMathModel* mathModel)
+{
+    //
+    // setup vectors
+    //
+    glm::vec3 start = glm::vec3(0.0f);
+    glm::vec3 direction = glm::vec3(1.0f, 0.0f, 0.0f);
+    float length = 0.5;
+    //
+    // force E
+    //
+    m_forceAtE.setup(start, direction, length, glm::vec4(0.7f, 0.7f, 1.0f, 1.0f));
+    m_reactionAtE.setup(start, direction, length, glm::vec4(0.7f, 0.7f, 0.0f, 1.0f));
+
+    m_forceAtC1.setup(start, direction, length, glm::vec4(0.7f, 0.7f, 1.0f, 1.0f));
+    m_reactionAtC1.setup(start, direction, length, glm::vec4(0.7f, 0.7f, 0.0f, 1.0f));
+    m_forceAtC2.setup(start, direction, length, glm::vec4(0.7f, 0.7f, 1.0f, 1.0f));
+    m_reactionAtC2.setup(start, direction, length, glm::vec4(0.7f, 0.7f, 0.0f, 1.0f));
+    m_forceAtD1.setup(start, direction, length, glm::vec4(0.7f, 0.7f, 1.0f, 1.0f));
+    m_reactionAtD1.setup(start, direction, length, glm::vec4(0.7f, 0.7f, 0.0f, 1.0f));
+    m_forceAtD2.setup(start, direction, length, glm::vec4(0.7f, 0.7f, 1.0f, 1.0f));
+    m_reactionAtD2.setup(start, direction, length, glm::vec4(0.7f, 0.7f, 0.0f, 1.0f));
+    m_forceAtB.setup(start, direction, length, glm::vec4(0.7f, 0.7f, 1.0f, 1.0f));
+    m_reactionAtB.setup(start, direction, length, glm::vec4(0.7f, 0.7f, 0.0f, 1.0f));
+
+    this->Update(mathModel);
+
+    return true;
+}
+
+void
+CForceVectors::Update(CMathModel* mathModel)
+{
+    glm::vec3 start = glm::vec3(0.0f);
+
+    glm::vec3 direction = glm::vec3(mathModel->m_epureData.forceAtE.direction, 0.0f);
+    float length = mathModel->m_epureData.forceAtE.magnitude * m_vectorScale;
+
+    m_forceAtE.update(start, direction, length);
+
+    direction = glm::vec3(mathModel->m_epureData.reactionAtE.direction, 0.0f);
+    length = mathModel->m_epureData.reactionAtE.magnitude * m_vectorScale;
+    m_reactionAtE.update(start, direction, length);
+
+    direction = glm::vec3(mathModel->m_epureData.forceAtC1.direction, 0.0f);
+    length = mathModel->m_epureData.forceAtC1.magnitude * m_vectorScale;
+    m_forceAtC1.update(start, direction, length);
+
+    direction = glm::vec3(mathModel->m_epureData.reactionAtC1.direction, 0.0f);
+    length = mathModel->m_epureData.reactionAtC1.magnitude * m_vectorScale;
+    m_reactionAtC1.update(start, direction, length);
+
+    direction = glm::vec3(mathModel->m_epureData.forceAtC2.direction, 0.0f);
+    length = mathModel->m_epureData.forceAtC2.magnitude * m_vectorScale;
+    m_forceAtC2.update(start, direction, length);
+
+    direction = glm::vec3(mathModel->m_epureData.reactionAtC2.direction, 0.0f);
+    length = mathModel->m_epureData.reactionAtC2.magnitude * m_vectorScale;
+    m_reactionAtC2.update(start, direction, length);
+
+    direction = glm::vec3(mathModel->m_epureData.forceAtD1.direction, 0.0f);
+    length = mathModel->m_epureData.forceAtD1.magnitude * m_vectorScale;
+    m_forceAtD1.update(start, direction, length);
+
+    direction = glm::vec3(mathModel->m_epureData.reactionAtD1.direction, 0.0f);
+    length = mathModel->m_epureData.reactionAtD1.magnitude * m_vectorScale;
+    m_reactionAtD1.update(start, direction, length);
+
+    direction = glm::vec3(mathModel->m_epureData.forceAtD2.direction, 0.0f);
+    length = mathModel->m_epureData.forceAtD2.magnitude * m_vectorScale;
+    m_forceAtD2.update(start, direction, length);
+
+    direction = glm::vec3(mathModel->m_epureData.reactionAtD2.direction, 0.0f);
+    length = mathModel->m_epureData.reactionAtD2.magnitude * m_vectorScale;
+    m_reactionAtD2.update(start, direction, length);
+
+    direction = glm::vec3(mathModel->m_epureData.forceAtB.direction, 0.0f);
+    length = mathModel->m_epureData.forceAtB.magnitude * m_vectorScale;
+    m_forceAtB.update(start, direction, length);
+
+    direction = glm::vec3(mathModel->m_epureData.reactionAtB.direction, 0.0f);
+    length = mathModel->m_epureData.reactionAtB.magnitude * m_vectorScale;
+    m_reactionAtB.update(start, direction, length);
+
+
+}
+
+void
+CForceVectors::Draw(CMathModel* mathModel, glm::mat4& relativeTransform, CShader& vectorShader)
+{
+    glm::mat4  craneArrowMat = relativeTransform * mathModel->getCraneMatrix();
+
+    glm::mat4  forceEMatrix = glm::translate(craneArrowMat, glm::vec3(100.0f, 0.0f, 0.0f));
+    glm::mat4  forceC1Matrix = glm::translate(craneArrowMat, glm::vec3(-29.7f, 0.0f, 20.0f));
+    glm::mat4  forceC2Matrix = glm::translate(craneArrowMat, glm::vec3(-29.7f, 0.0f, -12.0f));
+    glm::mat4  rod1Mat = relativeTransform * mathModel->getRod1Matrix();
+    glm::mat4  rod2Mat = relativeTransform * mathModel->getRod2Matrix();
+    rod1Mat = glm::translate(rod1Mat, glm::vec3(0.0f, 0.0f, 5.0f));
+    rod2Mat = glm::translate(rod2Mat, glm::vec3(0.0f, 0.0f, 5.0f));
+
+
+    m_forceAtE.Draw(forceEMatrix, vectorShader);
+    m_reactionAtE.Draw(forceEMatrix, vectorShader);
+    m_forceAtC1.Draw(forceC1Matrix, vectorShader);
+    m_reactionAtC1.Draw(forceC1Matrix, vectorShader);
+    m_forceAtC2.Draw(forceC2Matrix, vectorShader);
+    m_reactionAtC2.Draw(forceC2Matrix, vectorShader);
+    m_forceAtD1.Draw(rod1Mat, vectorShader);
+    m_reactionAtD1.Draw(rod1Mat, vectorShader);
+    m_forceAtD2.Draw(rod2Mat, vectorShader);
+    m_reactionAtD2.Draw(rod2Mat, vectorShader);
+    m_forceAtB.Draw(craneArrowMat, vectorShader);
+    m_reactionAtB.Draw(craneArrowMat, vectorShader);
+
+}
+
+
+
+
 CRenderer::CRenderer(CLogCallback* log)
     : m_log(log)
     , m_parent(NULL)
@@ -33,7 +169,7 @@ CRenderer::CRenderer(CLogCallback* log)
     , m_RodModel(log)
     , m_arrowLabel(log)
     , m_rodLabel(log)
-    , m_vector(log)
+    , m_vectors(log)
     , m_hwndOpenGl(NULL)
     , m_glVerMajor(2)
     , m_glVerMinor(0)
@@ -44,10 +180,10 @@ CRenderer::CRenderer(CLogCallback* log)
     m_first_mouse = false;
     m_pGlWindow = NULL;
 
-    m_baseMatrix = glm::mat4(1.0f);
+    m_worldTransform = glm::mat4(1.0f);
 
-    m_baseMatrix = glm::translate(m_baseMatrix, glm::vec3(0.0, -3.0, 0.0));
-    m_baseMatrix = glm::scale(m_baseMatrix, glm::vec3(0.05f));
+    m_worldTransform = glm::translate(m_worldTransform, glm::vec3(0.0, -3.0, 0.0));
+    m_worldTransform = glm::scale(m_worldTransform, glm::vec3(m_worldScale));
 
 }
 
@@ -114,6 +250,9 @@ CRenderer::Init(_In_ HWND  parent, _In_ CMathModel* mathModel)
 
     m_parent = parent;
     m_mathModel = mathModel;
+
+    mathModel->UpdateAngles();
+
 
     CString  output = _T("Initializing GLFW...");
 
@@ -183,7 +322,7 @@ CRenderer::Init(_In_ HWND  parent, _In_ CMathModel* mathModel)
     // During init, enable debug output
     //
     glEnable(GL_DEBUG_OUTPUT);
-    //glDebugMessageCallback(reinterpret_cast<GLDEBUGPROC>(&stGlMessageCallback), this);
+    glDebugMessageCallback(reinterpret_cast<GLDEBUGPROC>(&stGlMessageCallback), this);
 
     char* glVersion = (char*)glGetString(GL_VERSION);
 
@@ -191,9 +330,6 @@ CRenderer::Init(_In_ HWND  parent, _In_ CMathModel* mathModel)
 
         LogMessage(_T("[*] OpenGL version: %S\n"), glVersion);
     }
-
-    // Set vsync
-    //glfwSwapInterval(1);
 
     glEnable(GL_DEPTH_TEST);   // Depth testing
     glEnable(GL_CULL_FACE);    // Rear face culling
@@ -257,12 +393,12 @@ CRenderer::Init(_In_ HWND  parent, _In_ CMathModel* mathModel)
     m_arrowLabel.setup(glm::vec2(129.7f, 10.0f), textureDim);
     m_rodLabel.setup(glm::vec2(104.19f, 10.0f), textureDim);
 
-    glm::vec3 start(100.0f, 0.0f, 0.0f);
-    glm::vec3 direction(0.0f, 1.0f, 0.0f);
-    float length = 30.5f;
 
+    //glm::vec3 start(100.0f, 0.0f, 0.0f);
+    //glm::vec3 direction(0.0f, 1.0f, 0.0f);
+    //float length = 30.5f;
 
-    m_vector.setup(start, direction, length);
+    m_vectors.Init(m_mathModel);
 
     m_pGlWindow = pGlWindow;
 
@@ -343,6 +479,12 @@ CRenderer::SetSize(int cx, int cy)
 
 }
 
+void
+CRenderer::UpdateVectors()
+{
+    m_vectors.Update(m_mathModel);
+}
+
 
 void
 CRenderer::Draw()
@@ -413,41 +555,52 @@ CRenderer::Draw()
     m_VectorShader.setMat4("projection", proj_mat);
     m_VectorShader.setMat4("view", view_mat);
 
+
+    this->UpdateVectors();
     //
     // arrow
     //
     
-    m_ArrowModel.Draw(m_baseMatrix * m_mathModel->getArrowMatrix(), m_ModelShader);
+    m_ArrowModel.Draw(m_worldTransform * m_mathModel->getArrowMatrix(), m_ModelShader);
 
     //
     // crank
     //
-    m_CrankModel.Draw(m_baseMatrix * m_mathModel->getCrank1Matrix(), m_ModelShader);
-    m_CrankModel.Draw(m_baseMatrix * m_mathModel->getCrank2Matrix(), m_ModelShader);
+    m_CrankModel.Draw(m_worldTransform * m_mathModel->getCrank1Matrix(), m_ModelShader);
+    m_CrankModel.Draw(m_worldTransform * m_mathModel->getCrank2Matrix(), m_ModelShader);
 
     //
-    // crane arrow
+    // top arrow
     //
-    m_CraneArrowModel.Draw(m_baseMatrix * m_mathModel->getCraneMatrix(), m_ModelShader);
-    m_vector.Draw(m_baseMatrix * m_mathModel->getCraneMatrix(), m_VectorShader);
+    glm::mat4  craneArrowMat = m_worldTransform * m_mathModel->getCraneMatrix();
+    m_CraneArrowModel.Draw(craneArrowMat, m_ModelShader);
 
 
     //
     // crane rod
     //
-    m_RodModel.Draw(m_baseMatrix * m_mathModel->getRod1Matrix(), m_ModelShader);
-    m_RodModel.Draw(m_baseMatrix * m_mathModel->getRod2Matrix(), m_ModelShader);
+    glm::mat4  rod1Mat = m_worldTransform * m_mathModel->getRod1Matrix();
+    m_RodModel.Draw(rod1Mat, m_ModelShader);
+
+    glm::mat4  rod2Mat = m_worldTransform * m_mathModel->getRod2Matrix();
+    m_RodModel.Draw(rod2Mat, m_ModelShader);
+
+    rod1Mat = glm::translate(rod1Mat, glm::vec3(0.0f, 0.0f, 5.0f));
+    rod2Mat = glm::translate(rod2Mat, glm::vec3(0.0f, 0.0f, 5.0f));
 
 
-    glm::mat4  labelMatrix = m_baseMatrix * m_mathModel->getCraneMatrix();
+
+    glm::mat4  labelMatrix = m_worldTransform * m_mathModel->getCraneMatrix();
     labelMatrix = glm::translate(labelMatrix, glm::vec3(-29.7f, 20.000f, 0.0f));
 
     m_arrowLabel.Draw(labelMatrix, m_SpriteShader);
 
-    labelMatrix = m_baseMatrix * m_mathModel->getRod1Matrix();
+    labelMatrix = m_worldTransform * m_mathModel->getRod1Matrix();
     labelMatrix = glm::translate(labelMatrix, glm::vec3(0.0f, 10.0f, 0.0f));
 
     m_rodLabel.Draw(labelMatrix, m_SpriteShader);
+
+    m_vectors.Draw(m_mathModel, m_worldTransform, m_VectorShader);
 
 
     glUseProgram(0);

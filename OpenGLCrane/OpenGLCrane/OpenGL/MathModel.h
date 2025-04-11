@@ -18,17 +18,53 @@
 
 class CMathModel
 {
-private:
-    struct ForceMomentResult
+public:
+    struct ForceVector
     {
-        float reactionA;       // Вертикальная реакция в A
-        float reactionD;       // Вертикальная реакция в D
-        float momentAtD;       // Момент силы в точке D
-        float momentAtB;       // Момент в точке B от нагрузки
-        float forceInCD;       // Продольная сила в штанге CD
+        glm::vec2 direction; // normalized local-space direction
+        float magnitude;     // in Newtons
     };
 
+    struct ForceMomentResult
+    {
+        // Moments at joints
+        float momentAtA;
+        float momentAtB;
+        float momentAtC1;
+        float momentAtC2;
+        float momentAtD1;
+        float momentAtD2;
 
+        // Axial forces in rods
+        float axialForceRod1;
+        float axialForceRod2;
+
+        // External forces at key points
+        ForceVector forceAtE;
+        ForceVector reactionAtE; // Beam reaction at point E
+
+        ForceVector forceAtC1;
+        ForceVector reactionAtC1;
+
+        ForceVector forceAtC2;
+        ForceVector reactionAtC2;
+
+
+        // Reaction forces at joints and supports
+        ForceVector forceAtD1;
+        ForceVector reactionAtD1;
+        ForceVector forceAtD2;
+        ForceVector reactionAtD2;
+
+        ForceVector forceAtB;
+        ForceVector reactionAtB;
+
+
+        ForceVector reactionAtA;   //
+        ForceVector forceAtA;      //
+    };
+
+private:
     float   m_ArrowAngle;
     float   m_CrankAngle;
     float   m_CraneArrowAngle;
@@ -36,6 +72,9 @@ private:
 
     const float  m_ArrowLength = 95.0f;
     const float  m_crankLength = 25.0f;
+
+    const float  m_BE = 100.0f;
+
 
     const float m_AB = m_ArrowLength;
     const float m_AB2 = m_AB * m_AB;
@@ -49,31 +88,17 @@ private:
     glm::mat4   m_chains[6];
 
     bool RecalcAngles(float arrowAngle, float crankAngle, float& rodAngle, float& craneArrowAngle);
+    glm::vec2 GetPointInRodLocal(float length);
 
-    glm::vec2 CMathModel::GetPointC()
-    {
-        glm::vec4 world = m_chains[1] * glm::vec4(0, m_BC, 0, 1);
-        return glm::vec2(world.x, world.y);
-    }
-
-    glm::vec2 CMathModel::GetPointD()
-    {
-        glm::vec4 world = m_chains[4] * glm::vec4(-m_crankLength, 0, 0, 1);
-        return glm::vec2(world.x, world.y);
-    }
-
-    glm::vec2 CMathModel::GetPointB()
-    {
-        glm::vec4 world = m_chains[0] * glm::vec4(0, m_ArrowLength, 0, 1);
-        return glm::vec2(world.x, world.y);
-    }
 public:
 
     CMathModel();
 
     void UpdateAngles();
 
-    ForceMomentResult CalcForceMomentEpure(float loadForce /* F1 */);
+    ForceMomentResult m_epureData;
+
+    ForceMomentResult CalcForceMomentEpure(float loadForce, glm::vec3 gravityDir = glm::vec3(0.0f, -1.0f, 0.0f));
 
 
     void setArrowAngle(float angle)
