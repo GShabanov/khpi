@@ -15,6 +15,7 @@ CFone::~CFone()
     {
         glDeleteFramebuffers(1, &m_fbo);
         glDeleteTextures(1, &m_texture);
+        free(m_textureData);
     }
 }
 
@@ -65,6 +66,66 @@ CFone::setup()
 bool
 CFone::prepareFBOData()
 {
+    struct
+    {
+        BITMAPINFO      bi;
+        RGBQUAD         zeroColor[2];
+    } bmpInfo;
+
+    HFONT hFont = CreateFont(36, 20, 0, 0, FW_DONTCARE, FALSE, TRUE, FALSE, DEFAULT_CHARSET, OUT_OUTLINE_PRECIS,
+        CLIP_DEFAULT_PRECIS, CLEARTYPE_QUALITY, VARIABLE_PITCH, TEXT("Times New Roman"));
+
+
+    HDC hDc = GetDC(GetDesktopWindow());
+
+    HDC hDcCompatible = CreateCompatibleDC(hDc);
+
+    HBITMAP  hBitmap = CreateCompatibleBitmap(hDc, m_width, m_height);
+
+    SelectObject(hDcCompatible, hFont);
+    SelectObject(hDcCompatible, hBitmap);
+
+    TextOut(hDcCompatible, 10, 10, _T("MyText"), 6);
+
+
+    memset(&bmpInfo, 0, sizeof(bmpInfo));
+
+    bmpInfo.bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmpInfo.bi.bmiHeader.biCompression = BI_RGB;
+
+    if (GetDIBits(hDcCompatible, hBitmap, 0, 0, NULL, &bmpInfo.bi, DIB_RGB_COLORS) == 0)
+    {
+    }
+
+    LONG  height = bmpInfo.bi.bmiHeader.biHeight;
+    LONG  width = bmpInfo.bi.bmiHeader.biWidth;
+
+    bmpInfo.bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmpInfo.bi.bmiHeader.biCompression = BI_RGB;
+    //bmpInfo.bi.bmiHeader.biHeight = -bmpInfo.bi.bmiHeader.biHeight;
+
+
+    void* rawPixels = malloc(m_height * m_width * 4);
+
+    //
+    // copy background bits to buffer oldData
+    //
+
+    if (GetDIBits(hDcCompatible, (HBITMAP)hBitmap, 0, height, rawPixels, &bmpInfo.bi, DIB_RGB_COLORS) == 0)
+    {
+    }
+
+    DeleteObject(hFont);
+    DeleteObject(hBitmap);
+    DeleteDC(hDcCompatible);
+    ReleaseDC(GetDesktopWindow(), hDc);
+
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, rawPixels);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
     //
     // Пример рисования через дополнительный FBO
     //
@@ -77,15 +138,15 @@ CFone::prepareFBOData()
     // 
     //  это рисование будет в ДОПОЛНИТЕЛЬНЫЙ БУФЕР
     //
-    glClearColor(0.0f, 0.5f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //glClearColor(0.0f, 0.5f, 0.0f, 1.0f);
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glBegin(GL_LINES);
+    /*glBegin(GL_LINES);
 
     glVertex3f(0.0f, 0.0f, 0.0f);    // начало
     glVertex3f(50.0f, 0.0f, 0.0f);  // конец
 
-    glEnd();
+    glEnd();*/
 
 
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);  // отсоединяем
