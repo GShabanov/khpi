@@ -19,7 +19,7 @@
 #include "Shader.h"
 #include "Model.h"
 #include "Camera.h"
-#include "Fone.h"
+#include "Background.h"
 
 
 class CRenderer
@@ -36,7 +36,7 @@ protected:
     CCamera             m_Camera;
 
     CShader             m_DefaultShader;
-    CFone               m_fone;
+    CBackground         m_Background;
 
     double              m_prev_x;
     double              m_prev_y;

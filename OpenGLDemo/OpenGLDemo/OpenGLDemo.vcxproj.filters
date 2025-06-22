@@ -63,7 +63,7 @@
     <ClInclude Include="LogWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="OpenGL\Fone.h">
+    <ClInclude Include="OpenGL\Background.h">
       <Filter>Header Files\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
@@ -98,7 +98,7 @@
     <ClCompile Include="OpenGL\GlUtils.cpp">
       <Filter>Source Files\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="OpenGL\Fone.cpp">
+    <ClCompile Include="OpenGL\Background.cpp">
       <Filter>Source Files\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>

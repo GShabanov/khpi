@@ -201,10 +201,9 @@ CRenderer::Init(_In_ CWnd* parent)
     }
 
 
-    m_fone.setup();
+    m_Background.setup();
 
-
-    m_fone.prepareFBOData();
+    m_Background.prepareFBOData();
     //
     // Instantiate and load models
     //
@@ -293,6 +292,10 @@ CRenderer::SetSize(int cx, int cy)
     glViewport(0, 0, cx, cy);
     m_Camera.setScreenDimensions(cx, cy);
 
+    m_Background.Resize(cx, cy);
+    m_Background.PreDraw();
+
+
 }
 
 
@@ -378,7 +381,7 @@ CRenderer::Draw()
     CRect  rect;
     GetClientRect(m_hwndOpenGl, &rect);
 
-    m_fone.Draw(rect);
+    m_Background.Draw(rect);
 
 
     this->drawCircle3f(0.0f, 0.0f, 0.5f, 100);

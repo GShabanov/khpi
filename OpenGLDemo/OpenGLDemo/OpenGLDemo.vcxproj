@@ -197,7 +197,7 @@
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="OpenGLDemo.h" />
     <ClInclude Include="OpenGL\camera.h" />
-    <ClInclude Include="OpenGL\Fone.h" />
+    <ClInclude Include="OpenGL\Background.h" />
     <ClInclude Include="OpenGL\GlUtils.h" />
     <ClInclude Include="OpenGL\mesh.h" />
     <ClInclude Include="OpenGL\model.h" />
@@ -212,7 +212,7 @@
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="OpenGLDemo.cpp" />
     <ClCompile Include="OpenGL\camera.cpp" />
-    <ClCompile Include="OpenGL\Fone.cpp" />
+    <ClCompile Include="OpenGL\Background.cpp" />
     <ClCompile Include="OpenGL\GlUtils.cpp" />
     <ClCompile Include="OpenGL\mesh.cpp" />
     <ClCompile Include="OpenGL\model.cpp" />
