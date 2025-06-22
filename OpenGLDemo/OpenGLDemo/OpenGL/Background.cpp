@@ -11,7 +11,7 @@ CBackground::CBackground()
     , m_hBitmap(NULL)
 {
     //
-    // размеры поумолчанию
+    // размеры по-умолчанию
     //
     m_width = 800;
     m_height = 600;
