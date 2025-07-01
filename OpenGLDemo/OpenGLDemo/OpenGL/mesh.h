@@ -4,7 +4,7 @@
 #define __OPENGL_MESH_H__
 
 #include <vector>
-#include "glm/glm.hpp"
+#include "glm\include\glm\glm.hpp"
 #include "GlUtils.h"
 
 

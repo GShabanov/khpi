@@ -1,9 +1,9 @@
-#pragma once
+﻿#pragma once
 #ifndef __OPENGL_BACKGROUND_H__
 #define __OPENGL_BACKGROUND_H__
 
 #include <vector>
-#include "glm/glm.hpp"
+#include "glm\include\glm/glm.hpp"
 #include "GlUtils.h"
 
 
@@ -12,7 +12,6 @@ class CBackground
 private:
     bool                m_initialized;
 
-    HFONT              m_hFont;
     HDC                m_hDcCompatible;
     HBITMAP            m_hBitmap;
     glm::uint32        m_fbo;

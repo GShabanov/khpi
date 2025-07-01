@@ -6,6 +6,9 @@
 #include "framework.h"
 #include "OpenGLDemo.h"
 #include "ChildView.h"
+#include <comdef.h>
+#include <gdiplus.h>
+#include <objidl.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -51,6 +54,11 @@ CChildView::PreCreateWindow(CREATESTRUCT& cs)
 int
 CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
+    Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+    ULONG_PTR gdiplusToken;
+
+    // Initialize GDI+.
+    Gdiplus::GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
     m_renderer.Init(this);
 

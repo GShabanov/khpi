@@ -116,11 +116,11 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>.;..\include;..\lib\glfw\include;..\lib\assimp\include;..\lib\glm\include;..\lib\glew\include;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\lib\;..\include;..\lib\assimp\include;..\lib\LaTeX\inc;..\lib\glew\include;..\lib\GLFW\include;..\lib\glm\include;</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>assimp\bin\Debug\assimp-vc142-mt.lib;assimp\contrib\zlib\Debug\zlibstaticd.lib;glfw\lib\glfw3_mt.lib;glew\lib\glew32s.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>tinyxml2\lib\tinyxml2.lib;LaTeX\lib\LaTeX.lib;assimp\bin\Debug\assimp-vc142-mt.lib;assimp\contrib\zlib\Debug\zlibstaticd.lib;glfw\lib\glfw3_mt.lib;glew\lib\glew32s.lib;opengl32.lib;gdiplus.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)lib</AdditionalLibraryDirectories>
     </Link>
     <Midl>
@@ -203,6 +203,8 @@
     <ClInclude Include="OpenGL\model.h" />
     <ClInclude Include="OpenGL\Renderer.h" />
     <ClInclude Include="OpenGL\Shader.h" />
+    <ClInclude Include="OpenGL\TeXtext.h" />
+    <ClInclude Include="OpenGL\winText.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
@@ -218,6 +220,8 @@
     <ClCompile Include="OpenGL\model.cpp" />
     <ClCompile Include="OpenGL\Renderer.cpp" />
     <ClCompile Include="OpenGL\Shader.cpp" />
+    <ClCompile Include="OpenGL\TeXtext.cpp" />
+    <ClCompile Include="OpenGL\winText.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

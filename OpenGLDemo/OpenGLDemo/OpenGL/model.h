@@ -2,7 +2,7 @@
 #ifndef __OPENGL_MODEL_H__
 #define __OPENGL_MODEL_H__
 
-#include "assimp/scene.h"
+#include "assimp\include\assimp\scene.h"
 #include "GlUtils.h"
 
 class CModel

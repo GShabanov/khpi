@@ -1,4 +1,4 @@
-/***************************************************************************************\
+ï»¿/***************************************************************************************\
 *   File:                                                                               *
 *       Renderer.cpp                                                                    *
 *                                                                                       *
@@ -27,6 +27,8 @@ CRenderer::CRenderer(CLogCallback* log)
     , m_hwndOpenGl(NULL)
     , m_glVerMajor(2)
     , m_glVerMinor(0)
+    , m_sampleText(log)
+    , m_sampleLaTeX(log)
 
 {
     m_prev_x = 0.0;
@@ -201,6 +203,25 @@ CRenderer::Init(_In_ CWnd* parent)
     }
 
 
+    m_sampleText.Setup(RGB(0xFF, 0x0, 0x0), 24);
+    m_sampleText.Update(_T("glText"));
+
+    m_sampleLaTeX.Setup(RGB(0xFF, 0x0, 0x0), 24);
+
+    unsigned char* data;
+    size_t         size;
+
+    if (ReadToBuffer(_T("SampleText.TeX"), &data, &size))
+    {
+
+        WCHAR* myTeX = (WCHAR*)data;
+
+        //m_sampleLaTeX.Update(L"\\text{What a beautiful day}");
+        m_sampleLaTeX.Update(myTeX);
+
+        free(data);
+    }
+
     m_Background.setup();
 
     m_Background.prepareFBOData();
@@ -303,15 +324,15 @@ void
 CRenderer::drawCircle3f(float cx, float cy, float r, int num_segments)
 {
     glBegin(GL_TRIANGLE_FAN);
-    glVertex3f(cx, cy, 0.0f);  // Öåíòð êðóãà
+    glVertex3f(cx, cy, 0.0f);  // Ð¦ÐµÐ½Ñ‚Ñ€ ÐºÑ€ÑƒÐ³Ð°
 
     for (int i = 0; i <= num_segments; i++)
     {
-        float theta = 2.0f * 3.1415926f * float(i) / float(num_segments);  // Óãîë
-        float x = r * cosf(theta);  // Êîîðäèíàòà X
-        float y = r * sinf(theta);  // Êîîðäèíàòà Y
+        float theta = 2.0f * 3.1415926f * float(i) / float(num_segments);  // Ð£Ð³Ð¾Ð»
+        float x = r * cosf(theta);  // ÐšÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ð° X
+        float y = r * sinf(theta);  // ÐšÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ð° Y
 
-        glVertex3f(x + cx, y + cy, 0.0f);  // Âåðøèíà íà îêðóæíîñòè
+        glVertex3f(x + cx, y + cy, 0.0f);  // Ð’ÐµÑ€ÑˆÐ¸Ð½Ð° Ð½Ð° Ð¾ÐºÑ€ÑƒÐ¶Ð½Ð¾ÑÑ‚Ð¸
     }
 
     glEnd();
@@ -322,8 +343,8 @@ CRenderer::drawLine3f(float cx, float cy, float cx2, float cy2)
 {
     glBegin(GL_LINES);
 
-    glVertex3f(cx, cy, 0.0f);    // íà÷àëî
-    glVertex3f(cx2, cy2, 0.0f);  // êîíåö
+    glVertex3f(cx, cy, 0.0f);    // Ð½Ð°Ñ‡Ð°Ð»Ð¾
+    glVertex3f(cx2, cy2, 0.0f);  // ÐºÐ¾Ð½ÐµÑ†
 
     glEnd();
 }
@@ -376,13 +397,21 @@ CRenderer::Draw()
 
 
     //-----------------------------------------//
-    //============= ÐÈÑÎÂÀÍÈÅ =================//
+    //============= Ð Ð˜Ð¡ÐžÐ’ÐÐÐ˜Ð• =================//
     //-----------------------------------------//
     CRect  rect;
     GetClientRect(m_hwndOpenGl, &rect);
 
     m_Background.Draw(rect);
 
+    glUseProgram(0);
+
+    m_sampleText.Draw(rect, 20, 20);
+    m_sampleLaTeX.Draw(rect, 70, 70);
+
+
+
+    m_DefaultShader.use();
 
     this->drawCircle3f(0.0f, 0.0f, 0.5f, 100);
 

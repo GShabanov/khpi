@@ -3,7 +3,7 @@
 #ifndef __OPENGL_CAMERA_H__
 #define __OPENGL_CAMERA_H__
 
-#include "glm/glm.hpp"
+#include "GlUtils.h"
 
 class CCamera
 {

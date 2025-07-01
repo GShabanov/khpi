@@ -6,7 +6,6 @@ CBackground::CBackground()
     : m_initialized(false)
     , m_fbo(0)
     , m_texture(0)
-    , m_hFont(NULL)
     , m_hDcCompatible(NULL)
     , m_hBitmap(NULL)
 {
@@ -26,11 +25,6 @@ CBackground::~CBackground()
         free(m_textureData);
     }
 
-    if (m_hFont)
-    {
-        DeleteObject(m_hFont);
-    }
-
     if (m_hDcCompatible)
     {
         DeleteDC(m_hDcCompatible);
@@ -48,24 +42,6 @@ CBackground::setup()
 
     memset(m_textureData, 0, m_width * m_height * 4);
 
-
-    m_hFont = CreateFont(
-        24,                       // nHeight
-        0,                        // nWidth
-        0,                        // nEscapement
-        0,                        // nOrientation
-        FW_NORMAL,                // nWeight
-        FALSE,                    // bItalic
-        FALSE,                    // bUnderline
-        0,                        // cStrikeOut
-        ANSI_CHARSET,             // nCharSet
-        OUT_DEFAULT_PRECIS,       // nOutPrecision
-        CLIP_DEFAULT_PRECIS,      // nClipPrecision
-        NONANTIALIASED_QUALITY/*DEFAULT_QUALITY */,          // nQuality
-        DEFAULT_PITCH | FF_SWISS, // nPitchAndFamily
-        _T("Arial"));
-
-
     HWND  hwndDesktop = GetDesktopWindow();
 
     HDC hDc = GetDC(hwndDesktop);
@@ -79,7 +55,6 @@ CBackground::setup()
 
     m_hBitmap = CreateCompatibleBitmap(hDc, m_width, m_height);
 
-    SelectObject(m_hDcCompatible, m_hFont);
     SelectObject(m_hDcCompatible, m_hBitmap);
 
     SetBkColor(m_hDcCompatible, RGB(0, 0, 0));
@@ -206,42 +181,6 @@ CBackground::Resize(unsigned int sX, unsigned int sY)
 void
 CBackground::PreDraw()
 {
-    static TCHAR demoText[] = _T("My demo text");
-
-    struct
-    {
-        BITMAPINFO      bi;
-        RGBQUAD         zeroColor[2];
-    } bmpInfo;
-
-
-    TextOut(m_hDcCompatible, 10, 10, _T("My demo text"), ARRAYSIZE(demoText));
-
-
-    memset(&bmpInfo, 0, sizeof(bmpInfo));
-
-    bmpInfo.bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bmpInfo.bi.bmiHeader.biCompression = BI_RGB;
-
-    if (GetDIBits(m_hDcCompatible, m_hBitmap, 0, 0, NULL, &bmpInfo.bi, DIB_RGB_COLORS) == 0)
-    {
-    }
-
-    LONG  height = bmpInfo.bi.bmiHeader.biHeight;
-    LONG  width = bmpInfo.bi.bmiHeader.biWidth;
-
-    bmpInfo.bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bmpInfo.bi.bmiHeader.biCompression = BI_RGB;
-    //bmpInfo.bi.bmiHeader.biHeight = -bmpInfo.bi.bmiHeader.biHeight;
-
-
-    //
-    // copy background bits to buffer oldData
-    //
-
-    if (GetDIBits(m_hDcCompatible, m_hBitmap, 0, height, m_textureData, &bmpInfo.bi, DIB_RGB_COLORS) == 0)
-    {
-    }
 
     //
     // рисуем что либо на текстуру !

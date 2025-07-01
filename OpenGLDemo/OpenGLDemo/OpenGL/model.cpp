@@ -6,7 +6,6 @@
 #include <iostream>
 #include "assimp/Importer.hpp"
 #include "assimp/postprocess.h"
-#include "glm/gtx/normal.hpp"
 
 
 

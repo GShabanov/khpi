@@ -20,6 +20,8 @@
 #include "Model.h"
 #include "Camera.h"
 #include "Background.h"
+#include "winText.h"
+#include "TeXtext.h"
 
 
 class CRenderer
@@ -31,7 +33,8 @@ protected:
     HWND                m_hwndOpenGl;
     GLFWwindow*         m_pGlWindow;
     CModel              m_SampleModel;
-
+    CWinText            m_sampleText;
+    CTeXText            m_sampleLaTeX;
 
     CCamera             m_Camera;
 
