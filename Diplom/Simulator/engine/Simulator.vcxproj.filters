@@ -1,0 +1,297 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="defaultWindow.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="eventPump.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="gameEngine.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="mainWindow.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="fastmath.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="character.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="fastmath.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="movemap.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="environment.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="ghost_character.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="scene.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="mouse.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="logWindow.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="logger.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="simple_character.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="gfx\drawEngine.cpp" />
+    <ClCompile Include="fs\filestream.cpp">
+      <Filter>fs</Filter>
+    </ClCompile>
+    <ClCompile Include="fs\filesystem.cpp">
+      <Filter>fs</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\utilites.cpp">
+      <Filter>system\source</Filter>
+    </ClCompile>
+    <ClCompile Include="crt\amalloc.cpp">
+      <Filter>CRT</Filter>
+    </ClCompile>
+    <ClCompile Include="sfx\riffFile.cpp">
+      <Filter>sfx\source</Filter>
+    </ClCompile>
+    <ClCompile Include="sfx\win_snd.cpp">
+      <Filter>sfx\source</Filter>
+    </ClCompile>
+    <ClCompile Include="sfx\sound.cpp">
+      <Filter>sfx\source</Filter>
+    </ClCompile>
+    <ClCompile Include="sfx\soundEngine.cpp">
+      <Filter>sfx\source</Filter>
+    </ClCompile>
+    <ClCompile Include="sfx\soundWorld.cpp">
+      <Filter>sfx\source</Filter>
+    </ClCompile>
+    <ClCompile Include="gfx\font.cpp">
+      <Filter>gfx\source</Filter>
+    </ClCompile>
+    <ClCompile Include="gfx\vertex.cpp">
+      <Filter>gfx\source</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\libgif.cpp">
+      <Filter>gfx\source</Filter>
+    </ClCompile>
+    <ClCompile Include="gfx\primitives.cpp">
+      <Filter>gfx\source</Filter>
+    </ClCompile>
+    <ClCompile Include="gfx\sprite.cpp">
+      <Filter>gfx\source</Filter>
+    </ClCompile>
+    <ClCompile Include="gfx\surface.cpp">
+      <Filter>gfx\source</Filter>
+    </ClCompile>
+    <ClCompile Include="gfx\texture.cpp">
+      <Filter>gfx\source</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\sysObject.cpp">
+      <Filter>system\include</Filter>
+    </ClCompile>
+    <ClCompile Include="object.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="drawing_character.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="inc\defaultWindow.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\eventPump.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\gameEngine.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\mainWindow.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\NtInternal.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\Resource.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\stdafx.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\fastmath.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\character.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\fastmath.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\movemap.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\scene.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\mouse.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\environment.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\ghost_character.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\logWindow.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\object.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\winfont.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\logger.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\simple_character.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\bresenham.h">
+      <Filter>CRT\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="crt\inc\hashTable.h" />
+    <ClInclude Include="crt\inc\removeLock.h" />
+    <ClInclude Include="gfx\inc\drawEngine.h" />
+    <ClInclude Include="fs\inc\filestream.h">
+      <Filter>fs\include</Filter>
+    </ClInclude>
+    <ClInclude Include="fs\inc\filesystem.h">
+      <Filter>fs\include</Filter>
+    </ClInclude>
+    <ClInclude Include="sfx\inc\riffFile.h">
+      <Filter>sfx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="sfx\inc\sound.h">
+      <Filter>sfx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="sfx\inc\soundEngine.h">
+      <Filter>sfx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="sfx\inc\soundWorld.h">
+      <Filter>sfx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="sfx\inc\waveFormat.h">
+      <Filter>sfx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="sfx\inc\win_snd.h">
+      <Filter>sfx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\inc\libgif.h">
+      <Filter>gfx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="gfx\inc\font.h">
+      <Filter>gfx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="gfx\inc\primitives.h">
+      <Filter>gfx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="gfx\inc\sprite.h">
+      <Filter>gfx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="gfx\inc\surface.h">
+      <Filter>gfx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="gfx\inc\texture.h">
+      <Filter>gfx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="gfx\inc\vertex.h">
+      <Filter>gfx\include</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\inc\utilites.h">
+      <Filter>system\include</Filter>
+    </ClInclude>
+    <ClInclude Include="crt\inc\amalloc.h">
+      <Filter>CRT\inc</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\inc\sysObject.h">
+      <Filter>system\source</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\drawing_character.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="gameEngine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="gameEngine.ico" />
+    <None Include="small.ico" />
+    <None Include="source\gfx\i386\graphic.asm" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{0963a391-bcad-4ad3-9e7a-0629778ee9a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{c6b8be5a-1e53-4f40-bebc-e0fa41116b68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gfx">
+      <UniqueIdentifier>{020c3784-d617-40a2-8821-d1d78491d21b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gfx\include">
+      <UniqueIdentifier>{fb794eb0-3a7c-4245-9f23-572363249b0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gfx\source">
+      <UniqueIdentifier>{d5b9187a-3ca7-41cb-9b6c-8ef1b336a2f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sfx">
+      <UniqueIdentifier>{95f9d6ca-e5eb-438d-a015-d200d5716f84}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sfx\include">
+      <UniqueIdentifier>{994c8c5b-a2a6-4642-b9af-bbc6c150eb69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sfx\source">
+      <UniqueIdentifier>{c7cae568-b00e-499e-85d4-92b5e2f16bfc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="fs">
+      <UniqueIdentifier>{33e7a0bb-e773-4310-a0dc-4707debc3b95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="fs\include">
+      <UniqueIdentifier>{f546d324-2849-4cd2-8b80-3f5efcf738c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script">
+      <UniqueIdentifier>{9cf216dc-10ca-42b1-8091-d657dd25b87b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="script\inc">
+      <UniqueIdentifier>{a234ecb6-5552-4061-aa64-0bf726bff421}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CRT">
+      <UniqueIdentifier>{7ff72d1e-7263-4974-82bb-0b736cdc285c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CRT\inc">
+      <UniqueIdentifier>{b3063f69-7c39-4d7d-8d4f-b4fc81a0616d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="system">
+      <UniqueIdentifier>{d98ab746-211e-423a-a159-a4c396d7c246}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="system\include">
+      <UniqueIdentifier>{a3a9aac5-f8d9-4bfa-961b-f64e9e8fe2a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="system\source">
+      <UniqueIdentifier>{9be40717-5fd8-41d6-a67b-1c1062861941}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

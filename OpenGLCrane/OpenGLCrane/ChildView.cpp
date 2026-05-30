@@ -6,6 +6,7 @@
 #include "framework.h"
 #include "OpenGLDemo.h"
 #include "ChildView.h"
+#include "MainFrm.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -57,6 +58,10 @@ CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
     m_renderer.Init(this->GetSafeHwnd(), &m_mathModel);
 
+    CMainFrame* mainFrame = (CMainFrame*)AfxGetMainWnd();
+
+    mainFrame->getMediator()->subscribe(&m_renderer);
+
     this->Invalidate(FALSE);
 
     return CWnd::OnCreate(lpCreateStruct);
@@ -65,7 +70,7 @@ CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 void
 CChildView::OnSetAngle(int num, float angle)
 {
-    if (num == 0) {
+    /*if (num == 0) {
         m_mathModel.setArrowAngle(angle);
     }
 
@@ -73,7 +78,7 @@ CChildView::OnSetAngle(int num, float angle)
         m_mathModel.setCrankAngle(angle);
     }
 
-    this->Invalidate(FALSE);
+    this->Invalidate(FALSE);*/
 }
 
 CString*

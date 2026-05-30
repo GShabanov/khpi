@@ -114,7 +114,6 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/, CCreateContext* pContex
 
     if (wnd1 != NULL)
     {
-        wnd1->setMediator(&m_mediator);
         m_mediator.subscribe(wnd1);
     }
 
@@ -122,7 +121,6 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT /*lpcs*/, CCreateContext* pContex
 
     if (wnd2 != NULL)
     {
-        wnd2->setMediator(&m_mediator);
         m_mediator.subscribe(wnd2);
     }
 

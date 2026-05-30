@@ -189,6 +189,10 @@ CRenderer::CRenderer(CLogCallback* log)
 
 CRenderer::~CRenderer()
 {
+    if (this->m_pMediator != NULL) {
+        this->m_pMediator->unsubscribe(this);
+    }
+
     if (m_pGlWindow != NULL)
     {
         glfwDestroyWindow(m_pGlWindow);
@@ -480,9 +484,30 @@ CRenderer::SetSize(int cx, int cy)
 }
 
 void
+CRenderer::OnSetAngle(int num, float angle)
+{
+    if (num == 0) {
+        m_mathModel->setArrowAngle(angle);
+    }
+
+    if (num == 1) {
+        m_mathModel->setCrankAngle(angle);
+    }
+
+    this->UpdateVectors();
+
+    ::InvalidateRect(this->m_parent, NULL, FALSE);
+}
+
+
+void
 CRenderer::UpdateVectors()
 {
     m_vectors.Update(m_mathModel);
+
+    POINT  textureDim = { 1024, 256 };
+    //m_arrowLabel.UpdateDiagram(glm::vec2(129.7f, 10.0f), textureDim);
+
 }
 
 
@@ -555,8 +580,6 @@ CRenderer::Draw()
     m_VectorShader.setMat4("projection", proj_mat);
     m_VectorShader.setMat4("view", view_mat);
 
-
-    this->UpdateVectors();
     //
     // arrow
     //
@@ -590,7 +613,7 @@ CRenderer::Draw()
 
 
 
-    glm::mat4  labelMatrix = m_worldTransform * m_mathModel->getCraneMatrix();
+    /*glm::mat4  labelMatrix = m_worldTransform * m_mathModel->getCraneMatrix();
     labelMatrix = glm::translate(labelMatrix, glm::vec3(-29.7f, 20.000f, 0.0f));
 
     m_arrowLabel.Draw(labelMatrix, m_SpriteShader);
@@ -598,9 +621,9 @@ CRenderer::Draw()
     labelMatrix = m_worldTransform * m_mathModel->getRod1Matrix();
     labelMatrix = glm::translate(labelMatrix, glm::vec3(0.0f, 10.0f, 0.0f));
 
-    m_rodLabel.Draw(labelMatrix, m_SpriteShader);
+    m_rodLabel.Draw(labelMatrix, m_SpriteShader);*/
 
-    m_vectors.Draw(m_mathModel, m_worldTransform, m_VectorShader);
+    //m_vectors.Draw(m_mathModel, m_worldTransform, m_VectorShader);
 
 
     glUseProgram(0);

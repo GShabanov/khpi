@@ -14,6 +14,7 @@
 #ifndef __OPENGL_MATHMODEL_H__
 #define __OPENGL_MATHMODEL_H__
 
+#include <vector>
 #include "GlUtils.h"
 
 class CMathModel
@@ -64,6 +65,13 @@ public:
         ForceVector forceAtA;      //
     };
 
+    struct EpureData
+    {
+        std::vector<float> shearForce;  // V(x)
+        std::vector<float> bendingMoment; // M(x)
+    };
+
+
 private:
     float   m_ArrowAngle;
     float   m_CrankAngle;
@@ -88,7 +96,6 @@ private:
     glm::mat4   m_chains[6];
 
     bool RecalcAngles(float arrowAngle, float crankAngle, float& rodAngle, float& craneArrowAngle);
-    glm::vec2 GetPointInRodLocal(float length);
 
 public:
 
@@ -99,6 +106,8 @@ public:
     ForceMomentResult m_epureData;
 
     ForceMomentResult CalcForceMomentEpure(float loadForce, glm::vec3 gravityDir = glm::vec3(0.0f, -1.0f, 0.0f));
+
+    EpureData GenerateEpureArray(int resolution, float loadForce /*F1*/);
 
 
     void setArrowAngle(float angle)

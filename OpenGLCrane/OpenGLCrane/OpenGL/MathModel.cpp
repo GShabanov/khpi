@@ -206,11 +206,46 @@ CMathModel::UpdateAngles()
     m_epureData = CalcForceMomentEpure(100.0f);
 }
 
-glm::vec2 CMathModel::GetPointInRodLocal(float length)
+CMathModel::EpureData
+CMathModel::GenerateEpureArray(int resolution, float loadForce /*F1*/)
 {
-    return glm::vec2(0.0f, length); // если шатун направлен вверх
-}
+    EpureData data;
+    data.shearForce.resize(resolution);
+    data.bendingMoment.resize(resolution);
 
+    const float totalLength = m_BC + m_BE;
+
+    // step
+    float dx = totalLength / resolution;
+
+    // distributed force (в H/mm)
+    float A_mm2 = 100.0f;
+    float density = 7850.0f;
+    float g = 9.81f;
+    float A_m2 = A_mm2 * 1e-6f;
+    float q = density * A_m2 * g * 1e-3f; // H/mm
+
+    for (int i = 0; i < resolution; ++i)
+    {
+        float x = i * dx;
+
+        // force V(x)
+        float Vx = -q * x;
+
+        if (x >= totalLength)
+            Vx -= loadForce;
+
+        // moment M(x)
+        float Mx = -q * x * x / 2.0f;
+        if (x >= totalLength)
+            Mx -= loadForce * (x - totalLength);
+
+        data.shearForce[i] = Vx;
+        data.bendingMoment[i] = Mx;
+    }
+
+    return data;
+}
 
 CMathModel::ForceMomentResult
 CMathModel::CalcForceMomentEpure(float loadForce, glm::vec3 gravityDir)

@@ -17,6 +17,7 @@
 void
 CStateMediator::subscribe(CStateComponent* component)
 {
+    component->setMediator(this);
     //
     // check already present
     //

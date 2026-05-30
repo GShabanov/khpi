@@ -14,6 +14,8 @@
 #ifndef __OPENGL_RENDERER_H__
 #define __OPENGL_RENDERER_H__
 
+#include "controlState.h"
+
 #include "GlUtils.h"
 
 #include "Shader.h"
@@ -58,7 +60,7 @@ public:
 
 };
 
-class CRenderer
+class CRenderer : public CStateComponent
 {
 protected:
     class CLogCallback*       m_log;
@@ -110,6 +112,9 @@ public:
 
 
 protected:
+    virtual void  OnSetAngle(int num, float angle);
+
+
     void GlMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message);
     void OnScrollCallback(GLFWwindow* window, double x_offset, double y_offset);
     void OnMouseCallback(GLFWwindow* window, double x_pos, double y_pos);
