@@ -379,7 +379,7 @@ CTeXText::Update(const TCHAR *newText)
 
     m_text = newtext;
 
-    m_render = tex::LaTeX::parse(m_text, m_width, 26, 26 / 3.f, 0xff424242);
+    m_render = tex::LaTeX::parse(m_text, m_width, 26, 26 / 3.f, 0xffF2F2F2);
 
     m_render->draw(*this, 10, 10);
 
@@ -592,7 +592,7 @@ CTeXText::setStrokeWidth(float w)
 /** Set the stroke width of the context */
 {
     m_stroke.lineWidth = w;
-    m_pen->SetWidth(w);
+    //m_pen->SetWidth(w);
 
 }
 
@@ -742,6 +742,7 @@ CTeXText::drawLine(float x1, float y1, float x2, float y2)
  * @param y2 end point in y-direction
  */
 {
+
     m_g->DrawLine(m_pen, x1, y1, x2, y2);
 }
 
